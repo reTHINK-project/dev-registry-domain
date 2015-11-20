@@ -19,4 +19,16 @@ public class HypertyInstance {
     public String getLastUpdate(){
       return this.lastUpdate;
     }
+
+    public void setCatalogAddress(String catalogAddress){
+      this.catalogAddress = catalogAddress;
+    }
+
+    public void setGuid(String guid){
+      this.guid = guid;
+    }
+
+    public void setLastUpdate(String lastUpdate){
+      this.lastUpdate = lastUpdate;
+    }
 }

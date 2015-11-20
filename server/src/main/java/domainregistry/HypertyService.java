@@ -55,4 +55,8 @@ public class HypertyService{
       userServices.get(params[0]).containsKey(params[1]);
     }
   }
+
+  public Map<String, Map<String, HypertyInstance>> getServices(){
+    return userServices;
+  }
 }
