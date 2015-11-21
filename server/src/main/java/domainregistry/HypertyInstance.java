@@ -9,26 +9,26 @@ public class HypertyInstance {
     private String lastUpdate;
 
     public String getCatalogAddress(){
-      return this.catalogAddress;
+        return this.catalogAddress;
     }
 
     public String getGuid(){
-      return this.guid;
+        return this.guid;
     }
 
     public String getLastUpdate(){
-      return this.lastUpdate;
+        return this.lastUpdate;
     }
 
     public void setCatalogAddress(String catalogAddress){
-      this.catalogAddress = catalogAddress;
+        this.catalogAddress = catalogAddress;
     }
 
     public void setGuid(String guid){
-      this.guid = guid;
+        this.guid = guid;
     }
 
     public void setLastUpdate(String lastUpdate){
-      this.lastUpdate = lastUpdate;
+        this.lastUpdate = lastUpdate;
     }
 }
