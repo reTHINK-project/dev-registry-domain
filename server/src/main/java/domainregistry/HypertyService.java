@@ -10,19 +10,30 @@ public class HypertyService{
     private Map<String, Map<String, HypertyInstance>> userServices = new HashMap<>();
 
     public Map<String, HypertyInstance> getAllHyperties(String userID) {
-        if(checkObjectExistance(userID)){
-            return userServices.get(userID);
-        }
-        else return null;
+        Map<String, HypertyInstance> services = userServices.get(userID);
+        if(checkObjectExistance(userID) && !services.isEmpty())
+            return services;
+
+        else if(!checkObjectExistance(userID))
+            throw new UserNotFoundException();
+
+        else throw new DataNotFoundException();
+    }
+
+    public HypertyInstance getUserHyperty(String userID, String hypertyID){
+        if(checkObjectExistance(userID, hypertyID))
+            return userServices.get(userID).get(hypertyID);
+
+        else if(!checkObjectExistance(userID))
+            throw new UserNotFoundException();
+
+        else throw new DataNotFoundException();
     }
 
     public String createUser(String userID){
         Map<String, HypertyInstance> services = new HashMap<>();
-        if(!checkObjectExistance(userID)){
-            userServices.put(userID, services);
-            return userID;
-        }
-        else return null;
+        userServices.put(userID, services);
+        return userID;
     }
 
     public String createUserHyperty(String userID, String hypertyID, HypertyInstance instance){
@@ -30,22 +41,19 @@ public class HypertyService{
             userServices.get(userID).put(hypertyID, instance);
             return hypertyID;
         }
-        else return null;
-    }
-
-    public HypertyInstance getUserHyperty(String userID, String hypertyID){
-        if(checkObjectExistance(userID, hypertyID)){
-            return userServices.get(userID).get(hypertyID);
-        }
-        else return null;
+        else throw new UserNotFoundException();
     }
 
     public String deleteUserHyperty(String userID, String hypertyID){
         if(checkObjectExistance(userID, hypertyID)){
             userServices.get(userID).remove(hypertyID);
-            return hypertyID + " deleted";
+            return hypertyID;
         }
-        else return null;
+
+        else if(!checkObjectExistance(userID))
+            throw new UserNotFoundException();
+
+        else throw new DataNotFoundException();
     }
 
     private boolean checkObjectExistance(String... params){

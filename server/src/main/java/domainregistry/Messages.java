@@ -1,14 +1,14 @@
 package domainregistry;
 
-public class Errors {
+public class Messages {
 
     private String message;
 
-    public Errors(String message, String... args) {
+    public Messages(String message, String... args) {
         this.message = String.format(message, args);
     }
 
-    public Errors(Exception e) {
+    public Messages(Exception e) {
         this.message = e.getMessage();
     }
 

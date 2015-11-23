@@ -8,73 +8,66 @@ public class HypertyController {
 
     public HypertyController(final HypertyService hypertyService) {
 
+        Gson gson = new Gson();
+
         get("/", (req, res) -> "rethink registry api");
 
         get("/user_id/:user_id", (req,res) -> {
-            Gson gson = new Gson();
             String userID = req.params(":user_id");
             res.type("application/json");
-            Map<String, HypertyInstance> services = hypertyService.getAllHyperties(userID);
-            if (services != null && !services.isEmpty()){
-                res.status(200);
-                return gson.toJson(services);
-            }
-            res.status(404);
-            return gson.toJson(new Errors("services or user not found"));
+            return gson.toJson(hypertyService.getAllHyperties(userID));
         });
 
         get("/user_id/:user_id/:hyperty_instance_id", (req,res) -> {
-            Gson gson = new Gson();
             res.type("application/json");
             String userID = req.params(":user_id");
             String hypertyID = req.params(":hyperty_instance_id");
-            HypertyInstance hi = hypertyService.getUserHyperty(userID, hypertyID);
-            if(hi != null){
-                res.status(200);
-                return gson.toJson(hi);
-            }
-            res.status(404);
-            return gson.toJson(new Errors("user or hyperty not found"));
+            return gson.toJson(hypertyService.getUserHyperty(userID, hypertyID));
         });
 
         put("/user_id/:user_id", (req,res) -> {
-            Gson gson = new Gson();
             res.type("application/json");
             String userID = req.params(":user_id");
-            if(hypertyService.createUser(userID) != null){
-                res.status(200);
-                return gson.toJson(new Errors("user created"));
-            }
-            res.status(404);
-            return gson.toJson(new Errors("user already created"));
+            hypertyService.createUser(userID);
+            res.status(200);
+            return gson.toJson(new Messages("user created"));
         });
 
         put("/user_id/:user_id/:hyperty_instance_id", (req,res) -> {
-            Gson gson = new Gson();
             res.type("application/json");
             String userID = req.params(":user_id");
             String hypertyID = req.params(":hyperty_instance_id");
             String body = req.body();
             HypertyInstance hi = gson.fromJson(body, HypertyInstance.class);
-            if(hypertyService.createUserHyperty(userID, hypertyID, hi) != null){
-                res.status(200);
-                return gson.toJson(new Errors("success"));
-            }
-            res.status(404);
-            return gson.toJson(new Errors("user or hyperty not found"));
+            res.status(200);
+            gson.toJson(hypertyService.createUserHyperty(userID, hypertyID, hi));
+            return gson.toJson(new Messages("hyperty created"));
         });
 
         delete("/user_id/:user_id/:hyperty_instance_id", (req,res) -> {
-            Gson gson = new Gson();
             res.type("application/json");
             String hypertyID = req.params(":hyperty_instance_id");
             String userID = req.params(":user_id");
-            if(hypertyService.deleteUserHyperty(userID, hypertyID) != null){
-                res.status(200);
-                return gson.toJson(new Errors("hyperty deleted"));
-            }
-            res.status(404);
-            return gson.toJson(new Errors("user or hyperty not found"));
+            gson.toJson(hypertyService.deleteUserHyperty(userID, hypertyID));
+            return gson.toJson(new Messages("hyperty deleted"));
+        });
+
+        get("/throwexception", (request, response) -> {
+            throw new DataNotFoundException();
+        });
+
+        exception(DataNotFoundException.class, (e, req, res) -> {
+            res.status(400);
+            res.body(gson.toJson(new Messages("data not found")));
+        });
+
+        get("/throwexception", (request, response) -> {
+            throw new UserNotFoundException();
+        });
+
+        exception(UserNotFoundException.class, (e, req, res) -> {
+            res.status(400);
+            res.body(gson.toJson(new Messages("user not found")));
         });
     }
 }

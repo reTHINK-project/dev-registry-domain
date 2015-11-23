@@ -40,7 +40,7 @@ public class HypertyTest {
         assertEquals(2, allHyperties.keySet().size());
     }
 
-    @Test
+    @Test(expected= UserNotFoundException.class) 
     public void getAllHypertiesNonexistingUserTest(){
         assertNull(services.getAllHyperties("jj@twitter.com"));
     }
@@ -50,7 +50,7 @@ public class HypertyTest {
         assertEquals(ins, services.getUserHyperty(user, hypertyID));
     }
 
-    @Test
+    @Test(expected = DataNotFoundException.class)
     public void getNonexistentHypertyTest(){
         assertNull(services.getUserHyperty(user, ""));
     }
@@ -62,10 +62,10 @@ public class HypertyTest {
 
     @Test
     public void createAExistentUserTest(){
-        assertNull(services.createUser(user));
+        assertTrue(services.getServices().containsKey(user));
     }
 
-    @Test
+    @Test(expected= UserNotFoundException.class)
     public void createHypertyNonexistentUserTest(){
         String nonexistentUser = "kkk@facebook.com";
         String res = services.createUserHyperty(nonexistentUser, hypertyID, ins);
@@ -99,7 +99,7 @@ public class HypertyTest {
         assertFalse(services.getServices().get(user).containsKey(hypertyID));
     }
 
-    @Test
+    @Test(expected= DataNotFoundException.class)
     public void removeANonexistentHypertyTest(){
         String nonexistentHypertyID = "sdasdsa111112";
         String res = services.deleteUserHyperty(user, nonexistentHypertyID);
