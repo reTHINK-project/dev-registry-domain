@@ -19,8 +19,8 @@ public class HypertyController {
                 res.status(200);
                 return gson.toJson(services);
             }
-            res.status(400);
-            return gson.toJson("No services found");
+            res.status(404);
+            return gson.toJson(new Errors("services or user not found"));
         });
 
         get("/user_id/:user_id/:hyperty_instance_id", (req,res) -> {
@@ -33,16 +33,20 @@ public class HypertyController {
                 res.status(200);
                 return gson.toJson(hi);
             }
-            res.status(400);
-            return gson.toJson("user or hyperty not found");
+            res.status(404);
+            return gson.toJson(new Errors("user or hyperty not found"));
         });
 
         put("/user_id/:user_id", (req,res) -> {
             Gson gson = new Gson();
             res.type("application/json");
             String userID = req.params(":user_id");
-            String response = hypertyService.createUser(userID);
-            return gson.toJson(response);
+            if(hypertyService.createUser(userID) != null){
+                res.status(200);
+                return gson.toJson(new Errors("user created"));
+            }
+            res.status(404);
+            return gson.toJson(new Errors("user already created"));
         });
 
         put("/user_id/:user_id/:hyperty_instance_id", (req,res) -> {
@@ -52,7 +56,12 @@ public class HypertyController {
             String hypertyID = req.params(":hyperty_instance_id");
             String body = req.body();
             HypertyInstance hi = gson.fromJson(body, HypertyInstance.class);
-            return gson.toJson(hypertyService.createUserHyperty(userID, hypertyID, hi));
+            if(hypertyService.createUserHyperty(userID, hypertyID, hi) != null){
+                res.status(200);
+                return gson.toJson(new Errors("success"));
+            }
+            res.status(404);
+            return gson.toJson(new Errors("user or hyperty not found"));
         });
 
         delete("/user_id/:user_id/:hyperty_instance_id", (req,res) -> {
@@ -60,7 +69,12 @@ public class HypertyController {
             res.type("application/json");
             String hypertyID = req.params(":hyperty_instance_id");
             String userID = req.params(":user_id");
-            return gson.toJson(hypertyService.deleteUserHyperty(userID, hypertyID));
+            if(hypertyService.deleteUserHyperty(userID, hypertyID) != null){
+                res.status(200);
+                return gson.toJson(new Errors("hyperty deleted"));
+            }
+            res.status(404);
+            return gson.toJson(new Errors("user or hyperty not found"));
         });
     }
 }

@@ -10,24 +10,27 @@ public class HypertyService{
     private Map<String, Map<String, HypertyInstance>> userServices = new HashMap<>();
 
     public Map<String, HypertyInstance> getAllHyperties(String userID) {
-        return userServices.get(userID);
+        if(checkObjectExistance(userID)){
+            return userServices.get(userID);
+        }
+        else return null;
     }
 
     public String createUser(String userID){
         Map<String, HypertyInstance> services = new HashMap<>();
         if(!checkObjectExistance(userID)){
             userServices.put(userID, services);
-            return userID + " created";
+            return userID;
         }
-        else return "user already created";
+        else return null;
     }
 
     public String createUserHyperty(String userID, String hypertyID, HypertyInstance instance){
         if(checkObjectExistance(userID)){
             userServices.get(userID).put(hypertyID, instance);
-            return hypertyID + " created";
+            return hypertyID;
         }
-        else return "user not found";
+        else return null;
     }
 
     public HypertyInstance getUserHyperty(String userID, String hypertyID){
@@ -42,7 +45,7 @@ public class HypertyService{
             userServices.get(userID).remove(hypertyID);
             return hypertyID + " deleted";
         }
-        else return "user or data not found";
+        else return null;
     }
 
     private boolean checkObjectExistance(String... params){

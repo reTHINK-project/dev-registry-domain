@@ -8,6 +8,15 @@ public class HypertyInstance {
     private String guid;
     private String lastUpdate;
 
+    public HypertyInstance(String catalogAddress, String guid, String lastUpdate){
+        this.catalogAddress = catalogAddress;
+        this.guid = guid;
+        this.lastUpdate = lastUpdate;
+    }
+
+    public HypertyInstance(){
+    }
+
     public String getCatalogAddress(){
         return this.catalogAddress;
     }

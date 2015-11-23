@@ -29,7 +29,7 @@ public class HypertyTest {
     }
 
     @Test
-    public void getAllUserHypertiesTest(){
+    public void getAllExistingUserHypertiesTest(){
         String newHypertyID = "123dasxxxxlkiII";
         HypertyInstance hyperty = new HypertyInstance();
         hyperty.setLastUpdate("13-13-13");
@@ -38,6 +38,11 @@ public class HypertyTest {
         services.createUserHyperty(user, newHypertyID, hyperty);
         Map<String, HypertyInstance> allHyperties = services.getAllHyperties(user);
         assertEquals(2, allHyperties.keySet().size());
+    }
+
+    @Test
+    public void getAllHypertiesNonexistingUserTest(){
+        assertNull(services.getAllHyperties("jj@twitter.com"));
     }
 
     @Test
@@ -57,14 +62,14 @@ public class HypertyTest {
 
     @Test
     public void createAExistentUserTest(){
-        assertEquals("user already created", services.createUser(user));
+        assertNull(services.createUser(user));
     }
 
     @Test
     public void createHypertyNonexistentUserTest(){
         String nonexistentUser = "kkk@facebook.com";
         String res = services.createUserHyperty(nonexistentUser, hypertyID, ins);
-        assertEquals("user not found", res);
+        assertNull(res);
     }
 
     @Test
@@ -98,7 +103,7 @@ public class HypertyTest {
     public void removeANonexistentHypertyTest(){
         String nonexistentHypertyID = "sdasdsa111112";
         String res = services.deleteUserHyperty(user, nonexistentHypertyID);
-        assertEquals("user or data not found", res);
+        assertNull(res);
     }
 }
 
