@@ -10,7 +10,7 @@ public class HypertyController {
 
         Gson gson = new Gson();
 
-        get("/", (req, res) -> "rethink registry api");
+        get("/", (req, res) -> gson.toJson(new Messages("rethink registry api")));
 
         get("/user_id/:user_id", (req,res) -> {
             String userID = req.params(":user_id");
