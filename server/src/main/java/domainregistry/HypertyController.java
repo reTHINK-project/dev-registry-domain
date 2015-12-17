@@ -25,14 +25,6 @@ public class HypertyController {
             return gson.toJson(hypertyService.getUserHyperty(userID, hypertyID));
         });
 
-        put("/hyperty/user/:user_id", (req,res) -> {
-            res.type("application/json");
-            String userID = req.params(":user_id");
-            hypertyService.createUser(userID);
-            res.status(200);
-            return gson.toJson(new Messages("user created"));
-        });
-
         put("/hyperty/user/:user_id/:hyperty_instance_id", (req,res) -> {
             res.type("application/json");
             String userID = req.params(":user_id");

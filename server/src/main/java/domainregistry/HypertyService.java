@@ -30,18 +30,16 @@ public class HypertyService{
         else throw new DataNotFoundException();
     }
 
-    public String createUser(String userID){
-        Map<String, HypertyInstance> services = new HashMap<>();
-        userServices.put(userID, services);
-        return userID;
-    }
-
     public String createUserHyperty(String userID, String hypertyID, HypertyInstance instance){
         if(checkObjectExistance(userID)){
             userServices.get(userID).put(hypertyID, instance);
-            return hypertyID;
         }
-        else throw new UserNotFoundException();
+        else{
+          Map<String, HypertyInstance> services = new HashMap<>();
+          services.put(hypertyID, instance);
+          userServices.put(userID, services);
+        }
+        return hypertyID;
     }
 
     public String deleteUserHyperty(String userID, String hypertyID){

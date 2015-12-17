@@ -24,11 +24,6 @@ public class ITserverRest{
 
     @Test
     public void checkThatWeCanCreateAUserAndAHyperty(){
-        put("/john@skype.com").then()
-            .assertThat()
-            .statusCode(200)
-            .body("message", equalTo("user created"));
-
         String jsonString = "{\"catalogAddress\":\"sadasd11111222222\",\"guid\":\"adasdas23234324\",\"lastUpdate\":\"12-12-12\"}";
 
         given().contentType("application/json")
@@ -47,11 +42,6 @@ public class ITserverRest{
 
     @Test
     public void checkGetAllUserHyperties(){
-        put("/rui@skype.com").then()
-            .assertThat()
-            .statusCode(200)
-            .body("message", equalTo("user created"));
-
         String h1 = "{\"catalogAddress\":\"sadasd1111222222\",\"guid\":\"adasas23234324\",\"lastUpdate\":\"11-12-12\"}";
         String h2 = "{\"catalogAddress\":\"sadasd1111222222\",\"guid\":\"adasas23234324\",\"lastUpdate\":\"10-12-12\"}";
 
