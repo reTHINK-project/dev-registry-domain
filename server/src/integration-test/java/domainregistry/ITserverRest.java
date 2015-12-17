@@ -13,7 +13,7 @@ import static org.hamcrest.Matchers.equalTo;
 public class ITserverRest{
     @BeforeClass
     public static void configureRestAssured() {
-        RestAssured.baseURI = "http://localhost";
+        RestAssured.baseURI = "http://localhost/hyperty/user";
         RestAssured.port = 4567;
     }
 
@@ -24,7 +24,7 @@ public class ITserverRest{
 
     @Test
     public void checkThatWeCanCreateAUserAndAHyperty(){
-        put("/user_id/john@skype.com").then()
+        put("/john@skype.com").then()
             .assertThat()
             .statusCode(200)
             .body("message", equalTo("user created"));
@@ -34,9 +34,9 @@ public class ITserverRest{
         given().contentType("application/json")
             .body(jsonString)
             .expect().statusCode(200)
-            .when().put("/user_id/john@skype.com/asdas1212321ASASQ");
+            .when().put("/john@skype.com/asdas1212321ASASQ");
 
-        get("/user_id/john@skype.com/asdas1212321ASASQ")
+        get("/john@skype.com/asdas1212321ASASQ")
             .then()
             .assertThat()
             .body(
@@ -47,7 +47,7 @@ public class ITserverRest{
 
     @Test
     public void checkGetAllUserHyperties(){
-        put("/user_id/rui@skype.com").then()
+        put("/rui@skype.com").then()
             .assertThat()
             .statusCode(200)
             .body("message", equalTo("user created"));
@@ -58,15 +58,15 @@ public class ITserverRest{
         given().contentType("application/json")
             .body(h1)
             .expect().statusCode(200)
-            .when().put("/user_id/rui@skype.com/asbbdas1212321ASASQ");
+            .when().put("/rui@skype.com/asbbdas1212321ASASQ");
 
         given().contentType("application/json")
             .body(h2)
             .expect().statusCode(200)
-            .when().put("/user_id/rui@skype.com/Csdas1212321ASASQ");
+            .when().put("/rui@skype.com/Csdas1212321ASASQ");
 
         String res = "sadasd1111222222";
-        get("/user_id/rui@skype.com").then().body("asbbdas1212321ASASQ.catalogAddress", equalTo(res));
-        get("/user_id/rui@skype.com").then().body("Csdas1212321ASASQ.catalogAddress", equalTo(res));
+        get("/rui@skype.com").then().body("asbbdas1212321ASASQ.catalogAddress", equalTo(res));
+        get("/rui@skype.com").then().body("Csdas1212321ASASQ.catalogAddress", equalTo(res));
     }
 }

@@ -1,7 +1,7 @@
 require 'airborne'
 
 Airborne.configure do |config|
-  config.base_url = 'http://localhost:4567'
+  config.base_url = 'http://localhost:4567/hyperty/user'
 end
 
 describe 'domain registry api tests' do
@@ -23,7 +23,7 @@ describe 'domain registry api tests' do
   describe 'create user' do
 
     it 'should create a new user' do
-      put '/user_id/rui@skype.com'
+      put '/rui@skype.com'
       expect_status(200)
       expect_json(:message => 'user created')
     end
@@ -32,13 +32,13 @@ describe 'domain registry api tests' do
   describe 'create user hyperty' do
 
     it 'should add a new hyperty' do
-      put '/user_id/rui@skype.com/123AAdsadasdas', @hyperty_details
+      put '/rui@skype.com/123AAdsadasdas', @hyperty_details
       expect_status(200)
       expect_json(:message => "hyperty created") 
     end
 
     it 'should return an error, user not found' do
-      put '/user_id/pp@skype.com/123AAdsadasdas'
+      put '/pp@skype.com/123AAdsadasdas'
       expect_status(400)
       expect_json(:message => "user not found")
     end
@@ -47,19 +47,19 @@ describe 'domain registry api tests' do
   describe 'get details about a single hyperty' do
 
     it 'should return the hyperty' do
-      get '/user_id//rui@skype.com/123AAdsadasdas'
+      get '/rui@skype.com/123AAdsadasdas'
       expect_status(200)
       expect_json(@hyperty_details)
     end
 
     it 'should return an error, user not found' do
-      get '/user_id/pp@skype.com/123AAdsadasdaspp'
+      get '/pp@skype.com/123AAdsadasdaspp'
       expect_status(400)
       expect_json(:message => "user not found")
     end
 
     it 'should return an error, data not found' do
-      get '/user_id/rui@skype.com/0123AAdsadasdaspp'
+      get '/rui@skype.com/0123AAdsadasdaspp'
       expect_status(400)
       expect_json(:message => "data not found")
     end
@@ -73,16 +73,16 @@ describe 'domain registry api tests' do
     }
 
     it 'should return all the hyperties' do
-      put '/user_id/rui@skype.com/123AAdsadasdaspp', @hyperty_two_details
+      put '/rui@skype.com/123AAdsadasdaspp', @hyperty_two_details
       expect_status(200)
       expect_json(:message => "hyperty created") 
-      get '/user_id/rui@skype.com'
+      get '/rui@skype.com'
       expect_status(200)
       expect_json(all_hyperties)
     end
 
     it 'should return an error, user not found' do
-      get '/user_id/pp@skype.com'
+      get '/pp@skype.com'
       expect_status(400)
       expect_json(:message => "user not found")
     end
@@ -91,19 +91,19 @@ describe 'domain registry api tests' do
   describe 'delete user hyperty' do
 
     it 'should delete an user hyperty' do
-      delete '/user_id/rui@skype.com/123AAdsadasdaspp'
+      delete '/rui@skype.com/123AAdsadasdaspp'
       expect_status(200)
       expect_json(:message => "hyperty deleted")
     end
 
     it 'should return an error, user not found' do
-      delete '/user_id/pp@skype.com/123AAdsadasdaspp'
+      delete '/pp@skype.com/123AAdsadasdaspp'
       expect_status(400)
       expect_json(:message => "user not found")
     end
 
     it 'should return an error, data not found' do
-      delete '/user_id/rui@skype.com/0123AAdsadasdaspp'
+      delete '/rui@skype.com/0123AAdsadasdaspp'
       expect_status(400)
       expect_json(:message => "data not found")
     end

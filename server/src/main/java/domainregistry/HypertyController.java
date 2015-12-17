@@ -12,20 +12,20 @@ public class HypertyController {
 
         get("/", (req, res) -> gson.toJson(new Messages("rethink registry api")));
 
-        get("/user_id/:user_id", (req,res) -> {
+        get("/hyperty/user/:user_id", (req,res) -> {
             String userID = req.params(":user_id");
             res.type("application/json");
             return gson.toJson(hypertyService.getAllHyperties(userID));
         });
 
-        get("/user_id/:user_id/:hyperty_instance_id", (req,res) -> {
+        get("/hyperty/user/:user_id/:hyperty_instance_id", (req,res) -> {
             res.type("application/json");
             String userID = req.params(":user_id");
             String hypertyID = req.params(":hyperty_instance_id");
             return gson.toJson(hypertyService.getUserHyperty(userID, hypertyID));
         });
 
-        put("/user_id/:user_id", (req,res) -> {
+        put("/hyperty/user/:user_id", (req,res) -> {
             res.type("application/json");
             String userID = req.params(":user_id");
             hypertyService.createUser(userID);
@@ -33,7 +33,7 @@ public class HypertyController {
             return gson.toJson(new Messages("user created"));
         });
 
-        put("/user_id/:user_id/:hyperty_instance_id", (req,res) -> {
+        put("/hyperty/user/:user_id/:hyperty_instance_id", (req,res) -> {
             res.type("application/json");
             String userID = req.params(":user_id");
             String hypertyID = req.params(":hyperty_instance_id");
@@ -44,7 +44,7 @@ public class HypertyController {
             return gson.toJson(new Messages("hyperty created"));
         });
 
-        delete("/user_id/:user_id/:hyperty_instance_id", (req,res) -> {
+        delete("/hyperty/user/:user_id/:hyperty_instance_id", (req,res) -> {
             res.type("application/json");
             String hypertyID = req.params(":hyperty_instance_id");
             String userID = req.params(":user_id");
