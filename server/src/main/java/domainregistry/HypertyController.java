@@ -12,34 +12,34 @@ public class HypertyController {
 
         get("/", (req, res) -> gson.toJson(new Messages("rethink registry api")));
 
-        get("/hyperty/user/:user_id", (req,res) -> {
-            String userID = req.params(":user_id");
+        get("/hyperty/user/*", (req,res) -> {
             res.type("application/json");
-            return gson.toJson(hypertyService.getAllHyperties(userID));
-        });
-
-        get("/hyperty/user/:user_id/:hyperty_instance_id", (req,res) -> {
-            res.type("application/json");
-            String userID = req.params(":user_id");
-            String hypertyID = req.params(":hyperty_instance_id");
+            String request = req.splat()[0];
+            String[] parse = request.split("/(?=hyperty)");
+            String userID = parse[0];
+            String hypertyID = parse[1];
             return gson.toJson(hypertyService.getUserHyperty(userID, hypertyID));
         });
 
-        put("/hyperty/user/:user_id/:hyperty_instance_id", (req,res) -> {
+        put("/hyperty/user/*", (req,res) -> {
             res.type("application/json");
-            String userID = req.params(":user_id");
-            String hypertyID = req.params(":hyperty_instance_id");
             String body = req.body();
+            String request = req.splat()[0];
+            String[] parse = request.split("/(?=hyperty)");
+            String userID = parse[0];
+            String hypertyID = parse[1];
             HypertyInstance hi = gson.fromJson(body, HypertyInstance.class);
             res.status(200);
             gson.toJson(hypertyService.createUserHyperty(userID, hypertyID, hi));
             return gson.toJson(new Messages("hyperty created"));
         });
 
-        delete("/hyperty/user/:user_id/:hyperty_instance_id", (req,res) -> {
+        delete("/hyperty/user/*", (req,res) -> {
             res.type("application/json");
-            String hypertyID = req.params(":hyperty_instance_id");
-            String userID = req.params(":user_id");
+            String request = req.splat()[0];
+            String[] parse = request.split("/(?=hyperty)");
+            String userID = parse[0];
+            String hypertyID = parse[1];
             gson.toJson(hypertyService.deleteUserHyperty(userID, hypertyID));
             return gson.toJson(new Messages("hyperty deleted"));
         });

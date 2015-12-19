@@ -4,40 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HypertyInstance {
-    private String catalogAddress;
-    private String guid;
-    private String lastUpdate;
-
-    public HypertyInstance(String catalogAddress, String guid, String lastUpdate){
-        this.catalogAddress = catalogAddress;
-        this.guid = guid;
-        this.lastUpdate = lastUpdate;
-    }
+    private String descriptor;
 
     public HypertyInstance(){
     }
 
-    public String getCatalogAddress(){
-        return this.catalogAddress;
+    public HypertyInstance(String descriptor){
+        this.descriptor = descriptor;
     }
 
-    public String getGuid(){
-        return this.guid;
+    public String getDescriptor(){
+        return this.descriptor;
     }
 
-    public String getLastUpdate(){
-        return this.lastUpdate;
-    }
-
-    public void setCatalogAddress(String catalogAddress){
-        this.catalogAddress = catalogAddress;
-    }
-
-    public void setGuid(String guid){
-        this.guid = guid;
-    }
-
-    public void setLastUpdate(String lastUpdate){
-        this.lastUpdate = lastUpdate;
+    public void setDescriptor(String descriptor){
+        this.descriptor = descriptor;
     }
 }

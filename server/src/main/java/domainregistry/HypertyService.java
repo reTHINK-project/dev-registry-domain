@@ -9,17 +9,6 @@ public class HypertyService{
 
     private Map<String, Map<String, HypertyInstance>> userServices = new HashMap<>();
 
-    public Map<String, HypertyInstance> getAllHyperties(String userID) {
-        Map<String, HypertyInstance> services = userServices.get(userID);
-        if(checkObjectExistance(userID) && !services.isEmpty())
-            return services;
-
-        else if(!checkObjectExistance(userID))
-            throw new UserNotFoundException();
-
-        else throw new DataNotFoundException();
-    }
-
     public HypertyInstance getUserHyperty(String userID, String hypertyID){
         if(checkObjectExistance(userID, hypertyID))
             return userServices.get(userID).get(hypertyID);

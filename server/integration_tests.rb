@@ -8,28 +8,24 @@ describe 'domain registry api tests' do
 
   before {
     @hyperty_details = {
-      catalogAddress: "kkk11jasdasdAA",
-      guid: "asdas999111",
-      lastUpdate: "12-12-12"
+      descriptor: "kkk11jasdasdAA",
     }
 
     @hyperty_two_details = {
-      catalogAddress: "asdasd112AA",
-      guid: "asdas999111ee",
-      lastUpdate: "12-11-12"
+      descriptor: "asdasd112AA",
     }
   }
 
   describe 'create user hyperty' do
 
     it 'should add a new hyperty' do
-      put '/rui@skype.com/123AAdsadasdas', @hyperty_details
+      put '/user%3A%2F%2Fua.pt%2F123/hyperty%3A%2F%2Fua.pt%2Fb7b3rs4-3245-42gn-4327-238jhdq83d8', @hyperty_details
       expect_status(200)
       expect_json(:message => "hyperty created") 
     end
 
     it 'should add a new hyperty' do
-      put '/pp@skype.com/X123AAdsadasdas', @hyperty_two_details
+      put '/user%3A%2F%2Fua.pt%2F123/hyperty%3A%2F%2Fua.pt%2Fb7H3rs4-3245-42gf-4027-138aadq23d8', @hyperty_two_details
       expect_status(200)
       expect_json(:message => "hyperty created")
     end
@@ -38,48 +34,25 @@ describe 'domain registry api tests' do
   describe 'get details about a single hyperty' do
 
     it 'should return the hyperty' do
-      get '/rui@skype.com/123AAdsadasdas'
+      get '/user%3A%2F%2Fua.pt%2F123/hyperty%3A%2F%2Fua.pt%2Fb7b3rs4-3245-42gn-4327-238jhdq83d8'
       expect_status(200)
       expect_json(@hyperty_details)
     end
 
     it 'should return the hyperty' do
-      get '/pp@skype.com/X123AAdsadasdas'
+      get '/user%3A%2F%2Fua.pt%2F123/hyperty%3A%2F%2Fua.pt%2Fb7H3rs4-3245-42gf-4027-138aadq23d8'
       expect_status(200)
       expect_json(@hyperty_two_details)
     end
 
     it 'should return an error, data not found' do
-      get '/rui@skype.com/0123AAdsadasdaspp'
+      get '/user%3A%2F%2Fua.pt%2F123/hyperty%3A%2F%2Fua.pt%2Fb7H3rs4-3245-42gf-4027-138aadq23d0'
       expect_status(400)
       expect_json(:message => "data not found")
     end
 
     it 'should return an error, user not found' do
-      get '/joao@google.com/asdasdasd'
-      expect_status(400)
-      expect_json(:message => "user not found")
-    end
-  end
-
-  describe 'get all user hyperties' do
-
-    all_hyperties = {
-      "123AAdsadasdas"   => @hyperty_details,
-      "123AAdsadasdaspp" => @hyperty_two_details
-    }
-
-    it 'should return all the hyperties' do
-      put '/rui@skype.com/123AAdsadasdaspp', @hyperty_two_details
-      expect_status(200)
-      expect_json(:message => "hyperty created") 
-      get '/rui@skype.com'
-      expect_status(200)
-      expect_json(all_hyperties)
-    end
-
-    it 'should return an error, user not found' do
-      get '/joao@google.com'
+      get '/user%3A%2F%2Foa.pt%2F123/hyperty%3A%2F%2Fua.pt%2Fb7H3rs4-3245-42gf-4027-138aadq23d0'
       expect_status(400)
       expect_json(:message => "user not found")
     end
@@ -88,25 +61,31 @@ describe 'domain registry api tests' do
   describe 'delete user hyperty' do
 
     it 'should delete an user hyperty' do
-      delete '/rui@skype.com/123AAdsadasdaspp'
+      delete '/user%3A%2F%2Fua.pt%2F123/hyperty%3A%2F%2Fua.pt%2Fb7b3rs4-3245-42gn-4327-238jhdq83d8'
       expect_status(200)
       expect_json(:message => "hyperty deleted")
     end
 
     it 'should delete the hyperty' do
-      delete '/pp@skype.com/X123AAdsadasdas'
+      delete '/user%3A%2F%2Fua.pt%2F123/hyperty%3A%2F%2Fua.pt%2Fb7H3rs4-3245-42gf-4027-138aadq23d8'
       expect_status(200)
       expect_json(:message => "hyperty deleted")
     end
 
+    it 'should delete an user hyperty' do
+      delete '/user%3A%2F%2Fua.pt%2F123/hyperty%3A%2F%2Fua.pt%2Fb7b3rs4-3245-42gn-4327-238jhdq83d8'
+      expect_status(400)
+      expect_json(:message => "data not found")
+    end
+
     it 'should return an error, data not found' do
-      delete '/rui@skype.com/0123AAdsadasdaspp'
+      delete '/user%3A%2F%2Fua.pt%2F123/hyperty%3A%2F%2Fua.pt%2Fb7H3rs4-3245-42gf-4027-138aadq23e8'
       expect_status(400)
       expect_json(:message => "data not found")
     end
 
     it 'should return an error, user not found' do
-      delete '/joao@google.com/asdsadas'
+      delete '/user%3A%2F%2Foa.pt%2F123/hyperty%3A%2F%2Fua.pt%2Fb7H3rs4-3245-42gf-4027-138aadq23d8'
       expect_status(400)
       expect_json(:message => "user not found")
     end
