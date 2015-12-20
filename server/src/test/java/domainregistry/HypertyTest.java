@@ -31,21 +31,26 @@ public class HypertyTest {
     }
 
     @Test
-    public void getUserHypertyTest(){
-        assertEquals(ins, services.getUserHyperty(user, hypertyID));
-    }
-
-    @Test(expected = DataNotFoundException.class)
-    public void getNonexistentHypertyTest(){
-        services.getUserHyperty(user, "");
-    }
-
-    @Test
     public void HypertyCreationTest(){
         Map<String, HypertyInstance> servs = services.getServices().get(user);
         assertTrue(servs.containsKey(hypertyID));
         HypertyInstance i = servs.get(hypertyID);
         assertEquals(ins, i);
+    }
+
+    @Test
+    public void getAllExistingUserHypertiesTest(){
+      String newHypertyID = "123dasxxxxlkiII";
+      HypertyInstance hyperty = new HypertyInstance();
+      hyperty.setDescriptor("addd12AAQQ");
+      services.createUserHyperty(user, newHypertyID, hyperty);
+      Map<String, HypertyInstance> allHyperties = services.getAllHyperties(user);
+      assertEquals(2, allHyperties.keySet().size());
+    }
+
+    @Test(expected = UserNotFoundException.class) 
+    public void getAllHypertiesNonexistingUserTest(){
+        services.getAllHyperties("jj@twitter.com");
     }
 
     @Test

@@ -31,28 +31,21 @@ describe 'domain registry api tests' do
     end
   end
 
-  describe 'get details about a single hyperty' do
+  describe 'get all user hyperties' do
 
-    it 'should return the hyperty' do
-      get '/user%3A%2F%2Fua.pt%2F123/hyperty%3A%2F%2Fua.pt%2Fb7b3rs4-3245-42gn-4327-238jhdq83d8'
+    all_hyperties = {
+      "hyperty%3A%2F%2Fua.pt%2Fb7b3rs4-3245-42gn-4327-238jhdq83d8"   => @hyperty_details,
+      "hyperty%3A%2F%2Fua.pt%2Fb7H3rs4-3245-42gf-4027-138aadq23d8"   => @hyperty_two_details
+    }
+
+    it 'should return all the hyperties' do
+      get '/user%3A%2F%2Fua.pt%2F123'
       expect_status(200)
-      expect_json(@hyperty_details)
-    end
-
-    it 'should return the hyperty' do
-      get '/user%3A%2F%2Fua.pt%2F123/hyperty%3A%2F%2Fua.pt%2Fb7H3rs4-3245-42gf-4027-138aadq23d8'
-      expect_status(200)
-      expect_json(@hyperty_two_details)
-    end
-
-    it 'should return an error, data not found' do
-      get '/user%3A%2F%2Fua.pt%2F123/hyperty%3A%2F%2Fua.pt%2Fb7H3rs4-3245-42gf-4027-138aadq23d0'
-      expect_status(400)
-      expect_json(:message => "data not found")
+      expect_json(all_hyperties)
     end
 
     it 'should return an error, user not found' do
-      get '/user%3A%2F%2Foa.pt%2F123/hyperty%3A%2F%2Fua.pt%2Fb7H3rs4-3245-42gf-4027-138aadq23d0'
+      get '/user%3A%2F%2Fua.pt%2F124'
       expect_status(400)
       expect_json(:message => "user not found")
     end

@@ -14,11 +14,8 @@ public class HypertyController {
 
         get("/hyperty/user/*", (req,res) -> {
             res.type("application/json");
-            String request = req.splat()[0];
-            String[] parse = request.split("/(?=hyperty)");
-            String userID = parse[0];
-            String hypertyID = parse[1];
-            return gson.toJson(hypertyService.getUserHyperty(userID, hypertyID));
+            String userID = req.splat()[0];
+            return gson.toJson(hypertyService.getAllHyperties(userID));
         });
 
         put("/hyperty/user/*", (req,res) -> {
