@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class HypertyService{
 
     private Map<String, Map<String, HypertyInstance>> userServices = new HashMap<>();
+    private Map<String, String> lastHyperty = new HashMap<String, String>();
 
     public Map<String, HypertyInstance> getAllHyperties(String userID) {
       Map<String, HypertyInstance> services = userServices.get(userID);
@@ -29,6 +30,9 @@ public class HypertyService{
           services.put(hypertyID, instance);
           userServices.put(userID, services);
         }
+
+        this.lastHyperty.put(userID, hypertyID);
+
         return hypertyID;
     }
 
@@ -42,6 +46,10 @@ public class HypertyService{
             throw new UserNotFoundException();
 
         else throw new DataNotFoundException();
+    }
+
+    public String getLastHypertyID(String userID) {
+        return this.lastHyperty.get(userID);
     }
 
     private boolean checkObjectExistance(String... params){

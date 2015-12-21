@@ -3,6 +3,7 @@ package domainregistry;
 import static spark.Spark.*;
 import java.util.Map;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 public class HypertyController {
 
@@ -15,7 +16,10 @@ public class HypertyController {
         get("/hyperty/user/*", (req,res) -> {
             res.type("application/json");
             String userID = req.splat()[0];
-            return gson.toJson(hypertyService.getAllHyperties(userID));
+            JsonObject data = new JsonObject();
+            data.addProperty("last", hypertyService.getLastHypertyID(userID));
+            data.add("hyperties", gson.toJsonTree(hypertyService.getAllHyperties(userID)));
+            return data;
         });
 
         put("/hyperty/user/*", (req,res) -> {
