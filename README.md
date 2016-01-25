@@ -12,8 +12,8 @@ Run unit tests
 ``` 
 mvn clean test -P dev
 ```
-Run integration tests
+Integration tests: with ruby, rspec and Airborne (https://github.com/brooklynDev/airborne) installed:
 
 ``` 
-mvn clean verify -P integration-test
+rspec integration_tests.rb
 ```
