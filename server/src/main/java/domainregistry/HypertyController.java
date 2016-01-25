@@ -29,7 +29,6 @@ public class HypertyController {
             String[] pathSplit = req.pathInfo().split("/hyperty/user/")[1].split("/(?=hyperty)");
             String userID = pathSplit[0];
             String hypertyID = pathSplit[1];
-            System.out.println("User: " + userID + " Hyperty: " + hypertyID);
             HypertyInstance hi = gson.fromJson(body, HypertyInstance.class);
             res.status(200);
             gson.toJson(hypertyService.createUserHyperty(userID, hypertyID, hi));
