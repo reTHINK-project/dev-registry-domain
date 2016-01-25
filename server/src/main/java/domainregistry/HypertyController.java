@@ -15,8 +15,9 @@ public class HypertyController {
 
         get("/hyperty/user/*", (req,res) -> {
             res.type("application/json");
-            String userID = req.splat()[0];
             JsonObject data = new JsonObject();
+            String[] pathSplit = req.pathInfo().split("/hyperty/user/")[1].split("/(?=hyperty)");
+            String userID = pathSplit[0];
             data.addProperty("last", hypertyService.getLastHypertyID(userID));
             data.add("hyperties", gson.toJsonTree(hypertyService.getAllHyperties(userID)));
             return data;
@@ -25,10 +26,10 @@ public class HypertyController {
         put("/hyperty/user/*", (req,res) -> {
             res.type("application/json");
             String body = req.body();
-            String request = req.splat()[0];
-            String[] parse = request.split("/(?=hyperty)");
-            String userID = parse[0];
-            String hypertyID = parse[1];
+            String[] pathSplit = req.pathInfo().split("/hyperty/user/")[1].split("/(?=hyperty)");
+            String userID = pathSplit[0];
+            String hypertyID = pathSplit[1];
+            System.out.println("User: " + userID + " Hyperty: " + hypertyID);
             HypertyInstance hi = gson.fromJson(body, HypertyInstance.class);
             res.status(200);
             gson.toJson(hypertyService.createUserHyperty(userID, hypertyID, hi));
@@ -37,10 +38,9 @@ public class HypertyController {
 
         delete("/hyperty/user/*", (req,res) -> {
             res.type("application/json");
-            String request = req.splat()[0];
-            String[] parse = request.split("/(?=hyperty)");
-            String userID = parse[0];
-            String hypertyID = parse[1];
+            String[] pathSplit = req.pathInfo().split("/hyperty/user/")[1].split("/(?=hyperty)");
+            String userID = pathSplit[0];
+            String hypertyID = pathSplit[1];
             gson.toJson(hypertyService.deleteUserHyperty(userID, hypertyID));
             return gson.toJson(new Messages("hyperty deleted"));
         });
