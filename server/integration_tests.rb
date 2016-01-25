@@ -33,15 +33,11 @@ describe 'domain registry api tests' do
 
   describe 'get all user hyperties' do
 
-    all_hyperties = {
-      "hyperty%3A%2F%2Fua.pt%2Fb7b3rs4-3245-42gn-4327-238jhdq83d8"   => @hyperty_details,
-      "hyperty%3A%2F%2Fua.pt%2Fb7H3rs4-3245-42gf-4027-138aadq23d8"   => @hyperty_two_details
-    }
-
     it 'should return all the hyperties' do
       get '/user%3A%2F%2Fua.pt%2F123'
       expect_status(200)
-      expect_json(all_hyperties)
+      expect_json(:last => "hyperty://ua.pt/b7H3rs4-3245-42gf-4027-138aadq23d8")
+      expect_json_keys("hyperties", [:"hyperty://ua.pt/b7b3rs4-3245-42gn-4327-238jhdq83d8", :"hyperty://ua.pt/b7H3rs4-3245-42gf-4027-138aadq23d8"])
     end
 
     it 'should return an error, user not found' do
