@@ -61,7 +61,9 @@ public class HypertyTest {
         services.createUserHyperty(user, hypertyID, hyperty);
         assertTrue(servs.containsKey(hypertyID));
         HypertyInstance newHyperty = servs.get(hypertyID);
-        assertEquals(newHyperty, hyperty);
+        String d1 = newHyperty.getDescriptor();
+        String d2 = hyperty.getDescriptor();
+        assertEquals(d1, d2);
     }
 
     @Test
