@@ -49,6 +49,17 @@ public class HypertyService{
         return hypertyID;
     }
 
+    public HypertyInstance getUserHyperty(String userID, String hypertyID){
+        if(checkObjectExistance(userID, hypertyID)){
+            return userServices.get(userID).get(hypertyID);
+        }
+
+        else if(!checkObjectExistance(userID))
+            throw new UserNotFoundException();
+
+        else throw new DataNotFoundException();
+    }
+
     public String deleteUserHyperty(String userID, String hypertyID){
         if(checkObjectExistance(userID, hypertyID)){
             userServices.get(userID).remove(hypertyID);

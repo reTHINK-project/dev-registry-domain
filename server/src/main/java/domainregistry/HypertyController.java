@@ -20,8 +20,13 @@ public class HypertyController {
             res.type("application/json");
             String[] pathSplit = req.pathInfo().split("/hyperty/user/")[1].split("/(?=hyperty)");
             String userID = pathSplit[0];
-            log.info("Received request for " + userID + " hyperties");
-            return gson.toJson(hypertyService.getAllHyperties(userID));
+            if(pathSplit.length == 1){
+                log.info("Received request for " + userID + " hyperties");
+                return gson.toJson(hypertyService.getAllHyperties(userID));
+            }
+            String hypertyID = pathSplit[1];
+            log.info("Received request for " + hypertyID + " from user " + userID);
+            return gson.toJson(hypertyService.getUserHyperty(userID, hypertyID));
         });
 
         put("/hyperty/user/*", (req,res) -> {

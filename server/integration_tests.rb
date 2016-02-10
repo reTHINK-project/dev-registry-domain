@@ -69,7 +69,6 @@ describe 'domain registry api tests' do
 
     it 'should get all updated hyperties' do
       get '/ruijose@inesc.pt'
-      p json_body
       expect_status(200)
       expect_json_sizes(2)
       expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified])
@@ -80,6 +79,27 @@ describe 'domain registry api tests' do
       expect(json_body[:hyperty2][:descriptor]).to eql("asdasd112AA")
       expect(json_body[:hyperty2][:startingTime]).to eql(json_body[:hyperty2][:lastModified])
       expect(json_body[:hyperty1][:startingTime]).to be < (json_body[:hyperty1][:lastModified])
+    end
+  end
+
+  describe 'a single hyperty is returned' do
+
+    it "should return a user hyperty" do
+      get '/ruijose@inesc.pt/hyperty1'
+      expect_status(200)
+      expect_json_sizes(3) #a single hyperty has a descriptor, startingTime and lastModified
+      expect_json_types(descriptor: :string, startingTime: :string, lastModified: :string)
+      expect(json_body[:descriptor]).to eql("12312321istuapt") #after the update from above
+      expect(json_body[:startingTime]).to be < (json_body[:lastModified]) #after the update from above
+    end
+
+    it "should return a not updated user hyperty" do
+      get '/ruijose@inesc.pt/hyperty2'
+      expect_status(200)
+      expect_json_sizes(3)
+      expect_json_types(descriptor: :string, startingTime: :string, lastModified: :string)
+      expect(json_body[:descriptor]).to eql("asdasd112AA")
+      expect(json_body[:startingTime]).to eql(json_body[:lastModified]) #this hyperty was not updated . times remain equal
     end
   end
 
