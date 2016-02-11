@@ -16,14 +16,14 @@ public class HypertyService{
     private Map<String, Map<String, HypertyInstance>> userServices = new HashMap<>();
 
     public Map<String, HypertyInstance> getAllHyperties(String userID) {
-      Map<String, HypertyInstance> services = userServices.get(userID);
-      if(checkObjectExistance(userID) && !services.isEmpty())
-        return services;
+        Map<String, HypertyInstance> services = userServices.get(userID);
+        if(checkObjectExistance(userID) && !services.isEmpty())
+            return services;
 
-      else if(!checkObjectExistance(userID))
-        throw new UserNotFoundException();
+        else if(!checkObjectExistance(userID))
+            throw new UserNotFoundException();
 
-      else throw new DataNotFoundException();
+        else throw new DataNotFoundException();
     }
 
     public String createUserHyperty(String userID, String hypertyID, HypertyInstance instance){
@@ -39,14 +39,25 @@ public class HypertyService{
             userServices.get(userID).put(hypertyID, instance);
         }
         else{
-          Map<String, HypertyInstance> services = new HashMap<>();
-          instance.setStartingTime(getActualDate());
-          instance.setLastModified(getActualDate());
-          services.put(hypertyID, instance);
-          userServices.put(userID, services);
+            Map<String, HypertyInstance> services = new HashMap<>();
+            instance.setStartingTime(getActualDate());
+            instance.setLastModified(getActualDate());
+            services.put(hypertyID, instance);
+            userServices.put(userID, services);
         }
 
         return hypertyID;
+    }
+
+    public HypertyInstance getUserHyperty(String userID, String hypertyID){
+        if(checkObjectExistance(userID, hypertyID)){
+            return userServices.get(userID).get(hypertyID);
+        }
+
+        else if(!checkObjectExistance(userID))
+            throw new UserNotFoundException();
+
+        else throw new DataNotFoundException();
     }
 
     public String deleteUserHyperty(String userID, String hypertyID){

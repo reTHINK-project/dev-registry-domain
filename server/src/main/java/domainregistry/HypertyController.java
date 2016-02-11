@@ -18,51 +18,42 @@ public class HypertyController {
 
         get("/hyperty/user/*", (req,res) -> {
             res.type("application/json");
-            JsonObject data = new JsonObject();
             String[] pathSplit = req.pathInfo().split("/hyperty/user/")[1].split("/(?=hyperty)");
             String userID = pathSplit[0];
             if(pathSplit.length == 1){
                 log.info("Received request for " + userID + " hyperties");
-                data.addProperty("code", 200);
-                data.add("value", gson.toJsonTree(hypertyService.getAllHyperties(userID)));
                 res.status(200);
-                return data;
+                return gson.toJson(hypertyService.getAllHyperties(userID));
             }
             String hypertyID = pathSplit[1];
             log.info("Received request for " + hypertyID + " from user " + userID);
-            data.addProperty("code", 200);
-            data.add("value", gson.toJsonTree(hypertyService.getUserHyperty(userID, hypertyID)));
             res.status(200);
-            return data;
+            return gson.toJson(hypertyService.getUserHyperty(userID, hypertyID));
         });
 
         put("/hyperty/user/*", (req,res) -> {
             res.type("application/json");
-            JsonObject data = new JsonObject();
             String body = req.body();
             String[] pathSplit = req.pathInfo().split("/hyperty/user/")[1].split("/(?=hyperty)");
             String userID = pathSplit[0];
             String hypertyID = pathSplit[1];
             HypertyInstance hi = gson.fromJson(body, HypertyInstance.class);
             log.info("Received hyperty with ID: " + hypertyID + " and descriptor: " + hi.getDescriptor());
-            hypertyService.createUserHyperty(userID, hypertyID, hi);
-            log.info("Created hyperty with ID: " + hypertyID);
-            data.addProperty("code", 200);
+            gson.toJson(hypertyService.createUserHyperty(userID, hypertyID, hi));
             res.status(200);
-            return data;
+            log.info("Created hyperty with ID: " + hypertyID);
+            return gson.toJson(new Messages("Hyperty created"));
         });
 
         delete("/hyperty/user/*", (req,res) -> {
             res.type("application/json");
-            JsonObject data = new JsonObject();
             String[] pathSplit = req.pathInfo().split("/hyperty/user/")[1].split("/(?=hyperty)");
             String userID = pathSplit[0];
             String hypertyID = pathSplit[1];
-            hypertyService.deleteUserHyperty(userID, hypertyID);
-            log.info("Deleted hyperty with ID: " + hypertyID);
-            data.addProperty("code", 200);
+            gson.toJson(hypertyService.deleteUserHyperty(userID, hypertyID));
             res.status(200);
-            return data;
+            log.info("Deleted hyperty with ID: " + hypertyID);
+            return gson.toJson(new Messages("Hyperty deleted"));
         });
 
         get("/throwexception", (request, response) -> {
@@ -70,11 +61,8 @@ public class HypertyController {
         });
 
         exception(DataNotFoundException.class, (e, req, res) -> {
-            JsonObject data = new JsonObject();
             res.status(404);
-            data.addProperty("code", 404);
-            data.addProperty("description", "Data not found");
-            res.body(gson.toJson(data));
+            res.body(gson.toJson(new Messages("Data not found")));
         });
 
         get("/throwexception", (request, response) -> {
@@ -82,11 +70,8 @@ public class HypertyController {
         });
 
         exception(UserNotFoundException.class, (e, req, res) -> {
-            JsonObject data = new JsonObject();
             res.status(404);
-            data.addProperty("code", 404);
-            data.addProperty("description", "User not found");
-            res.body(gson.toJson(data));
+            res.body(gson.toJson(new Messages("User not found")));
         });
     }
 }
