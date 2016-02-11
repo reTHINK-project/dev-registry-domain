@@ -75,6 +75,7 @@ describe 'domain registry api tests' do
 
     it 'should get all updated hyperties' do
       get '/ruijose@inesc.pt'
+      p json_body
       expect_status(200)
       expect_json_sizes(2) #code and value
       value_hash = json_body[:value]
