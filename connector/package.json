@@ -1,0 +1,11 @@
+{
+  "name": "domain-registry-connector",
+  "version": "0.3.0",
+  "description": "Domain Registry connector",
+  "main": "RegistryConnector.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "reThink Project",
+  "license": "ISC"
+}
