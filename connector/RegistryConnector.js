@@ -10,6 +10,25 @@ var RegistryConnector = function(registryURL) {
   this._registryURL = registryURL;
 };
 
+RegistryConnector.prototype.processMessage = function(msg, callback) {
+  switch(msg.type) {
+      case "READ":
+      print("[Registry-Connector] Get user with " + msg.body.resource);
+      this.getUser(msg.body.resource, callback);
+      break;
+
+      case "CREATE":
+      print("[Registry-Connector] Add Hyperty with " + msg.body.value.hypertyURL);
+      this.addHyperty(msg.body.value.user, msg.body.value.hypertyURL, msg.body.value.hypertyDescriptorURL, callback);
+      break;
+
+      case "DELETE":
+      print("[Registry-Connector] Delete Hyperty with " + msg.body.value.hypertyURL);
+      this.deleteHyperty(msg.body.value.user, msg.body.value.hypertyURL, callback);
+      break;
+  }
+};
+
 RegistryConnector.prototype.getUser = function(userid, callback) {
   this._request.get(this._registryURL + '/hyperty/user/' + encodeURIComponent(userid), function(err, response, statusCode) {
     print("Get user: " + response);
