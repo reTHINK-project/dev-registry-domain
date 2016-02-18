@@ -31,9 +31,9 @@ Another important feature that the _HypertyService_ class provides is the associ
 
 The way code is organized in the Github repository is shown in Figure 3.
 
-![Domain Registry Architecture pattern](architecture_pattern.png)
+<img src="architecture_pattern.png" width="400"> 
 
-![Code structure](source_code_tree.png)
+<img src="source_code_tree.png" width="400">   
 
 Each folder contains the following:
 
@@ -48,5 +48,5 @@ builds for different environments (production/development);
 * pom.xml file -> XML file that contains configuration details used by maven to
 build the project.
 * Dockerfile -> TODO
-*
+
 
