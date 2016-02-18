@@ -82,26 +82,26 @@ describe 'domain registry api tests' do
     end
   end
 
-  describe 'a single hyperty is returned' do
-
-    it "should return a user hyperty" do
-      get '/ruijose@inesc.pt/hyperty1'
-      expect_status(200)
-      expect_json_sizes(3) #a single hyperty has a descriptor, startingTime and lastModified
-      expect_json_types(descriptor: :string, startingTime: :string, lastModified: :string)
-      expect(json_body[:descriptor]).to eql("12312321istuapt") #after the update from above
-      expect(json_body[:startingTime]).to be < (json_body[:lastModified]) #after the update from above
-    end
-
-    it "should return a not updated user hyperty" do
-      get '/ruijose@inesc.pt/hyperty2'
-      expect_status(200)
-      expect_json_sizes(3)
-      expect_json_types(descriptor: :string, startingTime: :string, lastModified: :string)
-      expect(json_body[:descriptor]).to eql("asdasd112AA")
-      expect(json_body[:startingTime]).to eql(json_body[:lastModified]) #this hyperty was not updated . times remain equal
-    end
-  end
+  # describe 'a single hyperty is returned' do
+  #
+  #   it "should return a user hyperty" do
+  #     get '/ruijose@inesc.pt/hyperty1'
+  #     expect_status(200)
+  #     expect_json_sizes(3) #a single hyperty has a descriptor, startingTime and lastModified
+  #     expect_json_types(descriptor: :string, startingTime: :string, lastModified: :string)
+  #     expect(json_body[:descriptor]).to eql("12312321istuapt") #after the update from above
+  #     expect(json_body[:startingTime]).to be < (json_body[:lastModified]) #after the update from above
+  #   end
+  #
+  #   it "should return a not updated user hyperty" do
+  #     get '/ruijose@inesc.pt/hyperty2'
+  #     expect_status(200)
+  #     expect_json_sizes(3)
+  #     expect_json_types(descriptor: :string, startingTime: :string, lastModified: :string)
+  #     expect(json_body[:descriptor]).to eql("asdasd112AA")
+  #     expect(json_body[:startingTime]).to eql(json_body[:lastModified]) #this hyperty was not updated . times remain equal
+  #   end
+  # end
 
   describe 'delete user hyperty' do
 

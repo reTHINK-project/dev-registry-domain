@@ -18,25 +18,19 @@ public class HypertyController {
 
         get("/hyperty/user/*", (req,res) -> {
             res.type("application/json");
-            String[] pathSplit = req.pathInfo().split("/hyperty/user/")[1].split("/(?=hyperty)");
-            String userID = pathSplit[0];
-            if(pathSplit.length == 1){
-                log.info("Received request for " + userID + " hyperties");
-                res.status(200);
-                return gson.toJson(hypertyService.getAllHyperties(userID));
-            }
-            String hypertyID = pathSplit[1];
-            log.info("Received request for " + hypertyID + " from user " + userID);
+            String[] encodedURL = req.url().split("/");
+            String userID = decodeUrl(encodedURL[encodedURL.length - 1]);
+            log.info("Received request for " + userID + " hyperties");
             res.status(200);
-            return gson.toJson(hypertyService.getUserHyperty(userID, hypertyID));
+            return gson.toJson(hypertyService.getAllHyperties(userID));
         });
 
         put("/hyperty/user/*", (req,res) -> {
             res.type("application/json");
             String body = req.body();
-            String[] pathSplit = req.pathInfo().split("/hyperty/user/")[1].split("/(?=hyperty)");
-            String userID = pathSplit[0];
-            String hypertyID = pathSplit[1];
+            String[] encodedURL = req.url().split("/");
+            String userID    = decodeUrl(encodedURL[encodedURL.length - 2]);
+            String hypertyID = decodeUrl(encodedURL[encodedURL.length - 1]);
             HypertyInstance hi = gson.fromJson(body, HypertyInstance.class);
             log.info("Received hyperty with ID: " + hypertyID + " and descriptor: " + hi.getDescriptor());
             gson.toJson(hypertyService.createUserHyperty(userID, hypertyID, hi));
@@ -47,9 +41,9 @@ public class HypertyController {
 
         delete("/hyperty/user/*", (req,res) -> {
             res.type("application/json");
-            String[] pathSplit = req.pathInfo().split("/hyperty/user/")[1].split("/(?=hyperty)");
-            String userID = pathSplit[0];
-            String hypertyID = pathSplit[1];
+            String[] encodedURL = req.url().split("/");
+            String userID    = decodeUrl(encodedURL[encodedURL.length - 2]);
+            String hypertyID = decodeUrl(encodedURL[encodedURL.length - 1]);
             gson.toJson(hypertyService.deleteUserHyperty(userID, hypertyID));
             res.status(200);
             log.info("Deleted hyperty with ID: " + hypertyID);
@@ -73,5 +67,10 @@ public class HypertyController {
             res.status(404);
             res.body(gson.toJson(new Messages("User not found")));
         });
+
+    }
+
+    private static String decodeUrl(String url) throws java.io.UnsupportedEncodingException {
+        return java.net.URLDecoder.decode(url, "UTF-8");
     }
 }
