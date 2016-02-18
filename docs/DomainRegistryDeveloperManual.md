@@ -14,6 +14,8 @@ The already developed initial prototype stores data in memory. As the prototype 
 
 ![Domain Registry Architecture](architecture.png)
 
+ **Figure 1:** Domain Registry architecture 
+
 ## Implementation and design choices
 
 The developed REST server features [Spark Java](http://sparkjava.com), which is a Java framework for building web applications. Furthermore, the API is being tested with an API testing framework, written in Ruby, called [Airborne](https://github.com/brooklynDev/airborne). Comparing Airborne with other API testing frameworks, this one leverages the use of the Ruby programming language, which has a m​ore flexible and terser syntax than other frameworks written in another programming languages, such as Java’s [Rest-assured](https://github.com/jayway/rest-assured). Regarding unit testing, Junit is being used to test individual modules of source code.
@@ -33,7 +35,11 @@ The way code is organized in the Github repository is shown in Figure 3.
 
 <img src="architecture_pattern.png" width="400"> 
 
-<img src="source_code_tree.png" width="400">   
+**Figure 2:** Domain Registry architecture pattern
+ 
+<img src="source_code_tree.png" width="400">
+
+**Figure 3:** Domain Registry directory structure
 
 Each folder contains the following:
 
