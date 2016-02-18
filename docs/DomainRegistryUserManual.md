@@ -1,6 +1,6 @@
 # Domain Registry User Manual
 
-## Introduction 
+## Introduction
 
 This document provides instructions on the use of a reThink’s architecture component named Domain Registry. Together with the Global Registry, it forms the Registry Service. The Global Registry provides a mapping from a User’s Unique Id (GUID) to the several services it uses. Each Communication Service Provider (CSP)
 runs a Domain Registry service that resolves domain-dependent user identifiers to
@@ -23,17 +23,17 @@ A Dockerfile is provided, so is possible to run the Domain Registry through a Do
 
 1. Download the code from the official repository in Github.
 2. Inside the server folder build the Docker image by executing the command:
-docker build -t domain-registry ./
-3. Now is possible to run the application inside the container, executing the following command: docker run -p 4567:4567 domain-registry
+_docker build -t domain-registry ./_
+3. Now is possible to run the application inside the container, executing the following command: _docker run -p 4567:4567 domain-registry_
 
 ### How to run through the command line
 
-In order to being able to run the Domain Registry, one must have Apache Maven version 3 and Java SDK 8 installed. The first is a build automation tool for Java projects, while the second is a development environment for building applications using the Java programming language. Git, a source code management system, may also be needed if the user chooses to clone the Github repository. Using an environment configured with these tools, installation follows these steps:
+In order to being able to run the Domain Registry, one must have [Apache Maven version 3](https://maven.apache.org) and [Java SDK 8](www.oracle.com) installed. The first is a build automation tool for Java projects, while the second is a development environment for building applications using the Java programming language. [Git](https://git-scm.com), a source code management system, may also be needed if the user chooses to clone the Github repository. Using an environment configured with these tools, installation follows these steps:
 
-1. Download the code straight from the respective Github repository. Here, two options are available: clone the repository using a Git client (e.g. through the command line or with the Github desktop application), or download a zip file from the Github repository web page.
+1. Download the code straight from the respective Github [repository](https://github.com/reTHINK-project/dev-registry-domain). Here, two options are available: clone the repository using a Git client (e.g. through the command line or with the Github desktop application), or download a zip file from the Github repository web page.
 2. Inside the server folder execute the following command to build the
-application: mvn clean compile
-3. Launch theapplication with the command: mvn exec:java
+application: _mvn clean compile_
+3. Launch theapplication with the command: _mvn exec:java_
 4. Once the server is successfully running requests can be issued by the user to
 the REST API.
 
