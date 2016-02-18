@@ -22,16 +22,16 @@ The Domain Registry can be deployed in one of two ways: using Docker or installi
 A Dockerfile is provided, so is possible to run the Domain Registry through a Docker container.
 
 1. Download the code from the official repository in Github.
-2. Inside the server folder build the Docker image by executing the command:
+2. Inside the _server_ folder build the Docker image by executing the command:
 _docker build -t domain-registry ./_
 3. Now is possible to run the application inside the container, executing the following command: _docker run -p 4567:4567 domain-registry_
 
 ### How to run through the command line
 
-In order to being able to run the Domain Registry, one must have [Apache Maven version 3](https://maven.apache.org) and [Java SDK 8](www.oracle.com) installed. The first is a build automation tool for Java projects, while the second is a development environment for building applications using the Java programming language. [Git](https://git-scm.com), a source code management system, may also be needed if the user chooses to clone the Github repository. Using an environment configured with these tools, installation follows these steps:
+In order to being able to run the Domain Registry, one must have [Apache Maven version 3](https://maven.apache.org) and [Java SDK 8](https://www.oracle.com) installed. The first is a build automation tool for Java projects, while the second is a development environment for building applications using the Java programming language. [Git](https://git-scm.com), a source code management system, may also be needed if the user chooses to clone the Github repository. Using an environment configured with these tools, installation follows these steps:
 
 1. Download the code straight from the respective Github [repository](https://github.com/reTHINK-project/dev-registry-domain). Here, two options are available: clone the repository using a Git client (e.g. through the command line or with the Github desktop application), or download a zip file from the Github repository web page.
-2. Inside the server folder execute the following command to build the
+2. Inside the _server_ folder execute the following command to build the
 application: _mvn clean compile_
 3. Launch theapplication with the command: _mvn exec:java_
 4. Once the server is successfully running requests can be issued by the user to
