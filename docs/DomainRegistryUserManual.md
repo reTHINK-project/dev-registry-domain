@@ -48,7 +48,6 @@ The Domain Registry is a REST server that allows to create, update and remove da
 Possible HTTP status codes returned: 200 OK indicating that the request has succeeded and 404 Not Found indicating that the server has not found anything matching the request URI (users or hyperties). In both cases, a message is returned on the response: “hyperty created”, “user not found” or “data not found”.
 
 Since the users and hyperties URLs contain characters outside the ASCII set, URLs need to be converted to a valid ASCII format. The character “%” followed by two
-3
 hexadecimal digits replace the unsafe characters. As an example, the enconded
 version of user://inesc-id.pt/ruijose is user%3A%2F%2Finesc-id.pt%2Fruijose.
 
