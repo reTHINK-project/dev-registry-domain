@@ -200,12 +200,53 @@ Message sent by the Registry Domain server (Connector or Protostub) to an Hypert
 ```
 
 ### Code Structure
-
+The Registry Connector code comprehends three files: RegistryConnector.js, js-request.js and java-request.js.
 
 ![Registry Connector code structure](registry-connector-code.png)
+**Figure 3** - Registry Connector code files structure.
 
 
+#### RegistryConnector file
+In the RegistryConnector file the main Registry Connector functions are defined.
 
+##### getUser
+Obtain the Hyperty instances associated with the specified user identifier.
+Translates into a `GET /hyperty/user/<userid>` HTTP request to the Domain Registry API.
+
+##### addHyperty
+Create a new Hyperty instance associated with the specified user identifier.
+Translates into a `PUT /hyperty/user/<userid>/<hyperty-instance-id>` HTTP request to the Domain Registry API.
+
+##### deleteHyperty
+Delete the hyperty instance with the specified identifier.
+Translates into a `DELETE /hyperty/user/<userid>/<hyperty-instance-id>` HTTP request to the Domain Registry API.
+
+##### processMessage
+Processes an arbitrary message directed to the Domain Registry, and call the
+respective function according to the `type` field.
+The following mapping between the `type` field and the called function is done:
+ - **CREATE** - addHyperty function
+ - **READ** - getUser function
+ - **DELETE** - deleteHyperty function
+
+Each of these functions receive a callback as an argument, which will be called
+with the response message as an argument.
+
+When initializing an RegistryConnector object, the constructor will check the
+Javascript engine, and load the corresponding HTTP request shim library.
+
+#### HTTP request shim files
+As mentioned before, even thought the code is able to run in different
+Javascript engines, due to the lack of a common API for executing HTTP requests.
+Right now, there is an implementation for the Nashorn engine and Node.js.
+Both shims provide the same functions:
+
+ - **get** - make a GET request to the provided URL;
+ - **put** - make a PUT request to the provided URL with the provided JSON data;
+ - **del** - make a DELETE request to the provided URL;
+
+A callback function should be provided, which will receive an error object,
+response body and status code, as arguments.
 
 
 
