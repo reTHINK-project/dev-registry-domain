@@ -1,5 +1,8 @@
 # dev-registry-domain
 
+### [Documentation](https://github.com/reTHINK-project/dev-registry-domain/tree/master/docs)
+
+
 ### How to run
 
 ``` 
@@ -18,4 +21,4 @@ With ruby, rspec and Airborne (https://github.com/brooklynDev/airborne) installe
 rspec integration_tests.rb
 ```
 
-### [Documentation](https://github.com/reTHINK-project/dev-registry-domain/tree/master/docs)
+
