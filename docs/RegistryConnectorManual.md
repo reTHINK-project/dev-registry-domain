@@ -203,6 +203,7 @@ Message sent by the Registry Domain server (Connector or Protostub) to an Hypert
 The Registry Connector code comprehends three files: RegistryConnector.js, js-request.js and java-request.js.
 
 ![Registry Connector code structure](registry-connector-code.png)
+
 **Figure 3** - Registry Connector code files structure.
 
 
@@ -237,7 +238,7 @@ Javascript engine, and load the corresponding HTTP request shim library.
 
 #### HTTP request shim files
 As mentioned before, even thought the code is able to run in different
-Javascript engines, due to the lack of a common API for executing HTTP requests.
+Javascript engines, due to the lack of a common API for executing HTTP requests, is necessary to provide shim functions for executing the requests accordingly with the underlying Javascript engine.
 Right now, there is an implementation for the Nashorn engine and Node.js.
 Both shims provide the same functions:
 
