@@ -48,7 +48,7 @@ an API to provide client functionality for transferring data between a client
 and a server (like XMLHTTPRequest). As such, it is necessary to implement this
 functionality calling Java methods from Javascript, which is accomplished by
 the use of a shim layer. This is also applicable to the Node.js runtime, where
-the Node.js HTTP client is used.
+a Node.js HTTP client library ([request](https://github.com/request/request)) is used.
 
 
 ### Implementation
@@ -73,7 +73,7 @@ verticle that is executed using a thread from the Vert.x worker thread pool.
 The communication with the Registry Connector verticle is done through the
 Event Bus using a publish-subscribe messaging pattern.  When the user runtime
 wants to contact the Domain Registry, it sends a message with the address
-*domain://registry.<provider>.com* in the from field, to the Messaging Node.  The
+domain://registry.\<sp-domain\> in the from field, to the Messaging Node.  The
 main verticle in the Messaging Node, when receiving this message, will forward
 it to the address mn:/registry-connector. During the deployment process, the
 Register Connector verticle will register a handler to process messages sent to
