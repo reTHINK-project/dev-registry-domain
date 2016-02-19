@@ -53,6 +53,6 @@ default configuration build. Using build profiles, it is possible to customize
 builds for different environments (production/development);
 * pom.xml file -> XML file that contains configuration details used by maven to
 build the project.
-* Dockerfile -> TODO
+* Dockerfile -> file containing all the commands necessary to build a Domain Registry Docker container image.
 
 
