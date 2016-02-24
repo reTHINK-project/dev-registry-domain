@@ -17,6 +17,7 @@
 package domainregistry;
 
 import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 import org.junit.Test;
 import org.junit.Before;
 import java.util.HashMap;
@@ -54,6 +55,9 @@ public class HypertyTest {
         assertTrue(userHyperties.containsKey(hypertyID));
         HypertyInstance userHypertyInstance = userHyperties.get(hypertyID);
         assertEquals(hypertyInstance, userHypertyInstance);
+        assertNotNull(hypertyInstance.getStartingTime()); // dates are added upon hyperty registration
+        assertNotNull(hypertyInstance.getLastModified());
+        assertEquals(hypertyInstance.getStartingTime(), hypertyInstance.getLastModified());
     }
 
     @Test
@@ -67,6 +71,12 @@ public class HypertyTest {
       assertEquals(2, allUserHyperties.keySet().size());
     }
 
+    @Test(expected= DataNotFoundException.class)
+    public void UserWithoutHypertiesTest(){ // The only hyperty this user had was removed. However, user still exists
+        services.deleteUserHyperty(userID, hypertyID);
+        services.getAllHyperties(userID);
+    }
+
     @Test(expected = UserNotFoundException.class) 
     public void getAllHypertiesNonexistingUserTest(){
         services.getAllHyperties("user://inesc-id.pt/ruipereira");
@@ -74,16 +84,18 @@ public class HypertyTest {
 
     @Test
     public void updateHypertyInfoTest(){
-        HypertyInstance hypertyInstance = new HypertyInstance();
-        String descriptor = "hyperty-catalogue://inesc-id.pt/1/222-ba-123123";
-        hypertyInstance.setDescriptor(descriptor);
+        HypertyInstance newHypertyInstance = new HypertyInstance();
+        String newDescriptor = "hyperty-catalogue://inesc-id.pt/1/222-ba-123123";
+        newHypertyInstance.setDescriptor(newDescriptor);
+        services.createUserHyperty(userID, hypertyID, newHypertyInstance);
         Map<String, HypertyInstance> allUserHyperties = services.getServices().get(userID);
-        services.createUserHyperty(userID, hypertyID, hypertyInstance);
         assertTrue(allUserHyperties.containsKey(hypertyID));
-        HypertyInstance newHypertyInstance = allUserHyperties.get(hypertyID);
-        String oldHypertyDescriptor = newHypertyInstance.getDescriptor();
-        String updatedHypertyDescriptor = hypertyInstance.getDescriptor();
-        assertEquals(oldHypertyDescriptor, updatedHypertyDescriptor);
+        HypertyInstance retrievedHypertyInstance = allUserHyperties.get(hypertyID);
+        String updatedHypertyDescriptor = retrievedHypertyInstance.getDescriptor();
+        assertEquals(newDescriptor, updatedHypertyDescriptor);
+        assertNotNull(retrievedHypertyInstance.getStartingTime());
+        assertNotNull(retrievedHypertyInstance.getLastModified());
+        assertThat(updatedHypertyDescriptor, not(equalTo(descriptor)));
     }
 
     @Test
