@@ -18,6 +18,9 @@ package domainregistry;
 
 public class Main {
     public static void main(String[] args) {
-        new HypertyController(new HypertyService());
+        HypertyService service = new HypertyService();
+        new HypertyController(service);
+        new HeartBeatThread(service).start();
     }
 }
+

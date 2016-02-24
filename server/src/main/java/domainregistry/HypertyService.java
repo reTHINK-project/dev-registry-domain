@@ -19,13 +19,7 @@ package domainregistry;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Date;
-import java.util.Calendar;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 
 public class HypertyService{
 
@@ -45,19 +39,19 @@ public class HypertyService{
     public String createUserHyperty(String userID, String hypertyID, HypertyInstance instance){
         if(checkObjectExistance(userID) && checkObjectExistance(userID, hypertyID)){
             HypertyInstance hyperty = userServices.get(userID).get(hypertyID);
-            hyperty.setLastModified(getActualDate());
+            hyperty.setLastModified(Dates.getActualDate());
             hyperty.setDescriptor(instance.getDescriptor());
             userServices.get(userID).put(hypertyID, hyperty);
         }
         else if(checkObjectExistance(userID) && !checkObjectExistance(userID, hypertyID)){
-            instance.setStartingTime(getActualDate());
-            instance.setLastModified(getActualDate());
+            instance.setStartingTime(Dates.getActualDate());
+            instance.setLastModified(Dates.getActualDate());
             userServices.get(userID).put(hypertyID, instance);
         }
         else{
             Map<String, HypertyInstance> services = new HashMap<>();
-            instance.setStartingTime(getActualDate());
-            instance.setLastModified(getActualDate());
+            instance.setStartingTime(Dates.getActualDate());
+            instance.setLastModified(Dates.getActualDate());
             services.put(hypertyID, instance);
             userServices.put(userID, services);
         }
@@ -97,12 +91,6 @@ public class HypertyService{
             return userServices.containsKey(params[0]) &&
                 userServices.get(params[0]).containsKey(params[1]);
         }
-    }
-
-    private String getActualDate() {
-        Date date = Calendar.getInstance().getTime();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        return sdf.format(date);
     }
 
     public Map<String, Map<String, HypertyInstance>> getServices(){
