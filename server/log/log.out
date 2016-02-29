@@ -6,3 +6,36 @@ Received request for hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4b
 2016-02-29 11:36:43 INFO  HypertyController:35 - Received hyperty with ID: hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bcc-8529-f3af7577bf98 and descriptor: hyperty-catalogue://inesc-id.pt/1/123-Ha-123123
 2016-02-29 11:36:43 INFO  HypertyController:38 - Created hyperty with ID: hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bcc-8529-f3af7577bf98
 2016-02-29 11:37:46 INFO  HeartBeatThread:52 - deleted hypertyhyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bcc-8529-f3af7577bf98 from user user://google.com/test
+2016-02-29 18:51:30 INFO  HypertyController:35 - Received hyperty with ID: hyperty1 and descriptor: kkk11jasdasdAA
+2016-02-29 18:51:30 INFO  HypertyController:38 - Created hyperty with ID: hyperty1
+2016-02-29 18:51:30 INFO  HypertyController:35 - Received hyperty with ID: hyperty2 and descriptor: asdasd112AA
+2016-02-29 18:51:30 INFO  HypertyController:38 - Created hyperty with ID: hyperty2
+2016-02-29 18:51:30 INFO  HypertyController:23 - Received request for ruijose@inesc.pt hyperties
+2016-02-29 18:51:30 INFO  HypertyController:23 - Received request for nuno@inesc.pt hyperties
+2016-02-29 18:51:31 INFO  HypertyController:35 - Received hyperty with ID: hyperty1 and descriptor: 12312321istuapt
+2016-02-29 18:51:31 INFO  HypertyController:38 - Created hyperty with ID: hyperty1
+2016-02-29 18:51:31 INFO  HypertyController:23 - Received request for ruijose@inesc.pt hyperties
+2016-02-29 18:51:31 INFO  HypertyController:49 - Deleted hyperty with ID: hyperty1
+2016-02-29 18:51:31 INFO  HypertyController:49 - Deleted hyperty with ID: hyperty2
+2016-02-29 18:51:38 INFO  HypertyController:35 - Received hyperty with ID: hyperty1 and descriptor: kkk11jasdasdAA
+2016-02-29 18:51:38 INFO  HypertyController:38 - Created hyperty with ID: hyperty1
+2016-02-29 18:51:38 INFO  HypertyController:35 - Received hyperty with ID: hyperty2 and descriptor: asdasd112AA
+2016-02-29 18:51:38 INFO  HypertyController:38 - Created hyperty with ID: hyperty2
+2016-02-29 18:51:38 INFO  HypertyController:23 - Received request for ruijose@inesc.pt hyperties
+2016-02-29 18:51:38 INFO  HypertyController:23 - Received request for nuno@inesc.pt hyperties
+2016-02-29 18:51:39 INFO  HypertyController:35 - Received hyperty with ID: hyperty1 and descriptor: 12312321istuapt
+2016-02-29 18:51:39 INFO  HypertyController:38 - Created hyperty with ID: hyperty1
+2016-02-29 18:51:39 INFO  HypertyController:23 - Received request for ruijose@inesc.pt hyperties
+2016-02-29 18:51:39 INFO  HypertyController:49 - Deleted hyperty with ID: hyperty1
+2016-02-29 18:51:39 INFO  HypertyController:49 - Deleted hyperty with ID: hyperty2
+2016-02-29 18:57:24 INFO  HypertyController:51 - Received hyperty with ID: hyperty1 and descriptor: kkk11jasdasdAA
+2016-02-29 18:57:24 INFO  HypertyController:54 - Created hyperty with ID: hyperty1
+2016-02-29 18:57:24 INFO  HypertyController:51 - Received hyperty with ID: hyperty2 and descriptor: asdasd112AA
+2016-02-29 18:57:24 INFO  HypertyController:54 - Created hyperty with ID: hyperty2
+2016-02-29 18:57:24 INFO  HypertyController:39 - Received request for ruijose@inesc.pt hyperties
+2016-02-29 18:57:24 INFO  HypertyController:39 - Received request for nuno@inesc.pt hyperties
+2016-02-29 18:57:25 INFO  HypertyController:51 - Received hyperty with ID: hyperty1 and descriptor: 12312321istuapt
+2016-02-29 18:57:25 INFO  HypertyController:54 - Created hyperty with ID: hyperty1
+2016-02-29 18:57:25 INFO  HypertyController:39 - Received request for ruijose@inesc.pt hyperties
+2016-02-29 18:57:26 INFO  HypertyController:65 - Deleted hyperty with ID: hyperty1
+2016-02-29 18:57:26 INFO  HypertyController:65 - Deleted hyperty with ID: hyperty2
