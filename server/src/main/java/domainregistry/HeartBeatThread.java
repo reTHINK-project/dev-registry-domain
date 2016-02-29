@@ -22,7 +22,7 @@ class HeartBeatThread extends Thread {
             while(true){
                 Thread.sleep(TEN_SECONDS);
                 if(!service.getServices().isEmpty()){
-                    DeadHypertiesVerification();
+                    inactiveHypertiesVerification();
                 }
             }
         }catch(InterruptedException e){
@@ -30,17 +30,25 @@ class HeartBeatThread extends Thread {
         }
     }
 
-    private void DeadHypertiesVerification(){
-        final int ONE_MINUTE = 60; //CHANGE later. very small value only for testing
+    private void inactiveHypertiesVerification(){
         Map<String, Map<String, HypertyInstance>> userServices = service.getServices();
         for(Map.Entry<String, Map<String, HypertyInstance>> entry : userServices.entrySet()){
             for(Map.Entry<String, HypertyInstance> hyperties : entry.getValue().entrySet()){
                 String lastModified = hyperties.getValue().getLastModified();
-                if(Dates.dateCompare(Dates.getActualDate(), lastModified) > ONE_MINUTE){
-                    log.info("Hyperty to be deleted" + hyperties.getKey() + " from user " + entry.getKey());
-                    service.deleteUserHyperty(entry.getKey(), hyperties.getKey());
+                if(hypertyAgeVerification(Dates.getActualDate(), lastModified)){
+                    deleteHyperty(entry.getKey(), hyperties.getKey());
                 }
             }
         }
+    }
+
+    private boolean hypertyAgeVerification(String actualDate, String lastModifiedDate){
+        final int ONE_MINUTE = 60; //CHANGE later. small value to facilitate local testing
+        return Dates.dateCompare(actualDate, lastModifiedDate) > ONE_MINUTE;
+    }
+
+    private void deleteHyperty(String user, String hyperty){
+        service.deleteUserHyperty(user, hyperty);
+        log.info("deleted hyperty" + hyperty + " from user " + user);
     }
 }
