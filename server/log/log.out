@@ -1,0 +1,8 @@
+Received request for hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bcc-8529-f3af7577bf98 hyperties
+2016-02-29 11:36:09 INFO  HypertyController:23 - Received request for hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bcc-8529-f3af7577bf98 hyperties
+2016-02-29 11:36:10 INFO  HypertyController:23 - Received request for hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bcc-8529-f3af7577bf98 hyperties
+2016-02-29 11:36:10 INFO  HypertyController:23 - Received request for hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bcc-8529-f3af7577bf98 hyperties
+2016-02-29 11:36:10 INFO  HypertyController:23 - Received request for hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bcc-8529-f3af7577bf98 hyperties
+2016-02-29 11:36:43 INFO  HypertyController:35 - Received hyperty with ID: hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bcc-8529-f3af7577bf98 and descriptor: hyperty-catalogue://inesc-id.pt/1/123-Ha-123123
+2016-02-29 11:36:43 INFO  HypertyController:38 - Created hyperty with ID: hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bcc-8529-f3af7577bf98
+2016-02-29 11:37:46 INFO  HeartBeatThread:52 - deleted hypertyhyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bcc-8529-f3af7577bf98 from user user://google.com/test
