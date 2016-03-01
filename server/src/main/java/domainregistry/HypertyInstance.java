@@ -23,6 +23,7 @@ public class HypertyInstance {
     private String descriptor;
     private String startingTime;
     private String lastModified;
+    private int expires;
 
     public HypertyInstance(){
     }
@@ -53,5 +54,13 @@ public class HypertyInstance {
 
     public void setLastModified(String time){
         this.lastModified = time;
+    }
+
+    public int getExpires(){
+        return this.expires;
+    }
+
+    public void setExpires(int expires){
+        this.expires = expires;
     }
 }

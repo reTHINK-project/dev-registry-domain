@@ -19,14 +19,19 @@ package domainregistry;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
+import org.apache.log4j.Logger;
 
 public class HypertyService{
+    static Logger log = Logger.getLogger(HypertyService.class.getName());
 
     private Map<String, Map<String, HypertyInstance>> userServices = new HashMap<>();
 
     public Map<String, HypertyInstance> getAllHyperties(String userID) {
-        Map<String, HypertyInstance> services = userServices.get(userID);
+        Map<String, HypertyInstance> services = getAllUserHyperties(userID);
+
+        if(checkObjectExistance(userID) && !services.isEmpty())
+            deleteExpiredHyperties(userID);
+
         if(checkObjectExistance(userID) && !services.isEmpty())
             return services;
 
@@ -36,7 +41,7 @@ public class HypertyService{
         else throw new DataNotFoundException();
     }
 
-    public String createUserHyperty(String userID, String hypertyID, HypertyInstance instance){
+    public void createUserHyperty(String userID, String hypertyID, HypertyInstance instance){
         if(checkObjectExistance(userID) && checkObjectExistance(userID, hypertyID)){
             HypertyInstance hyperty = userServices.get(userID).get(hypertyID);
             hyperty.setLastModified(Dates.getActualDate());
@@ -55,25 +60,12 @@ public class HypertyService{
             services.put(hypertyID, instance);
             userServices.put(userID, services);
         }
-
-        return hypertyID;
     }
 
-    public HypertyInstance getUserHyperty(String userID, String hypertyID){
-        if(checkObjectExistance(userID, hypertyID)){
-            return userServices.get(userID).get(hypertyID);
-        }
-
-        else if(!checkObjectExistance(userID))
-            throw new UserNotFoundException();
-
-        else throw new DataNotFoundException();
-    }
-
-    public String deleteUserHyperty(String userID, String hypertyID){
+    public void deleteUserHyperty(String userID, String hypertyID){
         if(checkObjectExistance(userID, hypertyID)){
             userServices.get(userID).remove(hypertyID);
-            return hypertyID;
+            log.info("Deleted hyperty" + hypertyID + " from user " + userID);
         }
 
         else if(!checkObjectExistance(userID))
@@ -90,6 +82,22 @@ public class HypertyService{
         else{
             return userServices.containsKey(params[0]) &&
                 userServices.get(params[0]).containsKey(params[1]);
+        }
+    }
+
+    private Map<String, HypertyInstance> getAllUserHyperties(String userID){
+        return userServices.get(userID);
+    }
+
+    protected void deleteExpiredHyperties(String userID){
+        String actualDate = Dates.getActualDate();
+        Map<String, HypertyInstance> userHyperties = getAllUserHyperties(userID);
+        for (Map.Entry<String, HypertyInstance> entry : userHyperties.entrySet()){
+            String lastModified = entry.getValue().getLastModified();
+            int expires = entry.getValue().getExpires();
+            if(Dates.dateCompare(actualDate, lastModified) > expires){
+                deleteUserHyperty(userID, entry.getKey());
+            }
         }
     }
 

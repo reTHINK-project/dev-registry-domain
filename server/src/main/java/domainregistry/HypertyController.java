@@ -57,11 +57,11 @@ public class HypertyController {
             res.type("application/json");
             String body = req.body();
             String[] encodedURL = req.url().split("/");
-            String userID    = decodeUrl(encodedURL[encodedURL.length - 2]);
+            String userID = decodeUrl(encodedURL[encodedURL.length - 2]);
             String hypertyID = decodeUrl(encodedURL[encodedURL.length - 1]);
             HypertyInstance hi = gson.fromJson(body, HypertyInstance.class);
             log.info("Received hyperty with ID: " + hypertyID + " and descriptor: " + hi.getDescriptor());
-            gson.toJson(hypertyService.createUserHyperty(userID, hypertyID, hi));
+            hypertyService.createUserHyperty(userID, hypertyID, hi);
             res.status(200);
             log.info("Created hyperty with ID: " + hypertyID);
             return gson.toJson(new Messages("Hyperty created"));
@@ -72,7 +72,7 @@ public class HypertyController {
             String[] encodedURL = req.url().split("/");
             String userID    = decodeUrl(encodedURL[encodedURL.length - 2]);
             String hypertyID = decodeUrl(encodedURL[encodedURL.length - 1]);
-            gson.toJson(hypertyService.deleteUserHyperty(userID, hypertyID));
+            hypertyService.deleteUserHyperty(userID, hypertyID);
             res.status(200);
             log.info("Deleted hyperty with ID: " + hypertyID);
             return gson.toJson(new Messages("Hyperty deleted"));
