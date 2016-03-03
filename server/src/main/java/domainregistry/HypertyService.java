@@ -46,6 +46,7 @@ public class HypertyService{
             HypertyInstance hyperty = userServices.get(userID).get(hypertyID);
             hyperty.setLastModified(Dates.getActualDate());
             hyperty.setDescriptor(instance.getDescriptor());
+            hyperty.setExpires(instance.getExpires());
             userServices.get(userID).put(hypertyID, hyperty);
         }
         else if(checkObjectExistance(userID) && !checkObjectExistance(userID, hypertyID)){

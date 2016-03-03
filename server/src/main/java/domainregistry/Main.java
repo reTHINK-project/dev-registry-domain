@@ -14,7 +14,7 @@
   * limitations under the License.
 **/
 
-package domainregistry; 
+package domainregistry;
 
 public class Main {
     public static void main(String[] args) {
