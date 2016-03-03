@@ -48,7 +48,8 @@ public class HypertyController {
             String userID = decodeUrl(encodedURL[encodedURL.length - 2]);
             String hypertyID = decodeUrl(encodedURL[encodedURL.length - 1]);
             HypertyInstance hi = gson.fromJson(body, HypertyInstance.class);
-            log.info("Received hyperty with ID: " + hypertyID + " and descriptor: " + hi.getDescriptor());
+            log.info("Received hyperty with ID: " +
+                hypertyID + " descriptor: " + hi.getDescriptor() + " expires " + hi.getExpires());
             hypertyService.createUserHyperty(userID, hypertyID, hi);
             res.status(200);
             log.info("Created hyperty with ID: " + hypertyID);

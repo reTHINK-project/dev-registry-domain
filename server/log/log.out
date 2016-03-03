@@ -442,3 +442,64 @@ Received request for hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4b
 2016-03-01 15:54:42 INFO  HypertyService:68 - Deleted hypertyhyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bpppc-8529-f3af7577bf98 from user user://inesc.com/tejoao
 2016-03-01 15:54:47 INFO  HypertyController:39 - Received request for user://inesc.com/tejoaot hyperties
 2016-03-01 15:54:47 INFO  HypertyService:68 - Deleted hypertyhyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bpppc-8529-f3af7577bf98 from user user://inesc.com/tejoaot
+2016-03-01 18:54:37 INFO  HypertyController:51 - Received hyperty with ID: hyperty1 and descriptor: kkk11jasdasdAA
+2016-03-01 18:54:37 INFO  HypertyController:54 - Created hyperty with ID: hyperty1
+2016-03-01 18:54:37 INFO  HypertyController:51 - Received hyperty with ID: hyperty2 and descriptor: asdasd112AA
+2016-03-01 18:54:37 INFO  HypertyController:54 - Created hyperty with ID: hyperty2
+2016-03-01 18:54:37 INFO  HypertyController:39 - Received request for ruijose@inesc.pt hyperties
+2016-03-01 18:54:37 INFO  HypertyController:39 - Received request for nuno@inesc.pt hyperties
+2016-03-01 18:54:39 INFO  HypertyController:51 - Received hyperty with ID: hyperty1 and descriptor: 12312321istuapt
+2016-03-01 18:54:39 INFO  HypertyController:54 - Created hyperty with ID: hyperty1
+2016-03-01 18:54:39 INFO  HypertyController:39 - Received request for ruijose@inesc.pt hyperties
+2016-03-01 18:54:39 INFO  HypertyService:68 - Deleted hypertyhyperty1 from user ruijose@inesc.pt
+2016-03-01 18:54:39 INFO  HypertyController:65 - Deleted hyperty with ID: hyperty1
+2016-03-01 18:54:39 INFO  HypertyService:68 - Deleted hypertyhyperty2 from user ruijose@inesc.pt
+2016-03-01 18:54:39 INFO  HypertyController:65 - Deleted hyperty with ID: hyperty2
+2016-03-01 18:55:18 INFO  HypertyService:68 - Deleted hypertyhyperty://ines-id.pt/123-Ha-123123 from user user://inesc-id.pt/ruimangas
+2016-03-01 18:55:18 INFO  HypertyService:68 - Deleted hypertyhyperty://ines-id.pt/123-Ha-123123 from user user://inesc-id.pt/ruimangas
+2016-03-01 18:56:06 INFO  HypertyController:51 - Received hyperty with ID: hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bpppc-8529-f3af7577bf98 and descriptor: hyperty-catalogue://ua-id.pt/1/123-Ha-pp3123
+2016-03-01 18:56:06 INFO  HypertyController:54 - Created hyperty with ID: hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bpppc-8529-f3af7577bf98
+2016-03-01 18:56:10 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-01 18:56:11 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-01 18:56:12 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-01 18:56:12 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-01 18:56:12 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-01 18:56:13 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-01 18:56:13 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-01 18:56:13 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-01 18:56:14 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-01 18:56:14 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-01 18:56:14 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-01 18:56:15 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-01 18:56:15 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-01 18:56:16 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-01 18:56:16 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-01 18:56:16 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-01 18:56:16 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-01 18:56:17 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-01 18:56:17 INFO  HypertyService:68 - Deleted hypertyhyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bpppc-8529-f3af7577bf98 from user user://inesc.com/tejoao
+2016-03-01 18:56:17 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-01 18:56:18 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-01 18:56:18 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-03 17:58:31 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-03 17:59:21 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-03 17:59:31 INFO  HypertyController:51 - Received hyperty with ID: hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bpppc-8529-f3af7577bf98 and descriptor: hyperty-catalogue://ua-id.pt/1/123-Ha-ruipp3123
+2016-03-03 17:59:31 INFO  HypertyController:54 - Created hyperty with ID: hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bpppc-8529-f3af7577bf98
+2016-03-03 17:59:36 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-03 17:59:47 INFO  HypertyController:51 - Received hyperty with ID: hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bpppc-8529-f3af7577bf98 and descriptor: hyperty-catalogue://ist-id.pt/1/123-Ha-ruipp3123
+2016-03-03 17:59:47 INFO  HypertyController:54 - Created hyperty with ID: hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bpppc-8529-f3af7577bf98
+2016-03-03 17:59:50 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-03 18:01:30 INFO  HypertyController:51 - Received hyperty with ID: hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bpppc-8529-f3af7577bf98 descriptor: hyperty-catalogue://ist-id.pt/1/123-Ha-ruipp312312
+2016-03-03 18:01:30 INFO  HypertyController:54 - Created hyperty with ID: hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bpppc-8529-f3af7577bf98
+2016-03-03 18:05:25 INFO  HypertyController:51 - Received hyperty with ID: hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bpppc-8529-f3af7577bf98 descriptor: hyperty-catalogue://ist-id.pt/1/123-Ha-ruipp3123 expires 12
+2016-03-03 18:05:25 INFO  HypertyController:55 - Created hyperty with ID: hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bpppc-8529-f3af7577bf98
+2016-03-03 18:05:36 INFO  HypertyController:51 - Received hyperty with ID: hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bpppc-8529-f3af7577bf98 descriptor: hyperty-catalogue://ist-id.pt/1/123-Ha-ruipp3123 expires 15
+2016-03-03 18:05:36 INFO  HypertyController:55 - Created hyperty with ID: hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bpppc-8529-f3af7577bf98
+2016-03-03 18:05:45 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-03 18:07:22 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-03 18:07:26 INFO  HypertyController:51 - Received hyperty with ID: hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bpppc-8529-f3af7577bf98 descriptor: hyperty-catalogue://ist-id.pt/1/123-Ha-ruipp3123 expires 12
+2016-03-03 18:07:26 INFO  HypertyController:55 - Created hyperty with ID: hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bpppc-8529-f3af7577bf98
+2016-03-03 18:07:32 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-03 18:07:36 INFO  HypertyController:51 - Received hyperty with ID: hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bpppc-8529-f3af7577bf98 descriptor: hyperty-catalogue://ist-id.pt/1/123-Ha-ruipp3123 expires 15
+2016-03-03 18:07:36 INFO  HypertyController:55 - Created hyperty with ID: hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bpppc-8529-f3af7577bf98
+2016-03-03 18:07:39 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
