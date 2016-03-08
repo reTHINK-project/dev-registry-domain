@@ -26,13 +26,13 @@ import java.util.concurrent.TimeUnit;
 import java.text.ParseException;
 
 public class Dates{
-    public static String getActualDate() {
+    protected static String getActualDate() {
         Date date = Calendar.getInstance().getTime();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         return simpleDateFormat.format(date);
     }
 
-    public static long dateCompare(String actualDate, String date){
+    protected static long dateCompare(String actualDate, String date){
         long seconds = 12345678910L;
         try{
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
