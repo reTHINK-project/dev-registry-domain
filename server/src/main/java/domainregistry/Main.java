@@ -16,8 +16,15 @@
 
 package domainregistry;
 
+import java.net.*;
+import java.util.*;
+
 public class Main {
     public static void main(String[] args) {
+        final CassandraClient client = new CassandraClient();
+        Collection<InetAddress> clusterContactPoinsts = Addresses.getClusterContactPoints();
+        client.connect(clusterContactPoinsts);
+
         HypertyService service = new HypertyService();
         new HypertyController(service);
         new HeartBeatThread(service).start();
