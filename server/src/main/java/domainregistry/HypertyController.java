@@ -26,20 +26,20 @@ public class HypertyController {
 
     static Logger log = Logger.getLogger(HypertyController.class.getName());
 
-    public HypertyController(final HypertyService hypertyService) {
+    public HypertyController(final HypertyService hypertyService, final CassandraClient cassandra) {
 
         Gson gson = new Gson();
 
-        get("/", (req, res) -> gson.toJson(new Messages("rethink registry api")));
-
-        get("/hyperty/user/*", (req,res) -> {
-            res.type("application/json");
-            String[] encodedURL = req.url().split("/");
-            String userID = decodeUrl(encodedURL[encodedURL.length - 1]);
-            log.info("Received request for " + userID + " hyperties");
-            res.status(200);
-            return gson.toJson(hypertyService.getAllHyperties(userID));
-        });
+        // get("/", (req, res) -> gson.toJson(new Messages("rethink registry api")));
+        //
+        // get("/hyperty/user#<{(|", (req,res) -> {
+        //     res.type("application/json");
+        //     String[] encodedURL = req.url().split("/");
+        //     String userID = decodeUrl(encodedURL[encodedURL.length - 1]);
+        //     log.info("Received request for " + userID + " hyperties");
+        //     res.status(200);
+        //     return gson.toJson(hypertyService.getAllHyperties(userID));
+        // });
 
         put("/hyperty/user/*", (req,res) -> {
             res.type("application/json");
@@ -47,25 +47,25 @@ public class HypertyController {
             String[] encodedURL = req.url().split("/");
             String userID = decodeUrl(encodedURL[encodedURL.length - 2]);
             String hypertyID = decodeUrl(encodedURL[encodedURL.length - 1]);
-            HypertyInstance hi = gson.fromJson(body, HypertyInstance.class);
-            log.info("Received hyperty with ID: " +
-                hypertyID + " descriptor: " + hi.getDescriptor() + " expires " + hi.getExpires());
-            hypertyService.createUserHyperty(userID, hypertyID, hi);
+            HypertyInstance hyperty = gson.fromJson(body, HypertyInstance.class);
+            log.info("Received request for hyperty with ID: " +
+                hypertyID + " descriptor: " + hyperty.getDescriptor() + " expires " + hyperty.getExpires());
+            hypertyService.createUserHyperty(cassandra, userID, hypertyID, hyperty);
             res.status(200);
-            log.info("Created hyperty with ID: " + hypertyID);
+            log.info("Created and stored hyperty with ID: " + hypertyID);
             return gson.toJson(new Messages("Hyperty created"));
         });
 
-        delete("/hyperty/user/*", (req,res) -> {
-            res.type("application/json");
-            String[] encodedURL = req.url().split("/");
-            String userID    = decodeUrl(encodedURL[encodedURL.length - 2]);
-            String hypertyID = decodeUrl(encodedURL[encodedURL.length - 1]);
-            hypertyService.deleteUserHyperty(userID, hypertyID);
-            res.status(200);
-            log.info("Deleted hyperty with ID: " + hypertyID);
-            return gson.toJson(new Messages("Hyperty deleted"));
-        });
+        // delete("/hyperty/user#<{(|", (req,res) -> {
+        //     res.type("application/json");
+        //     String[] encodedURL = req.url().split("/");
+        //     String userID    = decodeUrl(encodedURL[encodedURL.length - 2]);
+        //     String hypertyID = decodeUrl(encodedURL[encodedURL.length - 1]);
+        //     hypertyService.deleteUserHyperty(userID, hypertyID);
+        //     res.status(200);
+        //     log.info("Deleted hyperty with ID: " + hypertyID);
+        //     return gson.toJson(new Messages("Hyperty deleted"));
+        // });
 
         get("/throwexception", (request, response) -> {
             throw new DataNotFoundException();

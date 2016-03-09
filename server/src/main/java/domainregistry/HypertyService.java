@@ -24,85 +24,25 @@ import org.apache.log4j.Logger;
 public class HypertyService{
     static Logger log = Logger.getLogger(HypertyService.class.getName());
 
-    private Map<String, Map<String, HypertyInstance>> userServices = new HashMap<>();
 
-    public Map<String, HypertyInstance> getAllHyperties(String userID) {
-        Map<String, HypertyInstance> services = getAllUserHyperties(userID);
-
-        if(checkObjectExistance(userID) && !services.isEmpty())
-            deleteExpiredHyperties(userID);
-
-        if(checkObjectExistance(userID) && !services.isEmpty())
-            return services;
-
-        else if(!checkObjectExistance(userID))
-            throw new UserNotFoundException();
-
-        else throw new DataNotFoundException();
+    public void getAllHyperties(CassandraClient cassandra, String userID) {
     }
 
-    public void createUserHyperty(String userID, String hypertyID, HypertyInstance instance){
-        if(checkObjectExistance(userID) && checkObjectExistance(userID, hypertyID)){
-            HypertyInstance hyperty = userServices.get(userID).get(hypertyID);
-            hyperty.setLastModified(Dates.getActualDate());
-            hyperty.setDescriptor(instance.getDescriptor());
-            hyperty.setExpires(instance.getExpires());
-            userServices.get(userID).put(hypertyID, hyperty);
+    public void createUserHyperty(CassandraClient cassandra, String userID, String hypertyID, HypertyInstance newHyperty){
+        if(cassandra.hypertyExists(hypertyID)){
+            HypertyInstance oldHyperty = cassandra.getHyperty(hypertyID);
+            newHyperty.setLastModified(Dates.getActualDate());
+            newHyperty.setStartingTime(oldHyperty.getStartingTime());
+            cassandra.updateHyperty(hypertyID, newHyperty);
         }
-        else if(checkObjectExistance(userID) && !checkObjectExistance(userID, hypertyID)){
-            instance.setStartingTime(Dates.getActualDate());
-            instance.setLastModified(Dates.getActualDate());
-            userServices.get(userID).put(hypertyID, instance);
-        }
+
         else{
-            Map<String, HypertyInstance> services = new HashMap<>();
-            instance.setStartingTime(Dates.getActualDate());
-            instance.setLastModified(Dates.getActualDate());
-            services.put(hypertyID, instance);
-            userServices.put(userID, services);
+            newHyperty.setStartingTime(Dates.getActualDate());
+            newHyperty.setLastModified(Dates.getActualDate());
+            cassandra.insertHyperty(newHyperty, hypertyID, userID);
         }
     }
 
-    public void deleteUserHyperty(String userID, String hypertyID){
-        if(checkObjectExistance(userID, hypertyID)){
-            userServices.get(userID).remove(hypertyID);
-            log.info("Deleted hyperty" + hypertyID + " from user " + userID);
-        }
-
-        else if(!checkObjectExistance(userID))
-            throw new UserNotFoundException();
-
-        else throw new DataNotFoundException();
-    }
-
-    private boolean checkObjectExistance(String... params){
-        int numberOfArguments = params.length;
-        if(numberOfArguments == 1){
-            return userServices.containsKey(params[0]);
-        }
-        else{
-            return userServices.containsKey(params[0]) &&
-                userServices.get(params[0]).containsKey(params[1]);
-        }
-    }
-
-    private Map<String, HypertyInstance> getAllUserHyperties(String userID){
-        return userServices.get(userID);
-    }
-
-    protected void deleteExpiredHyperties(String userID){
-        String actualDate = Dates.getActualDate();
-        Map<String, HypertyInstance> userHyperties = getAllUserHyperties(userID);
-        for (Map.Entry<String, HypertyInstance> entry : userHyperties.entrySet()){
-            String lastModified = entry.getValue().getLastModified();
-            int expires = entry.getValue().getExpires();
-            if(Dates.dateCompare(actualDate, lastModified) > expires){
-                deleteUserHyperty(userID, entry.getKey());
-            }
-        }
-    }
-
-    public Map<String, Map<String, HypertyInstance>> getServices(){
-        return userServices;
+    public void deleteUserHyperty(CassandraClient cassandra, String userID, String hypertyID){
     }
 }

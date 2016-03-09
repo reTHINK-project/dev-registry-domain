@@ -18,15 +18,23 @@ package domainregistry;
 
 import java.net.*;
 import java.util.*;
+import org.apache.log4j.Logger;
 
 public class Main {
+    static Logger log = Logger.getLogger(Main.class.getName());
+
     public static void main(String[] args) {
-        final CassandraClient client = new CassandraClient();
         Collection<InetAddress> clusterContactPoinsts = Addresses.getClusterContactPoints();
-        client.connect(clusterContactPoinsts);
+        final CassandraClient cassandraClient = new CassandraClient();
+
+        if (!clusterContactPoinsts.isEmpty()){
+            cassandraClient.connect(clusterContactPoinsts);
+        }
+
+        else log.error("No contact points provided. Requests wont be saved.");
 
         HypertyService service = new HypertyService();
-        new HypertyController(service);
+        new HypertyController(service, cassandraClient);
         new HeartBeatThread(service).start();
     }
 }

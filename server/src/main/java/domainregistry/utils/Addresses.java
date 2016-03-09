@@ -20,21 +20,27 @@ import com.datastax.driver.core.*;
 import static java.lang.System.out;
 import java.util.*;
 import java.lang.System;
+import org.apache.log4j.Logger;
 import java.net.*;
 
 public class Addresses{
+    static Logger log = Logger.getLogger(Addresses.class.getName());
+
     protected static Collection<InetAddress> getClusterContactPoints(){
         Collection<InetAddress> contactPoints = new ArrayList<InetAddress>();
         String addresses = System.getenv("CONTACT_POINTS_IPS");
-        String[] ips = addresses.split(",");
-        for(String ip : ips){
-            System.out.println(ip);
-            try{
-                contactPoints.add(InetAddress.getByName(ip));
-            } catch(UnknownHostException e){
-                System.out.println("Unknown or malformed host ip");
+        if(addresses != null){
+            String[] ips = addresses.split(",");
+            for(String ip : ips){
+                System.out.println(ip);
+                try{
+                    contactPoints.add(InetAddress.getByName(ip));
+                } catch(UnknownHostException e){
+                    log.error("Unknown or malformed host ip");
+                }
             }
+            return contactPoints;
         }
-        return contactPoints;
+        else return Collections.emptyList();
     }
 }

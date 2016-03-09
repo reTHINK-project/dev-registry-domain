@@ -28,6 +28,17 @@ public class HypertyInstance {
     public HypertyInstance(){
     }
 
+    public HypertyInstance(String descriptor,
+                           String startingTime,
+                           String lastModified,
+                           int expires){
+
+        this.descriptor = descriptor;
+        this.startingTime = startingTime;
+        this.lastModified = lastModified;
+        this.expires = expires;
+    }
+
     public HypertyInstance(String descriptor){
         this.descriptor = descriptor;
     }
