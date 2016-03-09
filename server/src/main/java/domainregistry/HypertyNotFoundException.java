@@ -1,3 +1,4 @@
+
 /**
   * Copyright 2015-2016 INESC-ID
   *
@@ -16,24 +17,10 @@
 
 package domainregistry;
 
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+public class HypertyNotFoundException extends DomainRegistryException {
+    private static final long serialVersionUID = 1L;
 
-class HeartBeatThread extends Thread {
-    HypertyService service;
-
-    public HeartBeatThread(HypertyService service){
-        this.service = service;
-    }
-
-    @Override
-    public void run(){
-        try{
-            while(true){
-                TimeUnit.DAYS.sleep(1); //cleanup is executed once a day
-            }
-        }catch(InterruptedException e){
-            e.printStackTrace();
-        }
+    public String toString(){
+        return "Hyperty not found.";
     }
 }

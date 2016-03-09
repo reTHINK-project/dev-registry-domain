@@ -27,92 +27,93 @@ import java.util.ArrayList;
 
 public class HypertyTest {
 
-    private HypertyService services = null;
-    private HypertyInstance hypertyInstance = null;
-    private String userID;
-    private String hypertyID;
-    private String descriptor;
-
-    @Before
-    public void setData(){
-        services = new HypertyService();
-        hypertyInstance = new HypertyInstance();
-        userID = "user://inesc-id.pt/ruimangas";
-        hypertyID = "hyperty://ines-id.pt/123-Ha-123123";
-        descriptor = "hyperty-catalogue://inesc-id.pt/1/123-Ha-123123";
-        hypertyInstance.setDescriptor(descriptor);
-        services.createUserHyperty(userID, hypertyID, hypertyInstance);
-    }
-
-    @Test
-    public void createUserTest(){
-        assertTrue(services.getServices().containsKey(userID));
-    }
-
-    @Test
-    public void HypertyCreationTest(){
-        Map<String, HypertyInstance> userHyperties = services.getServices().get(userID);
-        assertTrue(userHyperties.containsKey(hypertyID));
-        HypertyInstance userHypertyInstance = userHyperties.get(hypertyID);
-        assertEquals(hypertyInstance, userHypertyInstance);
-        assertNotNull(hypertyInstance.getStartingTime()); // dates are added upon hyperty registration
-        assertNotNull(hypertyInstance.getLastModified());
-        assertEquals(hypertyInstance.getStartingTime(), hypertyInstance.getLastModified());
-    }
-
-    @Test
-    public void getAllExistingUserHypertiesTest(){
-      HypertyInstance hypertyInstance = new HypertyInstance();
-      String hypertyID = "hyperty://ua.pt/123-ba-123123";
-      String descriptor = "hyperty-catalogue://ua.pt/1/123-ba-123123";
-      hypertyInstance.setDescriptor(descriptor);
-      services.createUserHyperty(userID, hypertyID, hypertyInstance);
-      Map<String, HypertyInstance> allUserHyperties = services.getAllHyperties(userID);
-      assertEquals(2, allUserHyperties.keySet().size());
-    }
-
-    @Test(expected= DataNotFoundException.class)
-    public void UserWithoutHypertiesTest(){ // The only hyperty this user had was removed. However, user still exists
-        services.deleteUserHyperty(userID, hypertyID);
-        services.getAllHyperties(userID);
-    }
-
-    @Test(expected = UserNotFoundException.class) 
-    public void getAllHypertiesNonexistingUserTest(){
-        services.getAllHyperties("user://inesc-id.pt/ruipereira");
-    }
-
-    @Test
-    public void updateHypertyInfoTest(){
-        HypertyInstance newHypertyInstance = new HypertyInstance();
-        String newDescriptor = "hyperty-catalogue://inesc-id.pt/1/222-ba-123123";
-        newHypertyInstance.setDescriptor(newDescriptor);
-        services.createUserHyperty(userID, hypertyID, newHypertyInstance);
-        Map<String, HypertyInstance> allUserHyperties = services.getServices().get(userID);
-        assertTrue(allUserHyperties.containsKey(hypertyID));
-        HypertyInstance retrievedHypertyInstance = allUserHyperties.get(hypertyID);
-        String updatedHypertyDescriptor = retrievedHypertyInstance.getDescriptor();
-        assertEquals(newDescriptor, updatedHypertyDescriptor);
-        assertNotNull(retrievedHypertyInstance.getStartingTime());
-        assertNotNull(retrievedHypertyInstance.getLastModified());
-        assertThat(updatedHypertyDescriptor, not(equalTo(descriptor)));
-    }
-
-    @Test
-    public void removeUserHypertyTest(){
-        services.deleteUserHyperty(userID, hypertyID);
-        assertFalse(services.getServices().get(userID).containsKey(hypertyID));
-    }
-
-    @Test(expected= UserNotFoundException.class) 
-    public void removeFromANonExistantUserTest(){
-        services.deleteUserHyperty("user://inesc-id.pt//pedro", hypertyID);
-    }
-
-    @Test(expected= DataNotFoundException.class)
-    public void removeANonexistentHypertyTest(){
-        String nonExistentHypertyID = "hyperty://inesc-id.pt//asda-123-ll";
-        services.deleteUserHyperty(userID, nonExistentHypertyID);
-    }
+//     private HypertyService services = null;
+//     private HypertyInstance hypertyInstance = null;
+//     private String userID;
+//     private String hypertyID;
+//     private String descriptor;
+//
+//     @Before
+//     public void setData(){
+//         services = new HypertyService();
+//         hypertyInstance = new HypertyInstance();
+//         userID = "user://inesc-id.pt/ruimangas";
+//         hypertyID = "hyperty://ines-id.pt/123-Ha-123123";
+//         descriptor = "hyperty-catalogue://inesc-id.pt/1/123-Ha-123123";
+//         hypertyInstance.setDescriptor(descriptor);
+//         services.createUserHyperty(userID, hypertyID, hypertyInstance);
+//     }
+//
+//     @Test
+//     public void createUserTest(){
+//         assertTrue(services.getServices().containsKey(userID));
+//     }
+//
+//     @Test
+//     public void HypertyCreationTest(){
+//         Map<String, HypertyInstance> userHyperties = services.getServices().get(userID);
+//         assertTrue(userHyperties.containsKey(hypertyID));
+//         HypertyInstance userHypertyInstance = userHyperties.get(hypertyID);
+//         assertEquals(hypertyInstance, userHypertyInstance);
+//         assertNotNull(hypertyInstance.getStartingTime()); // dates are added upon hyperty registration
+//         assertNotNull(hypertyInstance.getLastModified());
+//         assertEquals(hypertyInstance.getStartingTime(), hypertyInstance.getLastModified());
+//     }
+//
+//     @Test
+//     public void getAllExistingUserHypertiesTest(){
+//       HypertyInstance hypertyInstance = new HypertyInstance();
+//       String hypertyID = "hyperty://ua.pt/123-ba-123123";
+//       String descriptor = "hyperty-catalogue://ua.pt/1/123-ba-123123";
+//       hypertyInstance.setDescriptor(descriptor);
+//       services.createUserHyperty(userID, hypertyID, hypertyInstance);
+//       Map<String, HypertyInstance> allUserHyperties = services.getAllHyperties(userID);
+//       assertEquals(2, allUserHyperties.keySet().size());
+//     }
+//
+//     @Test(expected= DataNotFoundException.class)
+//     public void UserWithoutHypertiesTest(){ // The only hyperty this user had was removed. However, user still exists
+//         services.deleteUserHyperty(userID, hypertyID);
+//         services.getAllHyperties(userID);
+//     }
+//
+//     @Test(expected = UserNotFoundException.class) 
+//     public void getAllHypertiesNonexistingUserTest(){
+//         services.getAllHyperties("user://inesc-id.pt/ruipereira");
+//     }
+//
+//     @Test
+//     public void updateHypertyInfoTest(){
+//         HypertyInstance newHypertyInstance = new HypertyInstance();
+//         String newDescriptor = "hyperty-catalogue://inesc-id.pt/1/222-ba-123123";
+//         newHypertyInstance.setDescriptor(newDescriptor);
+//         services.createUserHyperty(userID, hypertyID, newHypertyInstance);
+//         Map<String, HypertyInstance> allUserHyperties = services.getServices().get(userID);
+//         assertTrue(allUserHyperties.containsKey(hypertyID));
+//         HypertyInstance retrievedHypertyInstance = allUserHyperties.get(hypertyID);
+//         String updatedHypertyDescriptor = retrievedHypertyInstance.getDescriptor();
+//         assertEquals(newDescriptor, updatedHypertyDescriptor);
+//         assertNotNull(retrievedHypertyInstance.getStartingTime());
+//         assertNotNull(retrievedHypertyInstance.getLastModified());
+//         assertThat(updatedHypertyDescriptor, not(equalTo(descriptor)));
+//     }
+//
+//     @Test
+//     public void removeUserHypertyTest(){
+//         services.deleteUserHyperty(userID, hypertyID);
+//         assertFalse(services.getServices().get(userID).containsKey(hypertyID));
+//     }
+//
+//     @Test(expected= UserNotFoundException.class) 
+//     public void removeFromANonExistantUserTest(){
+//         services.deleteUserHyperty("user://inesc-id.pt//pedro", hypertyID);
+//     }
+//
+//     @Test(expected= DataNotFoundException.class)
+//     public void removeANonexistentHypertyTest(){
+//         String nonExistentHypertyID = "hyperty://inesc-id.pt//asda-123-ll";
+//         services.deleteUserHyperty(userID, nonExistentHypertyID);
+//     }
+// }
+//
 }
-

@@ -503,3 +503,9 @@ Received request for hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4b
 2016-03-03 18:07:36 INFO  HypertyController:51 - Received hyperty with ID: hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bpppc-8529-f3af7577bf98 descriptor: hyperty-catalogue://ist-id.pt/1/123-Ha-ruipp3123 expires 15
 2016-03-03 18:07:36 INFO  HypertyController:55 - Created hyperty with ID: hyperty://matrix1.rethink/matrixmn/hyperty/b3031ee5-1c0c-4bpppc-8529-f3af7577bf98
 2016-03-03 18:07:39 INFO  HypertyController:39 - Received request for user://inesc.com/tejoao hyperties
+2016-03-09 11:41:09 INFO  HypertyService:71 - Deleted hypertyhyperty://ines-id.pt/123-Ha-123123 from user user://inesc-id.pt/ruimangas
+2016-03-09 11:41:09 INFO  HypertyService:71 - Deleted hypertyhyperty://ines-id.pt/123-Ha-123123 from user user://inesc-id.pt/ruimangas
+2016-03-09 11:54:31 ERROR Main:33 - No contact points provided
+2016-03-09 12:02:59 ERROR Main:34 - No contact points provided. Requests wont be saved.
+2016-03-09 12:07:45 ERROR Main:34 - No contact points provided. Requests wont be saved.
+2016-03-09 12:08:26 ERROR Main:34 - No contact points provided. Requests wont be saved.
