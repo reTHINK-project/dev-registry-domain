@@ -15,7 +15,7 @@
 require 'airborne'
 
 Airborne.configure do |config|
-  config.base_url = 'http://localhost:4567/hyperty/user'
+  config.base_url = 'http://178.62.195.71:4567/hyperty/user'
 end
 
 describe 'domain registry api tests' do
@@ -101,6 +101,12 @@ describe 'domain registry api tests' do
       expect(json_body[:hyperty2][:startingTime]).to eql(json_body[:hyperty2][:lastModified])
       expect(json_body[:hyperty1][:startingTime]).to be < (json_body[:hyperty1][:lastModified])
     end
+
+    it 'should return an error, user not found' do
+      get '/nuno@inesc.pt'
+      expect_status(404)
+      expect_json(:message => "User not found")
+    end
   end
 
   describe 'delete user hyperty' do
@@ -120,11 +126,11 @@ describe 'domain registry api tests' do
     it 'should delete an user hyperty' do
       delete '/ruijose@inesc.pt/hyperty3'
       expect_status(404)
-      expect_json(:message => "Data not found")
+      expect_json(:message => "User not found") #all this user's hyperties were removed
     end
 
     it 'should return an error, user not found' do
-      delete '/ruijose1@inesc.pt/hyperty1'
+      delete '/ruijose12@inesc.pt/hyperty1'
       expect_status(404)
       expect_json(:message => "User not found")
     end
