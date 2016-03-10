@@ -35,7 +35,7 @@ public class Main {
 
         HypertyService service = new HypertyService();
         new HypertyController(service, cassandraClient);
-        new HeartBeatThread(service).start();
+        new HeartBeatThread(service, cassandraClient).start();
     }
 }
 

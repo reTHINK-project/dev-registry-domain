@@ -59,10 +59,10 @@ public class CassandraClient{
         }
     }
 
-    public void insertHyperty(HypertyInstance hyperty, String hypertyID, String userID){
+    public void insertHyperty(HypertyInstance hyperty){
         Statement statement = QueryBuilder.insertInto(KEYSPACE, HYPERTIES)
-            .value("hypertyID", hypertyID)
-            .value("user", userID)
+            .value("hypertyID", hyperty.getHypertyID())
+            .value("user", hyperty.getUserID())
             .value("descriptor", hyperty.getDescriptor())
             .value("startingTime", hyperty.getStartingTime())
             .value("lastModified", hyperty.getLastModified())
@@ -70,9 +70,26 @@ public class CassandraClient{
 
         if(getSession() != null){
             getSession().execute(statement);
-            log.info("Inserted in database hyperty with ID: " + hypertyID);
+            log.info("Inserted in database hyperty with ID: " + hyperty.getHypertyID());
         }
         else log.error("Invalid cassandra session.");
+    }
+
+    public ArrayList<String> getAllUsers(){
+        ArrayList<String> data = new ArrayList<String>();
+
+        Statement select = QueryBuilder.select().all().from(KEYSPACE, HYPERTIES);
+        ResultSet results = session.execute(select);
+
+        if(results == null) return new ArrayList();
+
+        for (Row row : results){
+            String user = row.getString("user");
+            if(!data.contains(user)){
+                data.add(user);
+            }
+        }
+        return data;
     }
 
     public HypertyInstance getHyperty(String hypertyID){
@@ -101,15 +118,15 @@ public class CassandraClient{
         return row != null;
     }
 
-    public void updateHyperty(String hypertyID, HypertyInstance hyperty){
+    public void updateHyperty(HypertyInstance hyperty){
         Statement update = QueryBuilder.update(KEYSPACE, HYPERTIES)
                                        .with(QueryBuilder.set("descriptor", hyperty.getDescriptor()))
                                        .and(QueryBuilder.set("lastModified", hyperty.getLastModified()))
                                        .and(QueryBuilder.set("expires", hyperty.getExpires()))
-                                       .where(QueryBuilder.eq("hypertyID", hypertyID));
+                                       .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()));
         if(getSession() != null){
             getSession().execute(update);
-            log.info("Updated in database hyperty with ID: " + hypertyID);
+            log.info("Updated in database hyperty with ID: " + hyperty.getHypertyID());
         }
         else log.error("Invalid cassandra session.");
     }
@@ -136,6 +153,7 @@ public class CassandraClient{
         Statement delete = QueryBuilder.delete().from(KEYSPACE, HYPERTIES)
                                                       .where(QueryBuilder.eq("hypertyID", hypertyID));
         getSession().execute(delete);
+        log.info("Deleted from database hyperty with ID: " + hypertyID);
     }
 
     public Session getSession(){

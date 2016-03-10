@@ -54,7 +54,9 @@ public class HypertyController {
             String userID = decodeUrl(encodedURL[encodedURL.length - 2]);
             String hypertyID = decodeUrl(encodedURL[encodedURL.length - 1]);
             HypertyInstance hyperty = gson.fromJson(body, HypertyInstance.class);
-            hypertyService.createUserHyperty(cassandra, userID, hypertyID, hyperty);
+            hyperty.setUserID(userID);
+            hyperty.setHypertyID(hypertyID);
+            hypertyService.createUserHyperty(cassandra, hyperty);
             res.status(200);
             return gson.toJson(new Messages("Hyperty created"));
         });
@@ -79,12 +81,30 @@ public class HypertyController {
         });
 
         get("/throwexception", (request, response) -> {
+            throw new CouldNotRemoveHypertyException();
+        });
+
+        exception(CouldNotRemoveHypertyException.class, (e, req, res) -> {
+            res.status(404);
+            res.body(gson.toJson(new Messages("Could not remove hyperty")));
+        });
+
+        get("/throwexception", (request, response) -> {
             throw new UserNotFoundException();
         });
 
         exception(UserNotFoundException.class, (e, req, res) -> {
             res.status(404);
             res.body(gson.toJson(new Messages("User not found")));
+        });
+
+        get("/throwexception", (request, response) -> {
+            throw new CouldNotCreateOrUpdateHypertyException();
+        });
+
+        exception(CouldNotCreateOrUpdateHypertyException.class, (e, req, res) -> {
+            res.status(404);
+            res.body(gson.toJson(new Messages("Could not create or update hyperty")));
         });
     }
 

@@ -18,12 +18,15 @@ package domainregistry;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.*;
 
 class HeartBeatThread extends Thread {
     HypertyService service;
+    CassandraClient cassandra;
 
-    public HeartBeatThread(HypertyService service){
+    public HeartBeatThread(HypertyService service, CassandraClient cassandra){
         this.service = service;
+        this.cassandra = cassandra;
     }
 
     @Override
@@ -31,9 +34,20 @@ class HeartBeatThread extends Thread {
         try{
             while(true){
                 TimeUnit.DAYS.sleep(1); //cleanup is executed once a day
+                removeOldHyperties(this.cassandra);
             }
         }catch(InterruptedException e){
             e.printStackTrace();
+        }
+    }
+
+    private void removeOldHyperties(CassandraClient cassandra){
+        ArrayList<String> users = cassandra.getAllUsers();
+
+        if(!users.isEmpty()){
+            for(String user : users){
+                service.deleteExpiredHyperties(cassandra, user);
+            }
         }
     }
 }
