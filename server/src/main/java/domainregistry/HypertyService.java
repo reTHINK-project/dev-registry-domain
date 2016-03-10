@@ -25,7 +25,16 @@ public class HypertyService{
     static Logger log = Logger.getLogger(HypertyService.class.getName());
 
 
-    public void getAllHyperties(CassandraClient cassandra, String userID) {
+    public Map<String, HypertyInstance> getAllHyperties(CassandraClient cassandra, String userID) {
+        Map<String, HypertyInstance> allUserHyperties = cassandra.getUserHyperties(userID);
+
+        if(!cassandra.userExists(userID))
+            throw new UserNotFoundException();
+
+        if(allUserHyperties.isEmpty())
+            throw new DataNotFoundException();
+
+        else return allUserHyperties;
     }
 
     public void createUserHyperty(CassandraClient cassandra, String userID, String hypertyID, HypertyInstance newHyperty){
@@ -44,5 +53,12 @@ public class HypertyService{
     }
 
     public void deleteUserHyperty(CassandraClient cassandra, String userID, String hypertyID){
+        if(!cassandra.userExists(userID))
+            throw new UserNotFoundException();
+
+        if(cassandra.hypertyExists(hypertyID))
+            cassandra.deleteUserHyperty(hypertyID);
+
+        else throw new DataNotFoundException();
     }
 }

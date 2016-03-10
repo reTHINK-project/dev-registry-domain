@@ -54,24 +54,20 @@ public class HypertyController {
             String userID = decodeUrl(encodedURL[encodedURL.length - 2]);
             String hypertyID = decodeUrl(encodedURL[encodedURL.length - 1]);
             HypertyInstance hyperty = gson.fromJson(body, HypertyInstance.class);
-            log.info("Received request for hyperty with ID: " +
-                hypertyID + " descriptor: " + hyperty.getDescriptor() + " expires " + hyperty.getExpires());
             hypertyService.createUserHyperty(cassandra, userID, hypertyID, hyperty);
             res.status(200);
-            log.info("Created and stored hyperty with ID: " + hypertyID);
             return gson.toJson(new Messages("Hyperty created"));
         });
 
-        // delete("/hyperty/user#<{(|", (req,res) -> {
-        //     res.type("application/json");
-        //     String[] encodedURL = req.url().split("/");
-        //     String userID    = decodeUrl(encodedURL[encodedURL.length - 2]);
-        //     String hypertyID = decodeUrl(encodedURL[encodedURL.length - 1]);
-        //     hypertyService.deleteUserHyperty(userID, hypertyID);
-        //     res.status(200);
-        //     log.info("Deleted hyperty with ID: " + hypertyID);
-        //     return gson.toJson(new Messages("Hyperty deleted"));
-        // });
+        delete("/hyperty/user/*", (req,res) -> {
+            res.type("application/json");
+            String[] encodedURL = req.url().split("/");
+            String userID = decodeUrl(encodedURL[encodedURL.length - 2]);
+            String hypertyID = decodeUrl(encodedURL[encodedURL.length - 1]);
+            hypertyService.deleteUserHyperty(cassandra, userID, hypertyID);
+            res.status(200);
+            return gson.toJson(new Messages("Hyperty deleted"));
+        });
 
         get("/throwexception", (request, response) -> {
             throw new DataNotFoundException();
@@ -90,7 +86,6 @@ public class HypertyController {
             res.status(404);
             res.body(gson.toJson(new Messages("User not found")));
         });
-
     }
 
     private static String decodeUrl(String url) throws java.io.UnsupportedEncodingException {

@@ -93,6 +93,14 @@ public class CassandraClient{
         return row != null;
     }
 
+    public boolean userExists(String userID){
+        Statement select = QueryBuilder.select().all().from(KEYSPACE, HYPERTIES)
+                                                      .where(QueryBuilder.eq("user", userID));
+        ResultSet results = session.execute(select);
+        Row row = results.one();
+        return row != null;
+    }
+
     public void updateHyperty(String hypertyID, HypertyInstance hyperty){
         Statement update = QueryBuilder.update(KEYSPACE, HYPERTIES)
                                        .with(QueryBuilder.set("descriptor", hyperty.getDescriptor()))
@@ -104,6 +112,30 @@ public class CassandraClient{
             log.info("Updated in database hyperty with ID: " + hypertyID);
         }
         else log.error("Invalid cassandra session.");
+    }
+
+    public Map<String, HypertyInstance> getUserHyperties(String userID){
+        Map<String, HypertyInstance> allUserHyperties = new HashMap();
+
+        Statement select = QueryBuilder.select().all().from(KEYSPACE, HYPERTIES)
+                                                      .where(QueryBuilder.eq("user", userID));
+        ResultSet results = session.execute(select);
+
+        if(results == null) return Collections.emptyMap();
+
+        for(Row row : results){
+            allUserHyperties.put(row.getString("hypertyID"), new HypertyInstance(row.getString("descriptor"),
+                                                                                 row.getString("startingTime"),
+                                                                                 row.getString("lastModified"),
+                                                                                 row.getInt("expires")));
+        }
+        return allUserHyperties;
+    }
+
+    public void deleteUserHyperty(String hypertyID){
+        Statement delete = QueryBuilder.delete().from(KEYSPACE, HYPERTIES)
+                                                      .where(QueryBuilder.eq("hypertyID", hypertyID));
+        getSession().execute(delete);
     }
 
     public Session getSession(){
