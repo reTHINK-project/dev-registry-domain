@@ -1,4 +1,4 @@
-# Copyright 2015-2016 INESC-ID
+# Copyright 2015-2016 inesc-id-ID
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,17 +22,17 @@ describe 'domain registry api tests' do
 
   before {
     @hyperty_details = {
-      descriptor: "kkk11jasdasdAA",
+      descriptor: "descriptor1",
       expires: 120
     }
 
     @hyperty_two_details = {
-      descriptor: "asdasd112AA",
+      descriptor: "descriptor2",
       expires: 120
     }
 
     @hyperty_three_details = {
-      descriptor: "12312321istuapt",
+      descriptor: "descriptor3",
       expires: 120
     }
   }
@@ -40,13 +40,13 @@ describe 'domain registry api tests' do
   describe 'create user hyperty' do
 
     it 'should add a new hyperty' do
-      put '/ruijose@inesc.pt/hyperty1', @hyperty_details
+      put '/ruijose@inesc-id.pt/hyperty1', @hyperty_details
       expect_status(200)
       expect_json(:message => "Hyperty created")
     end
 
     it 'should add a new hyperty' do
-      put '/ruijose@inesc.pt/hyperty2', @hyperty_two_details
+      put '/ruijose@inesc-id.pt/hyperty2', @hyperty_two_details
       expect_status(200)
       expect_json(:message => "Hyperty created")
     end
@@ -55,15 +55,15 @@ describe 'domain registry api tests' do
   describe 'get all user hyperties' do
 
     it 'should return all the hyperties' do
-      get '/ruijose@inesc.pt'
+      get '/ruijose@inesc-id.pt'
       expect_status(200)
       expect_json_sizes(2)
       expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires])
       expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires])
       expect_json_types("hyperty1", descriptor: :string, startingTime: :string, lastModified: :string, expires: :int)
       expect_json_types("hyperty2", descriptor: :string, startingTime: :string, lastModified: :string, expires: :int)
-      expect(json_body[:hyperty1][:descriptor]).to eql("kkk11jasdasdAA")
-      expect(json_body[:hyperty2][:descriptor]).to eql("asdasd112AA")
+      expect(json_body[:hyperty1][:descriptor]).to eql("descriptor1")
+      expect(json_body[:hyperty2][:descriptor]).to eql("descriptor2")
       expect(json_body[:hyperty1][:expires]).to eql(120)
       expect(json_body[:hyperty2][:expires]).to eql(120)
       expect(json_body[:hyperty1][:startingTime]).to eql(json_body[:hyperty1][:lastModified])
@@ -71,7 +71,7 @@ describe 'domain registry api tests' do
     end
 
     it 'should return an error, user not found' do
-      get '/nuno@inesc.pt'
+      get '/nuno@inesc-id.pt'
       expect_status(404)
       expect_json(:message => "User not found")
     end
@@ -81,21 +81,21 @@ describe 'domain registry api tests' do
 
     it 'should update a hyperty' do
       sleep(1)
-      put '/ruijose@inesc.pt/hyperty1', @hyperty_three_details
+      put '/ruijose@inesc-id.pt/hyperty1', @hyperty_three_details
       expect_status(200)
       expect_json(:message => "Hyperty created")
     end
 
     it 'should get all updated hyperties' do
-      get '/ruijose@inesc.pt'
+      get '/ruijose@inesc-id.pt'
       expect_status(200)
       expect_json_sizes(2)
       expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires])
       expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires])
       expect_json_types("hyperty1", descriptor: :string, startingTime: :string, lastModified: :string, expires: :int)
       expect_json_types("hyperty2", descriptor: :string, startingTime: :string, lastModified: :string, expires: :int)
-      expect(json_body[:hyperty1][:descriptor]).to eql("12312321istuapt")
-      expect(json_body[:hyperty2][:descriptor]).to eql("asdasd112AA")
+      expect(json_body[:hyperty1][:descriptor]).to eql("descriptor3")
+      expect(json_body[:hyperty2][:descriptor]).to eql("descriptor2")
       expect(json_body[:hyperty1][:expires]).to eql(120)
       expect(json_body[:hyperty2][:expires]).to eql(120)
       expect(json_body[:hyperty2][:startingTime]).to eql(json_body[:hyperty2][:lastModified])
@@ -103,7 +103,7 @@ describe 'domain registry api tests' do
     end
 
     it 'should return an error, user not found' do
-      get '/nuno@inesc.pt'
+      get '/nuno@inesc-id.pt'
       expect_status(404)
       expect_json(:message => "User not found")
     end
@@ -112,25 +112,37 @@ describe 'domain registry api tests' do
   describe 'delete user hyperty' do
 
     it 'should delete an user hyperty' do
-      delete '/ruijose@inesc.pt/hyperty1'
+      delete '/ruijose@inesc-id.pt/hyperty1'
       expect_status(200)
       expect_json(:message => "Hyperty deleted")
     end
 
     it 'should delete the hyperty' do
-      delete '/ruijose@inesc.pt/hyperty2'
+      delete '/ruijose@inesc-id.pt/hyperty2'
       expect_status(200)
       expect_json(:message => "Hyperty deleted")
     end
 
     it 'should delete an user hyperty' do
-      delete '/ruijose@inesc.pt/hyperty3'
+      delete '/ruijose@inesc-id.pt/hyperty3'
       expect_status(404)
       expect_json(:message => "User not found") #all this user's hyperties were removed
     end
 
+    it 'should add a new hyperty' do
+      put '/ruijose@inesc-id.pt/hyperty2', @hyperty_two_details
+      expect_status(200)
+      expect_json(:message => "Hyperty created")
+    end
+
+    it 'should delete an user hyperty' do
+      delete '/ruijose@inesc-id.pt/hyperty3'
+      expect_status(404)
+      expect_json(:message => "Data not found") 
+    end
+
     it 'should return an error, user not found' do
-      delete '/ruijose12@inesc.pt/hyperty1'
+      delete '/ruijose12@inesc-id.pt/hyperty1'
       expect_status(404)
       expect_json(:message => "User not found")
     end
