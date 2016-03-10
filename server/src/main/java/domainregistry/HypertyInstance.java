@@ -22,6 +22,8 @@ import java.util.List;
 public class HypertyInstance {
     private String descriptor;
     private String startingTime;
+    private String hypertyID;
+    private String userID;
     private String lastModified;
     private int expires;
 
@@ -49,6 +51,22 @@ public class HypertyInstance {
 
     public void setDescriptor(String descriptor){
         this.descriptor = descriptor;
+    }
+
+    public String getHypertyID(){
+        return this.hypertyID;
+    }
+
+    public void setHypertyID(String hypertyID){
+        this.hypertyID = hypertyID;
+    }
+
+    public String getUserID(){
+        return this.userID;
+    }
+
+    public void setUserID(String userID){
+        this.userID = userID;
     }
 
     public String getStartingTime(){
