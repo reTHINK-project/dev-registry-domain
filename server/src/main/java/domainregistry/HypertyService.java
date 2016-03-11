@@ -56,8 +56,6 @@ public class HypertyService{
         if(!cassandra.userExists(userID))
             throw new UserNotFoundException();
 
-        deleteExpiredHyperties(cassandra, userID);
-
         if(!cassandra.hypertyExists(hypertyID))
             throw new DataNotFoundException();
 
