@@ -26,7 +26,7 @@ public class HypertyController {
 
     static Logger log = Logger.getLogger(HypertyController.class.getName());
 
-    public HypertyController(final HypertyService hypertyService, final CassandraClient cassandra) {
+    public HypertyController(final StatusService status, final HypertyService hypertyService, final CassandraClient cassandra) {
 
         Gson gson = new Gson();
 

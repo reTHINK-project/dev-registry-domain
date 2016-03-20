@@ -32,7 +32,6 @@ public class Addresses{
         if(addresses != null){
             String[] ips = addresses.split(",");
             for(String ip : ips){
-                System.out.println(ip);
                 try{
                     contactPoints.add(InetAddress.getByName(ip));
                 } catch(UnknownHostException e){

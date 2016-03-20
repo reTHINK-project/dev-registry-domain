@@ -35,9 +35,11 @@ public class CassandraClient{
     private static final Logger log = LogManager.getLogger(CassandraClient.class.getName());
 
     public static final String KEYSPACE  = "rethink";
-    public static final String HYPERTIES = "hyperties";
+    public static final String IDHYPERTIES = "hyperties_by_id";
+    public static final String USERHYPERTIES = "hyperties_by_user";
     private Cluster cluster;
     private Session session;
+    private int clusterSize;
 
     public void connect(Collection<InetAddress> addresses){
         this.cluster = Cluster.builder()
@@ -49,6 +51,7 @@ public class CassandraClient{
         try{
             session = cluster.connect(KEYSPACE);
             final Metadata metadata = this.cluster.getMetadata();
+            setClusterSize(metadata.getAllHosts().size());
             out.printf("Connected to cluster: %s\n", metadata.getClusterName());
             for (final Host host : metadata.getAllHosts()){
                 out.printf("Datacenter: %s; Host: %s; Rack: %s\n",
@@ -60,7 +63,12 @@ public class CassandraClient{
     }
 
     public void insertHyperty(HypertyInstance hyperty){
-        Statement statement = QueryBuilder.insertInto(KEYSPACE, HYPERTIES)
+        insertStatement(hyperty, USERHYPERTIES);
+        insertStatement(hyperty, IDHYPERTIES);
+    }
+
+    private void insertStatement(HypertyInstance hyperty, String table){
+        Statement statement = QueryBuilder.insertInto(KEYSPACE, table)
             .value("hypertyID", hyperty.getHypertyID())
             .value("user", hyperty.getUserID())
             .value("descriptor", hyperty.getDescriptor())
@@ -78,12 +86,13 @@ public class CassandraClient{
     public ArrayList<String> getAllUsers(){
         ArrayList<String> data = new ArrayList<String>();
 
-        Statement select = QueryBuilder.select().all().from(KEYSPACE, HYPERTIES);
+        Statement select = QueryBuilder.select().column("user").from(KEYSPACE, USERHYPERTIES);
         ResultSet results = session.execute(select);
 
         if(results == null) return new ArrayList();
 
         for (Row row : results){
+            System.out.println(row);
             String user = row.getString("user");
             if(!data.contains(user)){
                 data.add(user);
@@ -93,16 +102,16 @@ public class CassandraClient{
     }
 
     public HypertyInstance getHyperty(String hypertyID){
-        Statement select = QueryBuilder.select().all().from(KEYSPACE, HYPERTIES)
+        Statement select = QueryBuilder.select().all().from(KEYSPACE, IDHYPERTIES)
                                                       .where(QueryBuilder.eq("hypertyID", hypertyID));
         ResultSet results = session.execute(select);
         Row row = results.one();
         return new HypertyInstance(row.getString("descriptor"), row.getString("startingTime"),
-                row.getString("lastModified"), row.getInt("expires"));
+                row.getString("user"), row.getString("lastModified"), row.getInt("expires"));
     }
 
     public boolean hypertyExists(String hypertyID){
-        Statement select = QueryBuilder.select().all().from(KEYSPACE, HYPERTIES)
+        Statement select = QueryBuilder.select().all().from(KEYSPACE, IDHYPERTIES)
                                                       .where(QueryBuilder.eq("hypertyID", hypertyID));
 
         ResultSet results = session.execute(select);
@@ -111,7 +120,7 @@ public class CassandraClient{
     }
 
     public boolean userExists(String userID){
-        Statement select = QueryBuilder.select().all().from(KEYSPACE, HYPERTIES)
+        Statement select = QueryBuilder.select().all().from(KEYSPACE, USERHYPERTIES)
                                                       .where(QueryBuilder.eq("user", userID));
         ResultSet results = session.execute(select);
         Row row = results.one();
@@ -119,14 +128,32 @@ public class CassandraClient{
     }
 
     public void updateHyperty(HypertyInstance hyperty){
-        Statement update = QueryBuilder.update(KEYSPACE, HYPERTIES)
+        updateTableIDs(hyperty, IDHYPERTIES);
+        updateTableUsers(hyperty, USERHYPERTIES);
+        log.info("Updated in database hyperty with ID: " + hyperty.getHypertyID());
+    }
+
+    private void updateTableIDs(HypertyInstance hyperty, String table){
+        Statement update = QueryBuilder.update(KEYSPACE, table)
                                        .with(QueryBuilder.set("descriptor", hyperty.getDescriptor()))
                                        .and(QueryBuilder.set("lastModified", hyperty.getLastModified()))
                                        .and(QueryBuilder.set("expires", hyperty.getExpires()))
                                        .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()));
         if(getSession() != null){
             getSession().execute(update);
-            log.info("Updated in database hyperty with ID: " + hyperty.getHypertyID());
+        }
+        else log.error("Invalid cassandra session.");
+    }
+
+    private void updateTableUsers(HypertyInstance hyperty, String table){
+        Statement update = QueryBuilder.update(KEYSPACE, table)
+                                       .with(QueryBuilder.set("descriptor", hyperty.getDescriptor()))
+                                       .and(QueryBuilder.set("lastModified", hyperty.getLastModified()))
+                                       .and(QueryBuilder.set("expires", hyperty.getExpires()))
+                                       .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()))
+                                       .and(QueryBuilder.eq("user", hyperty.getUserID()));
+        if(getSession() != null){
+            getSession().execute(update);
         }
         else log.error("Invalid cassandra session.");
     }
@@ -134,7 +161,7 @@ public class CassandraClient{
     public Map<String, HypertyInstance> getUserHyperties(String userID){
         Map<String, HypertyInstance> allUserHyperties = new HashMap();
 
-        Statement select = QueryBuilder.select().all().from(KEYSPACE, HYPERTIES)
+        Statement select = QueryBuilder.select().all().from(KEYSPACE, USERHYPERTIES)
                                                       .where(QueryBuilder.eq("user", userID));
         ResultSet results = session.execute(select);
 
@@ -150,14 +177,30 @@ public class CassandraClient{
     }
 
     public void deleteUserHyperty(String hypertyID){
-        Statement delete = QueryBuilder.delete().from(KEYSPACE, HYPERTIES)
+        HypertyInstance hyperty = getHyperty(hypertyID);
+
+        Statement deleteFromID = QueryBuilder.delete().from(KEYSPACE, IDHYPERTIES)
                                                       .where(QueryBuilder.eq("hypertyID", hypertyID));
-        getSession().execute(delete);
+
+        Statement deleteFromUsers = QueryBuilder.delete().from(KEYSPACE, USERHYPERTIES)
+                                                      .where(QueryBuilder.eq("user", hyperty.getUserID()))
+                                                      .and(QueryBuilder.eq("hypertyid", hypertyID));
+
+        getSession().execute(deleteFromID);
+        getSession().execute(deleteFromUsers);
         log.info("Deleted from database hyperty with ID: " + hypertyID);
     }
 
     public Session getSession(){
         return this.session;
+    }
+
+    public int getClusterSize(){
+        return this.clusterSize;
+    }
+
+    public void setClusterSize(int size){
+        this.clusterSize = size;
     }
 
     public void close(){
