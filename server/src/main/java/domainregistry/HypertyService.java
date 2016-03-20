@@ -33,7 +33,7 @@ public class HypertyService{
 
         if(cassandra.userExists(userID)) //if the user still have hyperties
             return allUserHyperties;
-        
+
         else throw new UserNotFoundException();
     }
 

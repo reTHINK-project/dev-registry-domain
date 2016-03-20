@@ -26,9 +26,16 @@ public class HypertyController {
 
     static Logger log = Logger.getLogger(HypertyController.class.getName());
 
-    public HypertyController(final HypertyService hypertyService, final CassandraClient cassandra) {
+    public HypertyController(final StatusService status, final HypertyService hypertyService, final CassandraClient cassandra) {
 
         Gson gson = new Gson();
+
+        get("/live", (req, res) -> {
+            res.type("application/json");
+            Map<String, String> databaseStats = status.getCassandraStats(cassandra);
+            res.status(200);
+            return gson.toJson(databaseStats);
+        });
 
         get("/hyperty/user/*", (req,res) -> {
             res.type("application/json");

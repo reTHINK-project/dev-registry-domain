@@ -41,6 +41,19 @@ public class HypertyInstance {
         this.expires = expires;
     }
 
+    public HypertyInstance(String descriptor,
+                           String startingTime,
+                           String userID,
+                           String lastModified,
+                           int expires){
+
+        this.descriptor = descriptor;
+        this.startingTime = startingTime;
+        this.lastModified = lastModified;
+        this.expires = expires;
+        this.userID = userID;
+    }
+
     public HypertyInstance(String descriptor){
         this.descriptor = descriptor;
     }
