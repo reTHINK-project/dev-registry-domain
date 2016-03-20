@@ -194,8 +194,11 @@ public class CassandraClient{
     }
 
     public int getClusterSize(){
-        Metadata metadata = this.cluster.getMetadata();
-        return metadata.getAllHosts().size();
+        if(this.cluster != null){
+            Metadata metadata = this.cluster.getMetadata();
+            return metadata.getAllHosts().size();
+        }
+        else return 0;
     }
 
     public void close(){
