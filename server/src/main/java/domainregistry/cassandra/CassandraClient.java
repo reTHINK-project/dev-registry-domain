@@ -39,7 +39,6 @@ public class CassandraClient{
     public static final String USERHYPERTIES = "hyperties_by_user";
     private Cluster cluster;
     private Session session;
-    private int clusterSize;
 
     public void connect(Collection<InetAddress> addresses){
         this.cluster = Cluster.builder()
@@ -51,7 +50,6 @@ public class CassandraClient{
         try{
             session = cluster.connect(KEYSPACE);
             final Metadata metadata = this.cluster.getMetadata();
-            setClusterSize(metadata.getAllHosts().size());
             out.printf("Connected to cluster: %s\n", metadata.getClusterName());
             for (final Host host : metadata.getAllHosts()){
                 out.printf("Datacenter: %s; Host: %s; Rack: %s\n",
@@ -196,11 +194,8 @@ public class CassandraClient{
     }
 
     public int getClusterSize(){
-        return this.clusterSize;
-    }
-
-    public void setClusterSize(int size){
-        this.clusterSize = size;
+        Metadata metadata = this.cluster.getMetadata();
+        return metadata.getAllHosts().size();
     }
 
     public void close(){
