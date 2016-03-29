@@ -25,92 +25,94 @@ public class HypertyService{
     static Logger log = Logger.getLogger(HypertyService.class.getName());
 
 
-    public Map<String, HypertyInstance> getAllHyperties(CassandraClient cassandra, String userID) {
-        Map<String, HypertyInstance> allUserHyperties = cassandra.getUserHyperties(userID);
+    public Map<String, HypertyInstance> getAllHyperties(Connection connectionClient, String userID) {
+        Map<String, HypertyInstance> allUserHyperties = connectionClient.getUserHyperties(userID);
 
-        if(cassandra.userExists(userID))
-            deleteExpiredHyperties(cassandra, userID);
+        if(connectionClient.userExists(userID)){
+            deleteExpiredHyperties(connectionClient, userID);
+        }
 
-        if(cassandra.userExists(userID)) //if the user still have hyperties
+        if(connectionClient.userExists(userID)){ //if the user still have hyperties
             return allUserHyperties;
+        }
 
         else throw new UserNotFoundException();
     }
 
-    public void createUserHyperty(CassandraClient cassandra, HypertyInstance newHyperty){
+    public void createUserHyperty(Connection connectionClient, HypertyInstance newHyperty){
         String userID = newHyperty.getUserID();
         String hypertyID = newHyperty.getHypertyID();
 
-        if(cassandra.userExists(userID)){
-            checkHypertyExistence(cassandra, newHyperty);
+        if(connectionClient.userExists(userID)){
+            checkHypertyExistence(connectionClient, newHyperty);
             return;
         }
 
-        if(cassandra.hypertyExists(hypertyID))
+        if(connectionClient.hypertyExists(hypertyID))
             throw new CouldNotCreateOrUpdateHypertyException();
 
-        else newHyperty(cassandra, newHyperty);
+        else newHyperty(connectionClient, newHyperty);
     }
 
-    public void deleteUserHyperty(CassandraClient cassandra, String userID, String hypertyID){
-        if(!cassandra.userExists(userID))
+    public void deleteUserHyperty(Connection connectionClient, String userID, String hypertyID){
+        if(!connectionClient.userExists(userID))
             throw new UserNotFoundException();
 
-        if(!cassandra.hypertyExists(hypertyID))
+        if(!connectionClient.hypertyExists(hypertyID))
             throw new DataNotFoundException();
 
-        Map<String, HypertyInstance> userHyperties = cassandra.getUserHyperties(userID);
+        Map<String, HypertyInstance> userHyperties = connectionClient.getUserHyperties(userID);
         if(userHyperties.keySet().contains(hypertyID)){
-            cassandra.deleteUserHyperty(hypertyID);
+            connectionClient.deleteUserHyperty(hypertyID);
         }
 
         else throw new CouldNotRemoveHypertyException();
     }
 
-    protected void deleteExpiredHyperties(CassandraClient cassandra, String userID){
+    protected void deleteExpiredHyperties(Connection connectionClient, String userID){
         String actualDate = Dates.getActualDate();
-        Map<String, HypertyInstance> userHyperties = cassandra.getUserHyperties(userID);
+        Map<String, HypertyInstance> userHyperties = connectionClient.getUserHyperties(userID);
         for (Map.Entry<String, HypertyInstance> entry : userHyperties.entrySet()){
             String lastModified = entry.getValue().getLastModified();
             int expires = entry.getValue().getExpires();
             if(Dates.dateCompare(actualDate, lastModified) > expires){
-                cassandra.deleteUserHyperty(entry.getKey());
+                connectionClient.deleteUserHyperty(entry.getKey());
             }
         }
     }
 
-    private void checkHypertyExistence(CassandraClient cassandra, HypertyInstance hyperty){
-        if(cassandra.hypertyExists(hyperty.getHypertyID()))
-            checkHypertyOwnership(cassandra, hyperty);
+    private void checkHypertyExistence(Connection connectionClient, HypertyInstance hyperty){
+        if(connectionClient.hypertyExists(hyperty.getHypertyID()))
+            checkHypertyOwnership(connectionClient, hyperty);
 
-        else newHyperty(cassandra, hyperty);
+        else newHyperty(connectionClient, hyperty);
     }
 
-    public void checkHypertyOwnership(CassandraClient cassandra, HypertyInstance hyperty){
+    public void checkHypertyOwnership(Connection connectionClient, HypertyInstance hyperty){
         String userID = hyperty.getUserID();
         String hypertyID = hyperty.getHypertyID();
-        Map<String, HypertyInstance> userHyperties = cassandra.getUserHyperties(userID);
+        Map<String, HypertyInstance> userHyperties = connectionClient.getUserHyperties(userID);
 
         if(userHyperties.keySet().contains(hypertyID))
-            updateHyperty(cassandra, hyperty);
+            updateHyperty(connectionClient, hyperty);
 
         else throw new CouldNotCreateOrUpdateHypertyException();
     }
 
-    private void newHyperty(CassandraClient cassandra, HypertyInstance newHyperty){
+    private void newHyperty(Connection connectionClient, HypertyInstance newHyperty){
         String userID = newHyperty.getUserID();
         String hypertyID = newHyperty.getHypertyID();
         newHyperty.setStartingTime(Dates.getActualDate());
         newHyperty.setLastModified(Dates.getActualDate());
-        cassandra.insertHyperty(newHyperty);
+        connectionClient.insertHyperty(newHyperty);
     }
 
-    private void updateHyperty(CassandraClient cassandra, HypertyInstance newHyperty){
+    private void updateHyperty(Connection connectionClient, HypertyInstance newHyperty){
         String userID = newHyperty.getUserID();
         String hypertyID = newHyperty.getHypertyID();
-        HypertyInstance oldHyperty = cassandra.getHyperty(hypertyID);
+        HypertyInstance oldHyperty = connectionClient.getHyperty(hypertyID);
         newHyperty.setLastModified(Dates.getActualDate());
         newHyperty.setStartingTime(oldHyperty.getStartingTime());
-        cassandra.updateHyperty(newHyperty);
+        connectionClient.updateHyperty(newHyperty);
     }
 }

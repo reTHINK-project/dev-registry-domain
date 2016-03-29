@@ -22,11 +22,11 @@ import java.util.*;
 
 class HeartBeatThread extends Thread {
     HypertyService service;
-    CassandraClient cassandra;
+    Connection storageClient;
 
-    public HeartBeatThread(HypertyService service, CassandraClient cassandra){
+    public HeartBeatThread(HypertyService service, Connection storageClient){
         this.service = service;
-        this.cassandra = cassandra;
+        this.storageClient = storageClient;
     }
 
     @Override
@@ -34,19 +34,19 @@ class HeartBeatThread extends Thread {
         try{
             while(true){
                 TimeUnit.DAYS.sleep(1); //cleanup is executed once a day
-                removeOldHyperties(this.cassandra);
+                removeOldHyperties(this.storageClient);
             }
         }catch(InterruptedException e){
             e.printStackTrace();
         }
     }
 
-    private void removeOldHyperties(CassandraClient cassandra){
-        ArrayList<String> users = cassandra.getAllUsers();
+    private void removeOldHyperties(Connection storageClient){
+        ArrayList<String> users = storageClient.getAllUsers();
 
         if(!users.isEmpty()){
             for(String user : users){
-                service.deleteExpiredHyperties(cassandra, user);
+                service.deleteExpiredHyperties(storageClient, user);
             }
         }
     }

@@ -25,33 +25,33 @@ import com.google.gson.JsonObject;
 
 public class StatusService {
 
-    private Map<String, String> cassandraStats = new HashMap();
-
-    public Map<String, String> getCassandraStats(CassandraClient cassandra){
-        cassandraStats.put("Status", "up");
-        cassandraSession(cassandra);
-        cassandraClusterSize(cassandra);
-        numberOfUsers(cassandra);
-        numberOfhyperties(cassandra);
-        return this.cassandraStats;
-    }
-
-    private void cassandraSession(CassandraClient cassandra){
-        if(cassandra.getSession() != null)
-            cassandraStats.put("Database connection", "up");
-
-        else cassandraStats.put("Database connection", "down");
-    }
-
-    private void cassandraClusterSize(CassandraClient cassandra){
-        cassandraStats.put("Database cluster size", String.valueOf(cassandra.getClusterSize()));
-    }
-
-    private void numberOfUsers(CassandraClient cassandra){
-        cassandraStats.put("Number of users", String.valueOf(cassandra.getAllUsers().size()));
-    }
-
-    private void numberOfhyperties(CassandraClient cassandra){
-        cassandraStats.put("Number of hyperties", String.valueOf(cassandra.getNumberOfHyperties()));
-    }
+    // private Map<String, String> cassandraStats = new HashMap();
+    //
+    // public Map<String, String> getCassandraStats(Connection connectionClient){
+    //     cassandraStats.put("Status", "up");
+    //     cassandraSession(connectionClient);
+    //     cassandraClusterSize(connectionClient);
+    //     numberOfUsers(connectionClient);
+    //     numberOfhyperties(connectionClient);
+    //     return this.cassandraStats;
+    // }
+    //
+    // private void cassandraSession(Connection connectionClient){
+    //     if(connectionClient.getSession() != null)
+    //         cassandraStats.put("Database connection", "up");
+    //
+    //     else cassandraStats.put("Database connection", "down");
+    // }
+    //
+    // private void cassandraClusterSize(Connection connectionClient){
+    //     cassandraStats.put("Database cluster size", String.valueOf(connectionClient.getClusterSize()));
+    // }
+    //
+    // private void numberOfUsers(Connection connectionClient){
+    //     cassandraStats.put("Number of users", String.valueOf(connectionClient.getAllUsers().size()));
+    // }
+    //
+    // private void numberOfhyperties(Connection connectionClient){
+    //     cassandraStats.put("Number of hyperties", String.valueOf(connectionClient.getNumberOfHyperties()));
+    // }
 }
