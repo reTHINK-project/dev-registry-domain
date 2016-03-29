@@ -26,23 +26,23 @@ public class HypertyController {
 
     static Logger log = Logger.getLogger(HypertyController.class.getName());
 
-    public HypertyController(final StatusService status, final HypertyService hypertyService, final CassandraClient cassandra) {
+    public HypertyController(final HypertyService hypertyService, final Connection connectionClient) {
 
         Gson gson = new Gson();
 
-        get("/live", (req, res) -> {
-            res.type("application/json");
-            Map<String, String> databaseStats = status.getCassandraStats(cassandra);
-            res.status(200);
-            return gson.toJson(databaseStats);
-        });
+        // get("/live", (req, res) -> {
+        //     res.type("application/json");
+        //     Map<String, String> databaseStats = status.getCassandraStats(connectionClient);
+        //     res.status(200);
+        //     return gson.toJson(databaseStats);
+        // });
 
         get("/hyperty/user/*", (req,res) -> {
             res.type("application/json");
             String[] encodedURL = req.url().split("/");
             String userID = decodeUrl(encodedURL[encodedURL.length - 1]);
             log.info("Received request for " + userID + " hyperties");
-            Map<String, HypertyInstance> userHyperties = hypertyService.getAllHyperties(cassandra, userID);
+            Map<String, HypertyInstance> userHyperties = hypertyService.getAllHyperties(connectionClient, userID);
             res.status(200);
             return gson.toJson(userHyperties);
         });
@@ -56,7 +56,7 @@ public class HypertyController {
             HypertyInstance hyperty = gson.fromJson(body, HypertyInstance.class);
             hyperty.setUserID(userID);
             hyperty.setHypertyID(hypertyID);
-            hypertyService.createUserHyperty(cassandra, hyperty);
+            hypertyService.createUserHyperty(connectionClient, hyperty);
             res.status(200);
             return gson.toJson(new Messages("Hyperty created"));
         });
@@ -66,7 +66,7 @@ public class HypertyController {
             String[] encodedURL = req.url().split("/");
             String userID = decodeUrl(encodedURL[encodedURL.length - 2]);
             String hypertyID = decodeUrl(encodedURL[encodedURL.length - 1]);
-            hypertyService.deleteUserHyperty(cassandra, userID, hypertyID);
+            hypertyService.deleteUserHyperty(connectionClient, userID, hypertyID);
             res.status(200);
             return gson.toJson(new Messages("Hyperty deleted"));
         });

@@ -24,18 +24,33 @@ public class Main {
     static Logger log = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
-        Collection<InetAddress> clusterContactPoinsts = Addresses.getClusterContactPoints();
-        final CassandraClient cassandraClient = new CassandraClient();
+        String storageType = System.getenv("STORAGE_TYPE");
 
-        if (!clusterContactPoinsts.isEmpty())
-            cassandraClient.connect(clusterContactPoinsts);
+        if(storageType.equals("CASSANDRA")){
+            log.info("Cassandra choosen. Requests will be saved in a Cassandra db cluster");
 
-        else log.error("No contact points provided. Requests wont be saved.");
+            Collection<InetAddress> clusterContactPoinsts = Addresses.getClusterContactPoints();
+            final CassandraClient cassandraClient = new CassandraClient();
 
-        HypertyService service = new HypertyService();
-        StatusService status = new StatusService();
-        new HypertyController(status, service, cassandraClient);
-        new HeartBeatThread(service, cassandraClient).start();
+            if (!clusterContactPoinsts.isEmpty())
+               ((CassandraClient) cassandraClient).connect(clusterContactPoinsts);
+
+            else log.error("No contact points provided. Requests wont be saved.");
+
+            HypertyService service = new HypertyService();
+            // StatusService status = new StatusService();
+            new HypertyController(service, cassandraClient);
+            new HeartBeatThread(service, cassandraClient).start();
+        }
+
+        if(storageType.equals("RAM")){
+            log.info("RAM choosen. Requests will be saved in-memory");
+            final Connection ramClient = new RamClient();
+            HypertyService service = new HypertyService();
+            // StatusService status = new StatusService();
+            new HypertyController(service, ramClient);
+            new HeartBeatThread(service, ramClient).start();
+        }
     }
 }
 
