@@ -28,6 +28,7 @@ public class StatusService {
     private Map<String, String> cassandraStats = new HashMap();
 
     public Map<String, String> getCassandraStats(CassandraClient cassandra){
+        cassandraStats.put("Status", "up");
         cassandraSession(cassandra);
         cassandraClusterSize(cassandra);
         return this.cassandraStats;
