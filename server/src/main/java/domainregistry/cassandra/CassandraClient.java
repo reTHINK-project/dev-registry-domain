@@ -81,6 +81,23 @@ public class CassandraClient{
         else log.error("Invalid cassandra session.");
     }
 
+    public int getNumberOfHyperties(){
+        ArrayList<String> data = new ArrayList<String>();
+
+        Statement select = QueryBuilder.select().column("hypertyID").from(KEYSPACE, IDHYPERTIES);
+        ResultSet results = session.execute(select);
+
+        if(results == null) return 0;
+
+        for (Row row : results){
+            String hyperty = row.getString("hypertyID");
+            if(!data.contains(hyperty)){
+                data.add(hyperty);
+            }
+        }
+        return data.size();
+    }
+
     public ArrayList<String> getAllUsers(){
         ArrayList<String> data = new ArrayList<String>();
 
@@ -90,7 +107,6 @@ public class CassandraClient{
         if(results == null) return new ArrayList();
 
         for (Row row : results){
-            System.out.println(row);
             String user = row.getString("user");
             if(!data.contains(user)){
                 data.add(user);

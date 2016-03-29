@@ -31,6 +31,8 @@ public class StatusService {
         cassandraStats.put("Status", "up");
         cassandraSession(cassandra);
         cassandraClusterSize(cassandra);
+        numberOfUsers(cassandra);
+        numberOfhyperties(cassandra);
         return this.cassandraStats;
     }
 
@@ -43,5 +45,13 @@ public class StatusService {
 
     private void cassandraClusterSize(CassandraClient cassandra){
         cassandraStats.put("Database cluster size", String.valueOf(cassandra.getClusterSize()));
+    }
+
+    private void numberOfUsers(CassandraClient cassandra){
+        cassandraStats.put("Number of users", String.valueOf(cassandra.getAllUsers().size()));
+    }
+
+    private void numberOfhyperties(CassandraClient cassandra){
+        cassandraStats.put("Number of hyperties", String.valueOf(cassandra.getNumberOfHyperties()));
     }
 }
