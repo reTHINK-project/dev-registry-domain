@@ -23,16 +23,16 @@ import com.google.gson.JsonObject;
 
 public class HypertyController {
 
-    public HypertyController(final HypertyService hypertyService, final Connection connectionClient) {
+    public HypertyController(StatusService status, final HypertyService hypertyService, final Connection connectionClient) {
 
         Gson gson = new Gson();
 
-        // get("/live", (req, res) -> {
-        //     res.type("application/json");
-        //     Map<String, String> databaseStats = status.getCassandraStats(connectionClient);
-        //     res.status(200);
-        //     return gson.toJson(databaseStats);
-        // });
+        get("/live", (req, res) -> {
+            res.type("application/json");
+            Map<String, String> databaseStats = status.getDomainRegistryStats();
+            res.status(200);
+            return gson.toJson(databaseStats);
+        });
 
         get("/hyperty/user/*", (req,res) -> {
             res.type("application/json");
