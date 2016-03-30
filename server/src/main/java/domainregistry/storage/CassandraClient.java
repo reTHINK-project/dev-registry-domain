@@ -37,6 +37,8 @@ public class CassandraClient implements Connection{
     public static final String KEYSPACE  = "rethink";
     public static final String IDHYPERTIES = "hyperties_by_id";
     public static final String USERHYPERTIES = "hyperties_by_user";
+    public static final String DOWN = "DOWN";
+
     private Cluster cluster;
     private Session session;
 
@@ -212,6 +214,16 @@ public class CassandraClient implements Connection{
     public int getClusterSize(){
         Metadata metadata = this.cluster.getMetadata();
         return metadata.getAllHosts().size();
+    }
+
+    public int getLiveNodes(){
+        int numLiveNodes = getClusterSize();
+        for(Host h : this.cluster.getMetadata().getAllHosts()){
+            if(h.getState().equals(DOWN)){
+                numLiveNodes--;
+            }
+        }
+        return numLiveNodes;
     }
 
     public void close(){

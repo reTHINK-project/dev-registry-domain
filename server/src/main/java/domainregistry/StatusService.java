@@ -29,6 +29,7 @@ public class StatusService {
     private static final String TYPE = "Storage type";
     private static final String DB_CONNECTION_STATUS = "Database connection";
     private static final String DB_SIZE = "Database cluster size";
+    private static final String LIVE_NODES = "Database up nodes";
     private static final String UP = "up";
     private static final String STATUS = "status";
 
@@ -55,6 +56,7 @@ public class StatusService {
                 domainRegistryStats.put(TYPE, CASSANDRA);
                 domainRegistryStats.put(DB_SIZE, getClusterDBSize());
                 domainRegistryStats.put(DB_CONNECTION_STATUS, UP);
+                domainRegistryStats.put(LIVE_NODES, getClusterLiveNodes());
                 break;
             case INMEMORY:
                 domainRegistryStats.put(TYPE, INMEMORY);
@@ -68,5 +70,9 @@ public class StatusService {
 
     private String getClusterDBSize(){
         return String.valueOf(((CassandraClient) this.connection).getClusterSize());
+    }
+
+    private String getClusterLiveNodes(){
+        return String.valueOf(((CassandraClient) this.connection).getLiveNodes());
     }
 }
