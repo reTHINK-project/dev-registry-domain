@@ -74,7 +74,7 @@ describe 'domain registry api tests' do
       expect_json(:message => "Could not create or update hyperty")
     end
 
-    it 'should add a new hyperty' do #existent user tries to create or update another user's hyperty
+    it 'should add a new hyperty' do #existent user creates non-existent hyperty
       put '/ruijose@inesc-id.pt/hyperty6', @hyperty_four_details
       expect_status(200)
       expect_json(:message => "Hyperty created")

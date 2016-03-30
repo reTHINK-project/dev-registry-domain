@@ -17,13 +17,16 @@
 package domainregistry;
 
 import java.util.*;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 public class RamClient implements Connection{
+    static Logger log = Logger.getLogger(RamClient.class.getName());
 
     private Map<String, Map<String, HypertyInstance>> userServices = new HashMap<>();
 
     public Map<String, HypertyInstance> getUserHyperties(String userID) {
-        System.out.println(userServices.get(userID).entrySet().size());
+        log.info("Received request for " + userID + " hyperties");
         return userServices.get(userID);
     }
 
@@ -35,6 +38,10 @@ public class RamClient implements Connection{
         for (String userID : userServices.keySet()) {
             if(userServices.get(userID).keySet().contains(hypertyID)){
                 userServices.get(userID).keySet().remove(hypertyID);
+                log.info("Removed hyperty " + hypertyID + " from " + userID);
+            }
+            if(userServices.get(userID).keySet().isEmpty()){
+                userServices.remove(userID);
             }
         }
     }
@@ -52,15 +59,18 @@ public class RamClient implements Connection{
         String user = hyperty.getUserID();
         if(userExists(user)){
             userServices.get(user).put(hyperty.getHypertyID(), hyperty);
+            log.info("Inserted hyperty with ID " + hyperty.getHypertyID());
             return;
         }
         Map<String, HypertyInstance> services = new HashMap<>();
         services.put(hyperty.getHypertyID(), hyperty);
         userServices.put(user, services);
+        log.info("Created user " + user + " and hyperty " + hyperty.getHypertyID());
     }
 
     public void updateHyperty(HypertyInstance newHyperty){
         userServices.get(newHyperty.getUserID()).put(newHyperty.getHypertyID(), newHyperty);
+        log.info("Updated hyperty " + newHyperty.getHypertyID() + " from user " + newHyperty.getUserID());
     }
 
     public ArrayList<String> getAllUsers(){

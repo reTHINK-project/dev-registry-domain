@@ -32,10 +32,11 @@ public class Main {
             Collection<InetAddress> clusterContactPoinsts = Addresses.getClusterContactPoints();
             final CassandraClient cassandraClient = new CassandraClient();
 
-            if (!clusterContactPoinsts.isEmpty())
-               ((CassandraClient) cassandraClient).connect(clusterContactPoinsts);
-
-            else log.error("No contact points provided. Requests wont be saved.");
+            if (clusterContactPoinsts.isEmpty()){
+                log.error("No contact points provided. Program will exit.");
+                return;
+            }
+            else ((CassandraClient) cassandraClient).connect(clusterContactPoinsts);
 
             HypertyService service = new HypertyService();
             // StatusService status = new StatusService();
