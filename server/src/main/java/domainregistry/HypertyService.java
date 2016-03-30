@@ -32,7 +32,7 @@ public class HypertyService{
             deleteExpiredHyperties(connectionClient, userID);
         }
 
-        if(connectionClient.userExists(userID)){ //if the user still have hyperties
+        if(connectionClient.userExists(userID) && !allUserHyperties.isEmpty()){ //if the user still have hyperties
             return allUserHyperties;
         }
 
@@ -72,7 +72,9 @@ public class HypertyService{
     protected void deleteExpiredHyperties(Connection connectionClient, String userID){
         String actualDate = Dates.getActualDate();
         Map<String, HypertyInstance> userHyperties = connectionClient.getUserHyperties(userID);
-        for (Map.Entry<String, HypertyInstance> entry : userHyperties.entrySet()){
+        Map<String, HypertyInstance> copy = new HashMap<String, HypertyInstance>(userHyperties);
+
+        for (Map.Entry<String, HypertyInstance> entry : copy.entrySet()){
             String lastModified = entry.getValue().getLastModified();
             int expires = entry.getValue().getExpires();
             if(Dates.dateCompare(actualDate, lastModified) > expires){

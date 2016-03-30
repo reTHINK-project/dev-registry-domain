@@ -17,14 +17,11 @@
 package domainregistry;
 
 import static spark.Spark.*;
-import org.apache.log4j.Logger;
 import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 public class HypertyController {
-
-    static Logger log = Logger.getLogger(HypertyController.class.getName());
 
     public HypertyController(final HypertyService hypertyService, final Connection connectionClient) {
 
@@ -41,7 +38,6 @@ public class HypertyController {
             res.type("application/json");
             String[] encodedURL = req.url().split("/");
             String userID = decodeUrl(encodedURL[encodedURL.length - 1]);
-            log.info("Received request for " + userID + " hyperties");
             Map<String, HypertyInstance> userHyperties = hypertyService.getAllHyperties(connectionClient, userID);
             res.status(200);
             return gson.toJson(userHyperties);
