@@ -32,6 +32,7 @@ public class StatusService {
     private static final String LIVE_NODES = "Database up nodes";
     private static final String UP = "up";
     private static final String STATUS = "status";
+    private static final String NUM_OBJECTS = "Hyperties stored";
 
     private static final String CASSANDRA = "Cassandra";
     private static final String INMEMORY = "Ram";
@@ -56,6 +57,7 @@ public class StatusService {
                 domainRegistryStats.put(TYPE, CASSANDRA);
                 domainRegistryStats.put(DB_SIZE, getClusterDBSize());
                 domainRegistryStats.put(DB_CONNECTION_STATUS, UP);
+                domainRegistryStats.put(NUM_OBJECTS, getNumHyperties());
                 domainRegistryStats.put(LIVE_NODES, getClusterLiveNodes());
                 break;
             case INMEMORY:
@@ -74,5 +76,9 @@ public class StatusService {
 
     private String getClusterLiveNodes(){
         return String.valueOf(((CassandraClient) this.connection).getLiveNodes());
+    }
+
+    private String getNumHyperties(){
+        return String.valueOf(((CassandraClient) this.connection).getNumberOfHyperties());
     }
 }
