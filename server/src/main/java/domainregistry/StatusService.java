@@ -24,34 +24,49 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 public class StatusService {
+    static Logger log = Logger.getLogger(StatusService.class.getName());
 
-    // private Map<String, String> cassandraStats = new HashMap();
-    //
-    // public Map<String, String> getCassandraStats(Connection connectionClient){
-    //     cassandraStats.put("Status", "up");
-    //     cassandraSession(connectionClient);
-    //     cassandraClusterSize(connectionClient);
-    //     numberOfUsers(connectionClient);
-    //     numberOfhyperties(connectionClient);
-    //     return this.cassandraStats;
-    // }
-    //
-    // private void cassandraSession(Connection connectionClient){
-    //     if(connectionClient.getSession() != null)
-    //         cassandraStats.put("Database connection", "up");
-    //
-    //     else cassandraStats.put("Database connection", "down");
-    // }
-    //
-    // private void cassandraClusterSize(Connection connectionClient){
-    //     cassandraStats.put("Database cluster size", String.valueOf(connectionClient.getClusterSize()));
-    // }
-    //
-    // private void numberOfUsers(Connection connectionClient){
-    //     cassandraStats.put("Number of users", String.valueOf(connectionClient.getAllUsers().size()));
-    // }
-    //
-    // private void numberOfhyperties(Connection connectionClient){
-    //     cassandraStats.put("Number of hyperties", String.valueOf(connectionClient.getNumberOfHyperties()));
-    // }
+    private static final String TYPE = "Storage type";
+    private static final String DB_CONNECTION_STATUS = "Database connection";
+    private static final String DB_SIZE = "Database cluster size";
+    private static final String UP = "up";
+    private static final String STATUS = "status";
+
+    private static final String CASSANDRA = "Cassandra";
+    private static final String INMEMORY = "Ram";
+
+    private String databaseType;
+    private Connection connection;
+
+    private Map<String, String> domainRegistryStats = new HashMap();
+
+    public StatusService(){
+    }
+
+    public StatusService(String databaseType, Connection connection){
+        this.databaseType = databaseType;
+        this.connection = connection;
+    }
+
+    public Map<String, String> getDomainRegistryStats(){
+        domainRegistryStats.put(STATUS, UP);
+        switch (databaseType) {
+            case CASSANDRA :
+                domainRegistryStats.put(TYPE, CASSANDRA);
+                domainRegistryStats.put(DB_SIZE, getClusterDBSize());
+                domainRegistryStats.put(DB_CONNECTION_STATUS, UP);
+                break;
+            case INMEMORY:
+                domainRegistryStats.put(TYPE, INMEMORY);
+                break;
+            default :
+                log.error("Invalid storage type");
+        }
+
+        return this.domainRegistryStats;
+    }
+
+    private String getClusterDBSize(){
+        return String.valueOf(((CassandraClient) this.connection).getClusterSize());
+    }
 }

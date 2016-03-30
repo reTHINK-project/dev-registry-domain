@@ -32,7 +32,6 @@ import com.datastax.driver.core.querybuilder.Update;
 import static java.lang.System.out;
 
 public class CassandraClient implements Connection{
-
     private static final Logger log = LogManager.getLogger(CassandraClient.class.getName());
 
     public static final String KEYSPACE  = "rethink";
@@ -211,11 +210,8 @@ public class CassandraClient implements Connection{
     }
 
     public int getClusterSize(){
-        if(this.cluster != null){
-            Metadata metadata = this.cluster.getMetadata();
-            return metadata.getAllHosts().size();
-        }
-        else return 0;
+        Metadata metadata = this.cluster.getMetadata();
+        return metadata.getAllHosts().size();
     }
 
     public void close(){

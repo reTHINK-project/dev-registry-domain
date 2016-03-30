@@ -23,6 +23,9 @@ import org.apache.log4j.Logger;
 public class Main {
     static Logger log = Logger.getLogger(Main.class.getName());
 
+    private static final String CASSANDRA = "Cassandra";
+    private static final String RAM = "Ram";
+
     public static void main(String[] args) {
         String storageType = System.getenv("STORAGE_TYPE");
 
@@ -39,17 +42,17 @@ public class Main {
             else ((CassandraClient) cassandraClient).connect(clusterContactPoinsts);
 
             HypertyService service = new HypertyService();
-            // StatusService status = new StatusService();
-            new HypertyController(service, cassandraClient);
+            StatusService status = new StatusService(CASSANDRA, cassandraClient);
+            new HypertyController(status, service, cassandraClient);
             new HeartBeatThread(service, cassandraClient).start();
         }
 
         if(storageType.equals("RAM")){
             log.info("RAM choosen. Requests will be saved in-memory");
             final Connection ramClient = new RamClient();
+            StatusService status = new StatusService(RAM, ramClient);
             HypertyService service = new HypertyService();
-            // StatusService status = new StatusService();
-            new HypertyController(service, ramClient);
+            new HypertyController(status, service, ramClient);
             new HeartBeatThread(service, ramClient).start();
         }
     }
