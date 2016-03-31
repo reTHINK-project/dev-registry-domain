@@ -27,4 +27,5 @@ interface Connection{
     public void insertHyperty(HypertyInstance hyperty);
     public Map<String, HypertyInstance> getUserHyperties(String userID);
     public void deleteUserHyperty(String hypertyID);
+    public int getNumberOfHyperties();
 }
