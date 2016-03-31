@@ -52,23 +52,30 @@ public class StatusService {
 
     public Map<String, String> getDomainRegistryStats(){
         domainRegistryStats.put(STATUS, UP);
-        switch (databaseType) {
-            case CASSANDRA :
-                domainRegistryStats.put(TYPE, CASSANDRA);
-                domainRegistryStats.put(DB_SIZE, getClusterDBSize());
-                domainRegistryStats.put(DB_CONNECTION_STATUS, UP);
-                domainRegistryStats.put(NUM_OBJECTS, getNumHyperties());
-                domainRegistryStats.put(LIVE_NODES, getClusterLiveNodes());
-                domainRegistryStats.put(NUM_REQUESTS, getNumRequests());
-                break;
-            case INMEMORY:
-                domainRegistryStats.put(TYPE, INMEMORY);
-                break;
-            default :
-                log.error("Invalid storage type");
-        }
+
+        if(databaseType.equals(CASSANDRA))
+            populateCassandraStats();
+
+        else if(databaseType.equals(INMEMORY))
+            populateRamStorageStats();
+
+        else log.error("Invalid storage type");
 
         return this.domainRegistryStats;
+    }
+
+    private void populateCassandraStats(){
+        domainRegistryStats.put(TYPE, CASSANDRA);
+        domainRegistryStats.put(DB_SIZE, getClusterDBSize());
+        domainRegistryStats.put(DB_CONNECTION_STATUS, UP);
+        domainRegistryStats.put(NUM_OBJECTS, getNumHyperties());
+        domainRegistryStats.put(LIVE_NODES, getClusterLiveNodes());
+        domainRegistryStats.put(NUM_REQUESTS, getNumRequests());
+    }
+
+    private void populateRamStorageStats(){
+        domainRegistryStats.put(TYPE, INMEMORY);
+        domainRegistryStats.put(NUM_OBJECTS, getNumHyperties());
     }
 
     private String getClusterDBSize(){
@@ -79,11 +86,11 @@ public class StatusService {
         return String.valueOf(((CassandraClient) this.connection).getNumLiveNodes());
     }
 
-    private String getNumHyperties(){
-        return String.valueOf(((CassandraClient) this.connection).getNumberOfHyperties());
-    }
-
     private String getNumRequests(){
         return String.valueOf(((CassandraClient) this.connection).getNumRequestsPerformed());
+    }
+
+    private String getNumHyperties(){
+        return String.valueOf(this.connection.getNumberOfHyperties());
     }
 }
