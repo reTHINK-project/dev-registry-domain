@@ -25,14 +25,15 @@ public class Main {
 
     private static final String CASSANDRA = "Cassandra";
     private static final String RAM = "Ram";
+    private static final String STORAGE = "STORAGE_TYPE";
 
     public static void main(String[] args) {
-        String storageType = System.getenv("STORAGE_TYPE");
+        String storageType = System.getenv(STORAGE);
 
         if(storageType.equals("CASSANDRA")){
             log.info("Cassandra choosen. Requests will be saved in a Cassandra db cluster");
 
-            Collection<InetAddress> clusterContactPoinsts = Addresses.getClusterContactPoints();
+            Collection<InetAddress> clusterContactPoinsts = Addresses.getClusterContactPointsAddresses();
             final CassandraClient cassandraClient = new CassandraClient();
 
             if (clusterContactPoinsts.isEmpty()){

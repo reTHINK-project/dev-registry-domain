@@ -22,23 +22,46 @@ import java.util.*;
 import java.lang.System;
 import org.apache.log4j.Logger;
 import java.net.*;
+import java.io.IOException;
 
 public class Addresses{
     static Logger log = Logger.getLogger(Addresses.class.getName());
 
-    protected static Collection<InetAddress> getClusterContactPoints(){
-        Collection<InetAddress> contactPoints = new ArrayList<InetAddress>();
-        String addresses = System.getenv("CONTACT_POINTS_IPS");
+    private static final String CONTACT_POINTS = "CONTACT_POINTS_IPS";
+    private static final String APP_SERVERS = "APP_SERVERS_IPS";
+    private static final int TIMEOUT = 100;
+
+    protected static Collection<InetAddress> getClusterContactPointsAddresses(){
+        String adds = System.getenv(CONTACT_POINTS);
+        return getAddresses(adds);
+    }
+
+    protected static Collection<InetAddress> getAppServersAddresses(){
+        String adds = System.getenv(APP_SERVERS);
+        return getAddresses(adds);
+    }
+
+    protected static boolean isHostReachable(InetAddress host){
+        try{
+            return host.isReachable(TIMEOUT);
+        } catch (IOException e){
+            log.error("Exception catched while reaching the host. A network error occured");
+            return false;
+        }
+    }
+
+    private static Collection<InetAddress> getAddresses(String addresses){
+        Collection<InetAddress> allAddresses = new ArrayList<InetAddress>();
         if(addresses != null){
             String[] ips = addresses.split(",");
             for(String ip : ips){
                 try{
-                    contactPoints.add(InetAddress.getByName(ip));
+                    allAddresses.add(InetAddress.getByName(ip));
                 } catch(UnknownHostException e){
-                    log.error("Unknown or malformed host ip");
+                    log.error("Exception catched. Unknown or malformed host ip");
                 }
             }
-            return contactPoints;
+            return allAddresses;
         }
         else return Collections.emptyList();
     }
