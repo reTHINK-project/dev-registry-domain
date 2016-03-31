@@ -216,7 +216,7 @@ public class CassandraClient implements Connection{
         return metadata.getAllHosts().size();
     }
 
-    public int getLiveNodes(){
+    public int getNumLiveNodes(){
         int numLiveNodes = getClusterSize();
         for(Host h : this.cluster.getMetadata().getAllHosts()){
             if(h.getState().equals(DOWN)){
@@ -224,6 +224,10 @@ public class CassandraClient implements Connection{
             }
         }
         return numLiveNodes;
+    }
+
+    public long getNumRequestsPerformed(){
+        return this.cluster.getMetrics().getRequestsTimer().getCount();
     }
 
     public void close(){
