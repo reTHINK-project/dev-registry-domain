@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 
 public class HypertyService{
     static Logger log = Logger.getLogger(HypertyService.class.getName());
+    private static final String EXPIRES = "EXPIRES";
 
 
     public Map<String, HypertyInstance> getAllHyperties(Connection connectionClient, String userID) {
@@ -40,8 +41,14 @@ public class HypertyService{
     }
 
     public void createUserHyperty(Connection connectionClient, HypertyInstance newHyperty){
+        long expiresLimit = Long.valueOf(System.getenv(EXPIRES)).longValue();
         String userID = newHyperty.getUserID();
         String hypertyID = newHyperty.getHypertyID();
+
+        if(validateExpiresField(newHyperty.getExpires(), expiresLimit)){
+            newHyperty.setExpires((int) expiresLimit);
+            log.info("Expires was set to the max value allowed by the Domain Registry: " + expiresLimit);
+        }
 
         if(connectionClient.userExists(userID)){
             checkHypertyExistence(connectionClient, newHyperty);
@@ -116,5 +123,9 @@ public class HypertyService{
         newHyperty.setLastModified(Dates.getActualDate());
         newHyperty.setStartingTime(oldHyperty.getStartingTime());
         connectionClient.updateHyperty(newHyperty);
+    }
+
+    private boolean validateExpiresField(long expires, long limit){
+        return expires > limit;
     }
 }

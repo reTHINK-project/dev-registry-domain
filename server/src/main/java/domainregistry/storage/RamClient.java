@@ -85,4 +85,13 @@ public class RamClient implements Connection{
         }
         return null;
     }
+
+    public int getNumberOfHyperties(){
+        int numHyperties = 0;
+
+        for (String userID : userServices.keySet()) {
+            numHyperties += userServices.get(userID).keySet().size();
+        }
+        return numHyperties;
+    }
 }

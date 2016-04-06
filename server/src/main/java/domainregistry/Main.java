@@ -25,14 +25,18 @@ public class Main {
 
     private static final String CASSANDRA = "Cassandra";
     private static final String RAM = "Ram";
+    private static final String STORAGE = "STORAGE_TYPE";
+    private static final String EXPIRES = "EXPIRES";
 
     public static void main(String[] args) {
-        String storageType = System.getenv("STORAGE_TYPE");
+        String storageType = System.getenv(STORAGE);
+        String expires = System.getenv(EXPIRES);
+        long time = Long.valueOf(expires).longValue();
 
         if(storageType.equals("CASSANDRA")){
             log.info("Cassandra choosen. Requests will be saved in a Cassandra db cluster");
 
-            Collection<InetAddress> clusterContactPoinsts = Addresses.getClusterContactPoints();
+            Collection<InetAddress> clusterContactPoinsts = Addresses.getClusterContactPointsAddresses();
             final CassandraClient cassandraClient = new CassandraClient();
 
             if (clusterContactPoinsts.isEmpty()){
@@ -44,7 +48,7 @@ public class Main {
             HypertyService service = new HypertyService();
             StatusService status = new StatusService(CASSANDRA, cassandraClient);
             new HypertyController(status, service, cassandraClient);
-            new HeartBeatThread(service, cassandraClient).start();
+            new HeartBeatThread(service, cassandraClient, time).start();
         }
 
         if(storageType.equals("RAM")){
@@ -53,7 +57,7 @@ public class Main {
             StatusService status = new StatusService(RAM, ramClient);
             HypertyService service = new HypertyService();
             new HypertyController(status, service, ramClient);
-            new HeartBeatThread(service, ramClient).start();
+            new HeartBeatThread(service, ramClient, time).start();
         }
     }
 }

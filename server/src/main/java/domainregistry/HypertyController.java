@@ -20,14 +20,17 @@ import static spark.Spark.*;
 import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import org.apache.log4j.Logger;
 
 public class HypertyController {
+    static Logger log = Logger.getLogger(HypertyController.class.getName());
 
     public HypertyController(StatusService status, final HypertyService hypertyService, final Connection connectionClient) {
 
         Gson gson = new Gson();
 
         get("/live", (req, res) -> {
+            log.info("Live page requested. Statistics on the way...");
             res.type("application/json");
             Map<String, String> databaseStats = status.getDomainRegistryStats();
             res.status(200);
