@@ -23,9 +23,11 @@ import java.util.*;
 class HeartBeatThread extends Thread {
     HypertyService service;
     Connection storageClient;
+    long time;
 
-    public HeartBeatThread(HypertyService service, Connection storageClient){
+    public HeartBeatThread(HypertyService service, Connection storageClient, long time){
         this.service = service;
+        this.time = time;
         this.storageClient = storageClient;
     }
 
@@ -33,7 +35,7 @@ class HeartBeatThread extends Thread {
     public void run(){
         try{
             while(true){
-                TimeUnit.DAYS.sleep(1); //cleanup is executed once a day
+                TimeUnit.SECONDS.sleep(this.time);
                 removeOldHyperties(this.storageClient);
             }
         }catch(InterruptedException e){

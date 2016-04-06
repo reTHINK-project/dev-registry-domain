@@ -20,15 +20,24 @@ import java.net.*;
 import java.util.*;
 import org.apache.log4j.Logger;
 
+package domainregistry;
+
+import java.net.*;
+import java.util.*;
+import org.apache.log4j.Logger;
+
 public class Main {
     static Logger log = Logger.getLogger(Main.class.getName());
 
     private static final String CASSANDRA = "Cassandra";
     private static final String RAM = "Ram";
     private static final String STORAGE = "STORAGE_TYPE";
+    private static final String EXPIRES = "EXPIRES";
 
     public static void main(String[] args) {
         String storageType = System.getenv(STORAGE);
+        String expires = System.getenv(EXPIRES);
+        long time = Long.valueOf(expires).longValue();
 
         if(storageType.equals("CASSANDRA")){
             log.info("Cassandra choosen. Requests will be saved in a Cassandra db cluster");
@@ -45,7 +54,7 @@ public class Main {
             HypertyService service = new HypertyService();
             StatusService status = new StatusService(CASSANDRA, cassandraClient);
             new HypertyController(status, service, cassandraClient);
-            new HeartBeatThread(service, cassandraClient).start();
+            new HeartBeatThread(service, cassandraClient, time).start();
         }
 
         if(storageType.equals("RAM")){
@@ -54,8 +63,7 @@ public class Main {
             StatusService status = new StatusService(RAM, ramClient);
             HypertyService service = new HypertyService();
             new HypertyController(status, service, ramClient);
-            new HeartBeatThread(service, ramClient).start();
+            new HeartBeatThread(service, ramClient, time).start();
         }
     }
 }
-
