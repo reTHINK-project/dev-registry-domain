@@ -33,13 +33,13 @@ Similarly to the last Domain registry version, requests may be saved in-memory. 
 docker build -t domain-registry .
 docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -p 4568:4567 domain-registry
 ```
-Expires global variable defines the maximum amount of time (in seconds) a Hyperty stays in the server (see [soft state issue](https://github.com/reTHINK-project/dev-registry-domain/issues/7)). Note that the published port 4568 may be changed to another port that better suits your needs. Running the server with configuration will work exactly as the last version.
+Expires global variable defines the maximum amount of time (in seconds) a Hyperty stays in the server (see [soft state issue](https://github.com/reTHINK-project/dev-registry-domain/issues/7)). Note that the published port 4568 may be changed to another port that better suits your needs. Running the server with this configuration will work exactly as the last version.
 
 #### Requests saved in a single-host Cassandra cluster
 
 With the purpose of easily testing and experiment with the Cassandra database, the database cluster can be deployed in a single host using docker. Here's how to start a Cassandra cluster in localhost.
 
-1. A bash script is available to smooth this process. The script executes a _docker run_ command per node with a 60 seconds delay between them ([Gossip protocol](https://en.wikipedia.org/wiki/Gossip_protocol) needs).
+1. A bash [script](https://github.com/reTHINK-project/dev-registry-domain/blob/database-integration/server/start_cassandra_cluster_localhost.sh) is available to smooth this process. The script executes a _docker run_ command per node with a 60 seconds delay between them ([Gossip protocol](https://en.wikipedia.org/wiki/Gossip_protocol) needs).
 
 ```
 sh start_cassandra_cluster_localhost.sh
@@ -90,12 +90,12 @@ CREATE TABLE hyperties_by_user (
 
 SELECT * FROM hyperties_by_id;
 ```
-If that worked your should see an empty hyperties's table. Again, you may change the replication\_factor to another value. With this configuration (5 nodes with a replication factor of 3), we can tolerate the loss of 2 nodes. The following command provides information about the cluster, such as the state (up/running/down), load, and IDs.
+If that worked your should see an empty hyperties's table. Again, you may change the replication\_factor to another value. With this configuration (5 nodes with a replication factor of 3), we can tolerate the loss of 2 nodes. The following command provides information about the cluster, such as the state (Normal/Leaving/Joining/Moving), load, and IDs.
 
 ```
 docker exec cassandra-node1 exec nodetool status rethinkeyspace
 ```
-Observer that the "cassandra-node1" may be another node (e.g cassandra-node2) and "rethinkeyspace" is the name of the keyspace defined previously.
+Observe that the "cassandra-node1" may be another node (e.g cassandra-node2) and "rethinkeyspace" is the name of the keyspace defined previously.
 
 Something like this should appear:
 
