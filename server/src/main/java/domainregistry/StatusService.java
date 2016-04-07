@@ -74,9 +74,9 @@ public class StatusService {
         domainRegistryStats.put(DB_CONNECTION_STATUS, UP);
         domainRegistryStats.put(NUM_OBJECTS, getNumHyperties());
         domainRegistryStats.put(LIVE_NODES, getClusterLiveNodes());
-        domainRegistryStats.put(NUM_REQUESTS, getNumRequests());
-        domainRegistryStats.put(NUM_APP_SERVERS, getNumAppServers());
-        domainRegistryStats.put(UP_APP_SERVERS, getNumLiveServers());
+        //domainRegistryStats.put(NUM_REQUESTS, getNumRequests());
+        //domainRegistryStats.put(NUM_APP_SERVERS, getNumAppServers());
+        //domainRegistryStats.put(UP_APP_SERVERS, getNumLiveServers());
     }
 
     private void populateRamStorageStats(){
