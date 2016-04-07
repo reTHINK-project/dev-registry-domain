@@ -20,12 +20,6 @@ import java.net.*;
 import java.util.*;
 import org.apache.log4j.Logger;
 
-package domainregistry;
-
-import java.net.*;
-import java.util.*;
-import org.apache.log4j.Logger;
-
 public class Main {
     static Logger log = Logger.getLogger(Main.class.getName());
 
@@ -67,3 +61,4 @@ public class Main {
         }
     }
 }
+
