@@ -150,7 +150,7 @@ Starting the database cluster in separate machines (ie, two VMs on a cloud servi
 ```
 ruby start_cassandra_cluster.rb "82.196.2.146" "128.199.35.237" "178.62.207.90" "128.199.33.57"
 ```
-This script takes as arguments the IP addresses of the servers, in which the docker container will run. After a few minutes the cluster should be running. Use SSH to connect to the remote server and follow the sames steps as before. The previous script assumes that Docker is installed on the servers and SSH root access is enabled.
+This script takes as arguments the IP addresses of the servers, in which the docker containers will run. After a few minutes the cluster should be running. Use SSH to connect to one of the remote servers and follow the sames steps as before. The previous script assumes that Docker is installed on the servers and SSH root access is enabled.
 
 ## Rest API definition and available endpoints
 
