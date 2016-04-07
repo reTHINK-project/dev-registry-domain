@@ -191,12 +191,14 @@ GET /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose
   "hyperty://inesc-id.pt/b7b3rs4-3245-42gn-4327-238jhdq83d8": {
     "descriptor": "hyperty-catalogue://localhost/HelloHyperty",
     "startingTime": "2016-02-08T13:40:26Z",
-    "lastModified": "2016-02-08T13:41:27Z
+    "lastModified": "2016-02-08T13:41:27Z,
+    "expires" : 3600
   }
   "hyperty://inesc-id.pt/b7b3rs4-3245-42gn-4127-238jhdq83d8": {
     "descriptor": "hyperty-catalogue://localhost/HelloHyperty",
     "startingTime": "2016-02-08T13:42:00Z",
-    "lastModified": "2016-02-08T13:42:53Z"
+    "lastModified": "2016-02-08T13:42:53Z",
+    "expires" : 30
   }
 }
 ```
@@ -280,8 +282,5 @@ Note that the requested URL’s are encoded.
 ## Future functionalities
 
 The current version is missing any authentication mechanisms. Currently, it is assumed that the Message Node is the only one capable of interacting with the Local Registry, with the former being trusted by the latter to verify the user’s authorization to perform the requests. This model will have to be replaced with a secure mechanism where either the identity of the Message Node or of the user is verified.
-
-Another missing feature is persistent storage. The current version stores data in- memory. In the near future, a NoSQL database will backend the server. The
-database that will be used is Cassandra DB, primarily for providing both a masterless cluster with no single point of failures and, fast reads and extremely fast writes. Also, Cassandra uses replication to achieve high availability and durability. Each data item is replicated at N machines, where N is a pre-configured replication factor.
 
 A load balancer will also be added to distribute network traffic across the Domain Registry servers. Thereby, we hope to increase capacity (concurrent users) and application’s reliability.
