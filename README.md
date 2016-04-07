@@ -4,6 +4,7 @@
 
 
 ### How to run
+Expires global variable defines the maximum amount of time a Hyperty stays in the server ([soft state issue](https://github.com/reTHINK-project/dev-registry-domain/issues/7)).
 
 ``` 
 docker build -t domain-registry .
