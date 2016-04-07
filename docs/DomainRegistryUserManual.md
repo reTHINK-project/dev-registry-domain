@@ -15,16 +15,25 @@ the command line, a definition of the REST API and respective available endpoint
 
 ## How to deploy
 
-The Domain Registry can be deployed in one of two ways: using Docker or installing in a Java capable environment. It was only tested in GNU/Linux and Mac environments.
+The Domain Registry is deployed using Docker. All commands must be executed  inside the _server_ folder.
 
 ### How to deploy using docker
 
-A Dockerfile is provided, so is possible to run the Domain Registry through a Docker container.
+A Dockerfile is provided, so is possible to run the Domain Registry through a Docker container. Since several ways of storing requests are available, there are three possible ways to run the Domain Registry.
 
-1. Download the code from the official repository in Github.
-2. Inside the _server_ folder build the Docker image by executing the command:
-_docker build -t domain-registry ./_
-3. Now is possible to run the application inside the container, executing the following command: _docker run -p 4567:4567 domain-registry_
+1. Storing requests in-memory;
+2. Storing requests in a single-host Cassandra database cluster;
+3. Storing requests in a multi-host Cassandra database cluster.
+
+#### Requests saved in-memory
+
+Similarly to the last Domain registry version, requests may be saved in-memory. It is the simplest way to deploy the server. The commands are the following:
+
+``` 
+docker build -t domain-registry .
+docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -p 4568:4567 domain-registry
+```
+Expires global variable defines the maximum amount of time (in seconds) a Hyperty stays in the server (see [soft state issue](https://github.com/reTHINK-project/dev-registry-domain/issues/7)).
 
 ### How to run through the command line
 
