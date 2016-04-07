@@ -39,14 +39,14 @@ Expires global variable defines the maximum amount of time (in seconds) a Hypert
 
 With the purpose of easily testing and experiment with the Cassandra database, the database cluster can be deployed in a single host using docker. Here's how to start a Cassandra cluster in localhost.
 
-1. A bash [script](https://github.com/reTHINK-project/dev-registry-domain/blob/database-integration/server/start_cassandra_cluster_localhost.sh) is available to smooth this process. The script executes a _docker run_ command per node with a 60 seconds delay between them ([Gossip protocol](https://en.wikipedia.org/wiki/Gossip_protocol) needs).
+* A bash [script](https://github.com/reTHINK-project/dev-registry-domain/blob/database-integration/server/start_cassandra_cluster_localhost.sh) is available to smooth this process. The script executes a _docker run_ command per node with a 60 seconds delay between them ([Gossip protocol](https://en.wikipedia.org/wiki/Gossip_protocol) needs).
 
 ```
 sh start_cassandra_cluster_localhost.sh
 ```
 The above script will start a five node Cassandra cluster in localhost. Verify the correctness of the script by executing _docker ps_ and checking if the five containers are up and running.
 
-2. Connect to the cluster using cqlsh (Cassandra query language interactive terminal).
+* Connect to the cluster using cqlsh (Cassandra query language interactive terminal).
 
 ```
 docker run -it --link cassandra-node1:cassandra --rm cassandra sh -c 'exec cqlsh "$CASSANDRA_PORT_9042_TCP_ADDR"'
@@ -59,7 +59,7 @@ Use HELP for help.
 cqlsh>
 ```
 
-3. Execute Domain registry data model configuration in cqlsh
+* Execute Domain registry data model configuration in cqlsh
 
 Paste the following configuration into your cqlsh prompt to create a keyspace, and two hyperties's tables:
 
