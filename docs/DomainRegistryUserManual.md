@@ -64,9 +64,9 @@ cqlsh>
 Paste the following configuration into your cqlsh prompt to create a keyspace, and two hyperties's tables:
 
 ```
-CREATE KEYSPACE rethink WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3};
+CREATE KEYSPACE rethinkeyspace WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3};
 
-use rethink;
+use rethinkeyspace;
 
 CREATE TABLE hyperties_by_id (
     hypertyid text,
@@ -90,7 +90,14 @@ CREATE TABLE hyperties_by_user (
 
 SELECT * FROM hyperties_by_id;
 ```
-If that worked your should see an empty hyperties's table. Again, you may change the replication\_factor to another value. With this configuration (5 nodes with a replication factor of 3), we can tolerate the loss of 2 nodes. With the database cluster running we can start the Domain Registry with the following commands:
+If that worked your should see an empty hyperties's table. Again, you may change the replication\_factor to another value. With this configuration (5 nodes with a replication factor of 3), we can tolerate the loss of 2 nodes. The following provides information about the cluster, such as the state (up/running/down), load, and IDs.
+
+```
+docker exec cassandra-node1 exec nodetool status rethinkeyspace
+```
+Observer that the "cassandra-node1" may be another node (e.g cassandra-node2) and "rethinkeyspace" is the name of the keyspace defined previously.
+
+With the database cluster running we can start the Domain Registry with the following commands:
 
 ```
 docker build -t domain-registry .
@@ -108,7 +115,7 @@ Datacenter: datacenter1; Host: /172.17.2.135; Rack: rack1
 Datacenter: datacenter1; Host: /172.17.2.134; Rack: rack1
 ```
 
-Finally, the /live page could be used to verify Up and down Cassandra nodes. A GET /live should return the following JSON object:
+Finally, the /live page could be used to verify up and down Cassandra nodes. A GET /live should return the following JSON object:
 
 ```
 {
@@ -121,17 +128,7 @@ Finally, the /live page could be used to verify Up and down Cassandra nodes. A G
 }
 ```
 
-
-### How to run through the command line
-
-In order to being able to run the Domain Registry, one must have [Apache Maven version 3](https://maven.apache.org) and [Java SDK 8](https://www.oracle.com) installed. The first is a build automation tool for Java projects, while the second is a development environment for building applications using the Java programming language. [Git](https://git-scm.com), a source code management system, may also be needed if the user chooses to clone the Github repository. Using an environment configured with these tools, installation follows these steps:
-
-1. Download the code straight from the respective Github [repository](https://github.com/reTHINK-project/dev-registry-domain). Here, two options are available: clone the repository using a Git client (e.g. through the command line or with the Github desktop application), or download a zip file from the Github repository web page.
-2. Inside the _server_ folder execute the following command to build the
-application: _mvn clean compile_
-3. Launch theapplication with the command: _mvn exec:java_
-4. Once the server is successfully running requests can be issued by the user to
-the REST API.
+#### Requests saved in a multi-host Cassandra cluster
 
 ## Rest API definition and available endpoints
 
