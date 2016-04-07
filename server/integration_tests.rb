@@ -15,7 +15,7 @@
 require 'airborne'
 
 Airborne.configure do |config|
-  config.base_url = 'http://178.62.195.71:4567/hyperty/user'
+  config.base_url = ENV["HOST"].dup << '/hyperty/user'
 end
 
 describe 'domain registry api tests' do
