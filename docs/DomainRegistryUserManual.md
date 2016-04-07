@@ -30,8 +30,8 @@ A Dockerfile is provided, so is possible to run the Domain Registry through a Do
 Similarly to the last Domain registry version, requests may be saved in-memory. It is the simplest way to deploy the server. The commands are the following:
 
 ```
-docker build -t domain-registry .
-docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -p 4568:4567 domain-registry
+$ docker build -t domain-registry .
+$ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -p 4568:4567 domain-registry
 ```
 Expires global variable defines the maximum amount of time (in seconds) a Hyperty stays in the server (see [soft state issue](https://github.com/reTHINK-project/dev-registry-domain/issues/7)). Note that the published port 4568 may be changed to another port that better suits your needs. Running the server with this configuration will work exactly as the last version.
 
@@ -40,14 +40,14 @@ Expires global variable defines the maximum amount of time (in seconds) a Hypert
 Starting the database cluster in separate machines (ie, two VMs on a cloud service provider), requires that every Cassandra node advertises an IP address to the other nodes because the address of the container is behind the docker bridge. A script, written in ruby, is provided to setup all this configuration.
 
 ```
-ruby start_cassandra_cluster.rb "82.196.2.146" "128.199.35.237" "178.62.207.90" "128.199.33.57"
+$ ruby start_cassandra_cluster.rb "82.196.2.146" "128.199.35.237" "178.62.207.90" "128.199.33.57"
 ```
 This script takes as arguments the IP addresses of the servers in which the docker containers will run. After a few minutes the cluster should be running. Use SSH to connect to one of the nodes remote server and follow the next steps. The previous script assumes that Docker is installed on the servers and SSH root access is enabled. Otherwise, it will not work. Before running the next command, execute a _docker ps_ to confirm that the container is indeed running.
 
 * Connect to the cluster using cqlsh (Cassandra query language interactive terminal).
 
 ```
-docker run -it --link <container name>:cassandra --rm cassandra sh -c 'exec cqlsh "$CASSANDRA_PORT_9042_TCP_ADDR"'
+$ docker run -it --link <container name>:cassandra --rm cassandra sh -c 'exec cqlsh "$CASSANDRA_PORT_9042_TCP_ADDR"'
 ```
 You should see something like:
 
@@ -93,7 +93,7 @@ If that worked your should see an empty hyperties's table. Again, you may change
 The following command provides information about the cluster, such as the state (Normal/Leaving/Joining/Moving), load, and IDs.
 
 ```
-docker exec <container-name> nodetool status rethinkeyspace
+$ docker exec <container-name> nodetool status rethinkeyspace
 ```
 Observe that "rethinkeyspace" is the name of the keyspace defined previously.
 
@@ -115,8 +115,8 @@ UN  172.17.2.134  283.42 KB  256          54.5%             ec5bf2ea-37f8-4751-a
 With the database cluster running we can start the Domain Registry with the following commands:
 
 ```
-docker build -t domain-registry .
-docker run -e STORAGE_TYPE=CASSANDRA -e CONTACT_POINTS_IPS=ip1,ip2,ip3 -e EXPIRES=3600 -p 4568:4567 domain-registry
+$ docker build -t domain-registry .
+$ docker run -e STORAGE_TYPE=CASSANDRA -e CONTACT_POINTS_IPS=ip1,ip2,ip3 -e EXPIRES=3600 -p 4568:4567 domain-registry
 ```
 The environment variable CONTACT\_POINTS\_IPS comprises a set of IP addresses belonging to some database nodes. The Domain Registry server will use these IP's to discover and establish a connection with the database. The server will only use one IP, but providing the client more IPs will increase the chance for the client to continue to work with the database in case of node failures.
 
@@ -147,14 +147,14 @@ Finally, the /live page could be used to verify up and down Cassandra nodes. A G
 Starting the Domain Registry backed with a single database node is quite simple:
 
 ```
-docker run --name cassandra-node -d cassandra:latest
+$ docker run --name cassandra-node -d cassandra:latest
 ```
 
 Next, follow the same steps as before. Establish a connection to the cluster with cqlsh, execute the data model into the cqlsh prompt, verify that everything is worked as expected, and finally start the Domain Registry.
 
 ```
-docker build -t domain-registry .
-docker run -e STORAGE_TYPE=CASSANDRA -e CONTACT_POINTS_IPS=ip -e EXPIRES=3600 -p 4568:4567 domain-registry
+$ docker build -t domain-registry .
+$ docker run -e STORAGE_TYPE=CASSANDRA -e CONTACT_POINTS_IPS=ip -e EXPIRES=3600 -p 4568:4567 domain-registry
 ```
 ## Rest API definition and available endpoints
 
