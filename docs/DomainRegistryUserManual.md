@@ -22,8 +22,8 @@ The Domain Registry is deployed using Docker. All commands must be executed  ins
 A Dockerfile is provided, so is possible to run the Domain Registry through a Docker container. Since several ways of storing requests are available, there are three possible ways to run the Domain Registry.
 
 1. Storing requests in-memory;
-2. Storing requests in a single-host Cassandra database cluster;
-3. Storing requests in a multi-host Cassandra database cluster.
+2. Storing requests in a multi-host Cassandra database cluster.
+3. Storing requests in a single Cassandra node;
 
 #### Requests saved in-memory
 
@@ -40,7 +40,7 @@ Expires global variable defines the maximum amount of time (in seconds) a Hypert
 Starting the database cluster in separate machines (ie, two VMs on a cloud service provider), requires that every Cassandra node advertises an IP address to the other nodes because the address of the container is behind the docker bridge. A script, written in ruby, is provided to setup all this configuration.
 
 ```
-ruby start\_cassandra\_cluster.rb "82.196.2.146" "128.199.35.237" "178.62.207.90" "128.199.33.57"
+ruby start_cassandra_cluster.rb "82.196.2.146" "128.199.35.237" "178.62.207.90" "128.199.33.57"
 ```
 This script takes as arguments the IP addresses of the servers in which the docker containers will run. After a few minutes the cluster should be running. Use SSH to connect to one of the nodes remote server and follow the next steps. The previous script assumes that Docker is installed on the servers and SSH root access is enabled. Otherwise, it will not work. Before running the next command, execute a _docker ps_ to confirm that the container is indeed running.
 
@@ -142,7 +142,20 @@ Finally, the /live page could be used to verify up and down Cassandra nodes. A G
   "status": "up"
 }
 ```
+#### Storing requests in a single Cassandra node
 
+Starting the Domain Registry backed with a single database node is quite simple:
+
+```
+docker run --name cassandra-node -d cassandra:latest
+```
+
+Next, follow the same steps as before. Establish a connection to the cluster with cqlsh, execute the data model into the cqlsh prompt, verify that everything is worked as expected, and finally start the Domain Registry.
+
+```
+docker build -t domain-registry .
+docker run -e STORAGE_TYPE=CASSANDRA -e CONTACT_POINTS_IPS=ip -e EXPIRES=3600 -p 4568:4567 domain-registry
+```
 ## Rest API definition and available endpoints
 
 The Domain Registry is a REST server that allows to create, update and remove data (users and Hyperty Instances in this case). Next, are described the three available API endpoints.
