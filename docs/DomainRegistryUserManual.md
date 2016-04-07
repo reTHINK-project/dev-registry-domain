@@ -42,12 +42,12 @@ Starting the database cluster in separate machines (ie, two VMs on a cloud servi
 ```
 ruby start\_cassandra\_cluster.rb "82.196.2.146" "128.199.35.237" "178.62.207.90" "128.199.33.57"
 ```
-This script takes as arguments the IP addresses of the servers in which the docker containers will run. After a few minutes the cluster should be running. Use SSH to connect to one of the nodes remote server and follow the next steps. The previous script assumes that Docker is installed on the servers and SSH root access is enabled. Otherwise, it will not work.
+This script takes as arguments the IP addresses of the servers in which the docker containers will run. After a few minutes the cluster should be running. Use SSH to connect to one of the nodes remote server and follow the next steps. The previous script assumes that Docker is installed on the servers and SSH root access is enabled. Otherwise, it will not work. Before running the next command, execute a _docker ps_ to confirm that the container is indeed running.
 
 * Connect to the cluster using cqlsh (Cassandra query language interactive terminal).
 
 ```
-docker run -it --link cassandra-node1:cassandra --rm cassandra sh -c 'exec cqlsh "$CASSANDRA_PORT_9042_TCP_ADDR"'
+docker run -it --link <container name>:cassandra --rm cassandra sh -c 'exec cqlsh "$CASSANDRA_PORT_9042_TCP_ADDR"'
 ```
 You should see something like:
 
@@ -88,12 +88,14 @@ CREATE TABLE hyperties_by_user (
 
 SELECT * FROM hyperties_by_id;
 ```
-If that worked your should see an empty hyperties's table. Again, you may change the replication\_factor to another value. With this configuration (5 nodes with a replication factor of 3), we can tolerate the loss of 2 nodes. The following command provides information about the cluster, such as the state (Normal/Leaving/Joining/Moving), load, and IDs.
+If that worked your should see an empty hyperties's table. Again, you may change the replication\_factor to another value. With this configuration (5 nodes with a replication factor of 3), we can tolerate the loss of 2 nodes. 
+
+The following command provides information about the cluster, such as the state (Normal/Leaving/Joining/Moving), load, and IDs.
 
 ```
-docker exec cassandra-node1 nodetool status rethinkeyspace
+docker exec <container-name> nodetool status rethinkeyspace
 ```
-Observe that the "cassandra-node1" may be another node (e.g cassandra-node2) and "rethinkeyspace" is the name of the keyspace defined previously.
+Observe that "rethinkeyspace" is the name of the keyspace defined previously.
 
 Something like this should appear:
 
@@ -140,15 +142,6 @@ Finally, the /live page could be used to verify up and down Cassandra nodes. A G
   "status": "up"
 }
 ```
-
-#### Requests saved in a multi-host Cassandra cluster
-
-Starting the database cluster in separate machines (ie, two VMs on a cloud service provider), requires a different configuration compared with the previous example. Cassandra needs to advertise an IP address to the other nodes because the address of the container is behind the docker bridge. Once again, is provided a script (this time written in ruby) to setup all this configuration.
-
-```
-ruby start_cassandra_cluster.rb "82.196.2.146" "128.199.35.237" "178.62.207.90" "128.199.33.57"
-```
-This script takes as arguments the IP addresses of the servers, in which the docker containers will run. After a few minutes the cluster should be running. Use SSH to connect to one of the remote servers and follow the sames steps as before. The previous script assumes that Docker is installed on the servers and SSH root access is enabled.
 
 ## Rest API definition and available endpoints
 
