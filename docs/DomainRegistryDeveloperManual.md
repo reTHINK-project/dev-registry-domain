@@ -12,7 +12,7 @@ The Domain Registry is a client-server REST web server in which users may issue 
 
 The already developed initial prototype stores data in memory. As the prototype will evolve, a database will be required. The NoSQL database Cassandra was the elected database to backend Domain Registry’s next prototype version. Also, a load balancer will be added to distribute the workload a​cross multiple servers. The architecture is shown in Figure 1.
 
-![Domain Registry Architecture](architecture.png)
+![Domain Registry Architecture](ac.png)
 
  **Figure 1:** Domain Registry architecture 
 
