@@ -33,7 +33,65 @@ Similarly to the last Domain registry version, requests may be saved in-memory. 
 docker build -t domain-registry .
 docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -p 4568:4567 domain-registry
 ```
-Expires global variable defines the maximum amount of time (in seconds) a Hyperty stays in the server (see [soft state issue](https://github.com/reTHINK-project/dev-registry-domain/issues/7)).
+Expires global variable defines the maximum amount of time (in seconds) a Hyperty stays in the server (see [soft state issue](https://github.com/reTHINK-project/dev-registry-domain/issues/7)). Note that the published port 4568 may be changed to another port that better suits your needs.
+
+#### Requests saved in a single-host Cassandra cluster
+
+With the purpose of easily testing and experiment the Cassandra database, the database cluster can be deployed in a single host using docker. Here's how to start a Cassandra cluster in localhost.
+
+1. A bash script is available to smooth this process. The script executes a _docker run_ command per node with a 60 seconds delay between them (see [Gossip protocol](https://en.wikipedia.org/wiki/Gossip_protocol) needs).
+
+```
+sh start_cassandra_cluster_localhost.sh
+```
+The above script will start a five node Cassandra cluster in localhost. In order to verify the correctness of the cluster, execute _docker ps_ and check if the five containers are up and running.
+
+2. Connect to the cluster using cqlsh (Cassandra query language interactive terminal).
+
+```
+docker run -it --link cassandra-node1:cassandra --rm cassandra sh -c 'exec cqlsh "$CASSANDRA_PORT_9042_TCP_ADDR"'
+```
+You should see something like:
+
+```
+[cqlsh 5.0.1 | Cassandra 2.2.0 | CQL spec 3.3.0 | Native protocol v4]
+Use HELP for help.
+cqlsh>
+```
+
+3. Execute Domain registry data model configuration in cqlsh
+
+Paste the following configuration into your cqlsh prompt to create a keyspace, and two hyperties's tables:
+
+```
+CREATE KEYSPACE rethink WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3};
+
+use rethink;
+
+CREATE TABLE hyperties_by_id (
+    hypertyid text,
+    user text,
+    descriptor text,
+    startingTime text,
+    lastModified text,
+    expires int,
+    PRIMARY KEY(hypertyid)
+);
+
+CREATE TABLE hyperties_by_user (
+    hypertyid text,
+    user text,
+    descriptor text,
+    startingTime text,
+    lastModified text,
+    expires int,
+    PRIMARY KEY(user, hypertyid)
+);
+
+SELECT * FROM hyperties_by_id;
+```
+If that worked your should see an empty hyperties's table. Again, you may change the replication\_factor to another value. With this configuration (5 nodes with a replication factor of 3), we can tolerate the loss of 2 nodes.
+
 
 ### How to run through the command line
 
