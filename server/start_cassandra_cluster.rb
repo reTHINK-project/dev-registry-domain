@@ -1,9 +1,7 @@
 puts "This tool starts a Cassandra DB cluster with predefined servers"
 
 nodes_ips = []
-ARGV.each do |node| nodes_ips << node
-  p node
-end
+ARGV.each { |node| nodes_ips << node }
 
 number_of_nodes = nodes_ips.size
 number_of_nodes > 3 ? number_of_seeds = number_of_nodes / 2 : number_of_seeds = 1
