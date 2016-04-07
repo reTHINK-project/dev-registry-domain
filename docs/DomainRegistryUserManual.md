@@ -35,18 +35,16 @@ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -p 4568:4567 domain-registry
 ```
 Expires global variable defines the maximum amount of time (in seconds) a Hyperty stays in the server (see [soft state issue](https://github.com/reTHINK-project/dev-registry-domain/issues/7)). Note that the published port 4568 may be changed to another port that better suits your needs. Running the server with this configuration will work exactly as the last version.
 
-#### Requests saved in a single-host Cassandra cluster
+#### Requests saved in a multi-host Cassandra cluster
 
-With the purpose of easily testing and experiment with the Cassandra database, the database cluster can be deployed in a single host using docker. Here's how to start a Cassandra cluster in localhost.
-
-1. A bash [script](https://github.com/reTHINK-project/dev-registry-domain/blob/database-integration/server/start_cassandra_cluster_localhost.sh) is available to smooth this process. The script executes a _docker run_ command per node with a 60 seconds delay between them ([Gossip protocol](https://en.wikipedia.org/wiki/Gossip_protocol) needs).
+Starting the database cluster in separate machines (ie, two VMs on a cloud service provider), requires that every Cassandra node advertises an IP address to the other nodes because the address of the container is behind the docker bridge. A script, written in ruby, is provided to setup all this configuration.
 
 ```
-sh start_cassandra_cluster_localhost.sh
+ruby start\_cassandra\_cluster.rb "82.196.2.146" "128.199.35.237" "178.62.207.90" "128.199.33.57"
 ```
-The above script will start a five node Cassandra cluster in localhost. Verify the correctness of the script by executing _docker ps_ and checking if the five containers are up and running.
+This script takes as arguments the IP addresses of the servers in which the docker containers will run. After a few minutes the cluster should be running. Use SSH to connect to one of the nodes remote server and follow the next steps. The previous script assumes that Docker is installed on the servers and SSH root access is enabled. Otherwise, it will not work.
 
-2. Connect to the cluster using cqlsh (Cassandra query language interactive terminal).
+* Connect to the cluster using cqlsh (Cassandra query language interactive terminal).
 
 ```
 docker run -it --link cassandra-node1:cassandra --rm cassandra sh -c 'exec cqlsh "$CASSANDRA_PORT_9042_TCP_ADDR"'
@@ -59,7 +57,7 @@ Use HELP for help.
 cqlsh>
 ```
 
-3. Execute Domain registry data model configuration in cqlsh
+* Execute Domain registry data model configuration in cqlsh
 
 Paste the following configuration into your cqlsh prompt to create a keyspace, and two hyperties's tables:
 
