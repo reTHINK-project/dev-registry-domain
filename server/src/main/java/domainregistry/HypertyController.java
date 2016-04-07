@@ -18,7 +18,7 @@ package domainregistry;
 
 import static spark.Spark.*;
 import org.apache.log4j.Logger;
-import java.util.*;
+// import java.util.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -32,19 +32,18 @@ public class HypertyController {
 
         get("/", (req, res) -> gson.toJson(new Messages("rethink registry api")));
 
-        get("/live", (req, res) -> {
-            int numberOfHyperties = 0;
-            res.type("application/json");
-            Map<String, String> stats = new HashMap();
-            stats.put("Status", "up");
-            stats.put("Database type", "RAM");
-            for(String userID : hypertyService.getServices().keySet())
-                numberOfHyperties += hypertyService.getServices().get(userID).keySet().size();
-            stats.put("Number of hyperties", String.valueOf(numberOfHyperties));
-            res.status(200);
-            return gson.toJson(stats);
-        });
-
+        // get("/live", (req, res) -> {
+        //     int numberOfHyperties = 0;
+        //     res.type("application/json");
+        //     Map<String, String> stats = new HashMap();
+        //     stats.put("Status", "up");
+        //     stats.put("Database type", "RAM");
+        //     for(String userID : hypertyService.getServices().keySet())
+        //         numberOfHyperties += hypertyService.getServices().get(userID).keySet().size();
+        //     stats.put("Number of hyperties", String.valueOf(numberOfHyperties));
+        //     res.status(200);
+        //     return gson.toJson(stats);
+        // });
         get("/hyperty/user/*", (req,res) -> {
             res.type("application/json");
             String[] encodedURL = req.url().split("/");
