@@ -90,12 +90,27 @@ CREATE TABLE hyperties_by_user (
 
 SELECT * FROM hyperties_by_id;
 ```
-If that worked your should see an empty hyperties's table. Again, you may change the replication\_factor to another value. With this configuration (5 nodes with a replication factor of 3), we can tolerate the loss of 2 nodes. The following provides information about the cluster, such as the state (up/running/down), load, and IDs.
+If that worked your should see an empty hyperties's table. Again, you may change the replication\_factor to another value. With this configuration (5 nodes with a replication factor of 3), we can tolerate the loss of 2 nodes. The following command provides information about the cluster, such as the state (up/running/down), load, and IDs.
 
 ```
 docker exec cassandra-node1 exec nodetool status rethinkeyspace
 ```
 Observer that the "cassandra-node1" may be another node (e.g cassandra-node2) and "rethinkeyspace" is the name of the keyspace defined previously.
+
+Something like this should appear:
+
+```
+Datacenter: datacenter1
+
+Status=Up/Down
+|/ State=Normal/Leaving/Joining/Moving
+--  Address       Load       Tokens       Owns (effective)  Host ID                               Rack
+UN  172.17.2.131  167.54 KB  256          60.0%             04111fc6-4dfa-496c-b904-0defde6d3b92  rack1
+UN  172.17.2.133  298.41 KB  256          61.4%             b5b98cd9-dea0-4413-9387-1050dd3dafc3  rack1
+UN  172.17.2.132  270.25 KB  256          66.1%             f771448e-2a93-4726-af0a-21d1577ca3d9  rack1
+UN  172.17.2.135  258.53 KB  256          58.0%             4e6a07c9-dd3b-43e2-9cc0-32e39122a82d  rack1
+UN  172.17.2.134  283.42 KB  256          54.5%             ec5bf2ea-37f8-4751-a578-dd09fd073a3f  rack1
+```
 
 With the database cluster running we can start the Domain Registry with the following commands:
 
