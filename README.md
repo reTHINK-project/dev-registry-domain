@@ -6,14 +6,10 @@
 ### How to run
 
 ``` 
-mvn compile exec:java
+docker build -t domain-registry .
+docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -p 4568:4567 domain-registry
 ```
 
-### Run unit tests
-
-``` 
-mvn clean test -P dev
-```
 ### Integration tests
 With ruby, rspec and Airborne (https://github.com/brooklynDev/airborne) installed.
 
