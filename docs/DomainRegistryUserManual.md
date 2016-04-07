@@ -29,7 +29,7 @@ A Dockerfile is provided, so is possible to run the Domain Registry through a Do
 
 Similarly to the last Domain registry version, requests may be saved in-memory. It is the simplest way to deploy the server. The commands are the following:
 
-``` 
+```
 docker build -t domain-registry .
 docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -p 4568:4567 domain-registry
 ```
@@ -90,7 +90,36 @@ CREATE TABLE hyperties_by_user (
 
 SELECT * FROM hyperties_by_id;
 ```
-If that worked your should see an empty hyperties's table. Again, you may change the replication\_factor to another value. With this configuration (5 nodes with a replication factor of 3), we can tolerate the loss of 2 nodes.
+If that worked your should see an empty hyperties's table. Again, you may change the replication\_factor to another value. With this configuration (5 nodes with a replication factor of 3), we can tolerate the loss of 2 nodes. With the database cluster running we can start the Domain Registry with the following commands:
+
+```
+docker build -t domain-registry .
+docker run -e STORAGE_TYPE=CASSANDRA -e CONTACT_POINTS_IPS=ip1,ip2,ip3 -e EXPIRES=3600 -p 4568:4567 domain-registry
+```
+The environment variable CONTACT\_POINTS\_IPS comprises a set of IP addresses belonging to some database nodes. The Domain Registry server will use these IP's to discover and establish a connection with the database. The server will only use one IP, but providing the client more IPs will increase the chance for the client to continue to work with the database in case of node failures.
+
+When executing the _docker run_ command, if something like this appear, it means that the client successfully connected with the database cluster.
+
+```
+Connected to cluster: Test Cluster
+Datacenter: datacenter1; Host: /172.17.2.131; Rack: rack1
+Datacenter: datacenter1; Host: /172.17.2.132; Rack: rack1
+Datacenter: datacenter1; Host: /172.17.2.135; Rack: rack1
+Datacenter: datacenter1; Host: /172.17.2.134; Rack: rack1
+```
+
+Finally, the /live page could be used to verify Up and down Cassandra nodes. A GET /live should return the following JSON object:
+
+```
+{
+  "Database cluster size": "5",
+  "Hyperties stored": "0",
+  "Database up nodes": "5",
+  "Database connection": "up",
+  "Storage type": "Cassandra",
+  "status": "up"
+}
+```
 
 
 ### How to run through the command line
