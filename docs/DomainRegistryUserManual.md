@@ -150,7 +150,7 @@ Starting the Domain Registry backed with a single database node is quite simple:
 $ docker run --name cassandra-node -d cassandra:latest
 ```
 
-Next, follow the same steps as before. Establish a connection to the cluster with cqlsh, execute the data model into the cqlsh prompt, verify that everything is worked as expected, and finally start the Domain Registry.
+Next, follow the same steps as before. Establish a connection to the cluster with cqlsh, execute the data model into the cqlsh prompt, verify that everything is working as expected, and finally start the Domain Registry.
 
 ```
 $ docker build -t domain-registry .
