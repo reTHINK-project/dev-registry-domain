@@ -39,14 +39,14 @@ Expires global variable defines the maximum amount of time (in seconds) a Hypert
 
 With the purpose of easily testing and experiment with the Cassandra database, the database cluster can be deployed in a single host using docker. Here's how to start a Cassandra cluster in localhost.
 
-* A bash [script](https://github.com/reTHINK-project/dev-registry-domain/blob/database-integration/server/start_cassandra_cluster_localhost.sh) is available to smooth this process. The script executes a _docker run_ command per node with a 60 seconds delay between them ([Gossip protocol](https://en.wikipedia.org/wiki/Gossip_protocol) needs).
+1. A bash [script](https://github.com/reTHINK-project/dev-registry-domain/blob/database-integration/server/start_cassandra_cluster_localhost.sh) is available to smooth this process. The script executes a _docker run_ command per node with a 60 seconds delay between them ([Gossip protocol](https://en.wikipedia.org/wiki/Gossip_protocol) needs).
 
 ```
 sh start_cassandra_cluster_localhost.sh
 ```
 The above script will start a five node Cassandra cluster in localhost. Verify the correctness of the script by executing _docker ps_ and checking if the five containers are up and running.
 
-* Connect to the cluster using cqlsh (Cassandra query language interactive terminal).
+2. Connect to the cluster using cqlsh (Cassandra query language interactive terminal).
 
 ```
 docker run -it --link cassandra-node1:cassandra --rm cassandra sh -c 'exec cqlsh "$CASSANDRA_PORT_9042_TCP_ADDR"'
@@ -59,7 +59,7 @@ Use HELP for help.
 cqlsh>
 ```
 
-* Execute Domain registry data model configuration in cqlsh
+3. Execute Domain registry data model configuration in cqlsh
 
 Paste the following configuration into your cqlsh prompt to create a keyspace, and two hyperties's tables:
 
@@ -144,6 +144,13 @@ Finally, the /live page could be used to verify up and down Cassandra nodes. A G
 ```
 
 #### Requests saved in a multi-host Cassandra cluster
+
+Starting the database cluster in separate machines (ie, two VMs on a cloud service provider), requires a different configuration compared with the previous example. Cassandra needs to advertise an IP address to the other nodes because the address of the container is behind the docker bridge. Once again, is provided a script (this time written in ruby) to setup all this configuration.
+
+```
+ruby start\_cassandra\_cluster.rb "82.196.2.146" "128.199.35.237" "178.62.207.90" "128.199.33.57"
+```
+This script takes as arguments the IP addresses of the servers, in which the docker container will run. After a few minutes the cluster should be running. Use SSH to connect to the remote server and follow the sames steps as before. The previous script assumes that Docker is installed on the servers and SSH root access is enabled.
 
 ## Rest API definition and available endpoints
 
