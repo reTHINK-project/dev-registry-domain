@@ -34,7 +34,7 @@ import static java.lang.System.out;
 public class CassandraClient implements Connection{
     private static final Logger log = LogManager.getLogger(CassandraClient.class.getName());
 
-    public static final String KEYSPACE  = "rethink";
+    public static final String KEYSPACE  = "rethinkeyspace";
     public static final String IDHYPERTIES = "hyperties_by_id";
     public static final String USERHYPERTIES = "hyperties_by_user";
     public static final String DOWN = "DOWN";
