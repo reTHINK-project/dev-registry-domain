@@ -79,9 +79,8 @@ public class HypertyService{
     protected void deleteExpiredHyperties(Connection connectionClient, String userID){
         String actualDate = Dates.getActualDate();
         Map<String, HypertyInstance> userHyperties = connectionClient.getUserHyperties(userID);
-        Map<String, HypertyInstance> copy = new HashMap<String, HypertyInstance>(userHyperties);
 
-        for (Map.Entry<String, HypertyInstance> entry : copy.entrySet()){
+        for (Map.Entry<String, HypertyInstance> entry : userHyperties.entrySet()){
             String lastModified = entry.getValue().getLastModified();
             int expires = entry.getValue().getExpires();
             if(Dates.dateCompare(actualDate, lastModified) > expires){

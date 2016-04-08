@@ -35,7 +35,10 @@ public class RamClient implements Connection{
     }
 
     public void deleteUserHyperty(String hypertyID){
-        for (String userID : userServices.keySet()) {
+        Set<String> allUsersIds = userServices.keySet();
+        List<String> users = new ArrayList<String>(allUsersIds);
+
+        for (String userID : users) {
             if(userServices.get(userID).keySet().contains(hypertyID)){
                 userServices.get(userID).keySet().remove(hypertyID);
                 log.info("Removed hyperty " + hypertyID + " from " + userID);
