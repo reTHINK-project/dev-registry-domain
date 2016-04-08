@@ -12,9 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# 1. For cleanup purposes all previous cassandra containers are removed from the remote servers
-# 2. Seeds nodes are initialized
-# 3. Remaining nodes are initialized with a 2 minute delay between them
+# 1. Seeds nodes are initialized
+# 2. Remaining nodes are initialized with a 2 minute delay between them
 
 puts "This tool starts a Cassandra DB cluster with predefined servers"
 
@@ -25,12 +24,6 @@ ARGV[1..-1].each { |node| p node ; nodes_ips << node }
 
 number_of_nodes = nodes_ips.size
 number_of_nodes > 3 ? number_of_seeds = number_of_nodes / 2 : number_of_seeds = 1
-
-#stop and removing existing cassandra containers
-nodes_ips.each do |node|
-  cmd = "ssh #{remote_username}@#{node} "docker ps -a | grep 'cassandra' | awk '{print $1}' | xargs --no-run-if-empty docker rm -f""
-  system(cmd)
-end
 
 #init seed nodes
 seeds = nodes_ips.sample(number_of_seeds)
