@@ -2,6 +2,7 @@ puts "This tool starts a Cassandra DB cluster with predefined servers"
 
 nodes_ips = []
 remote_username = ARGV.first
+raise ArgumentError, 'Minimum is two servers' if ARGV[1..-1].size < 2
 ARGV[1..-1].each { |node| p node ; nodes_ips << node }
 
 number_of_nodes = nodes_ips.size
