@@ -39,7 +39,7 @@ Expires global variable defines the maximum amount of time (in seconds) a Hypert
 
 Starting the database cluster in separate machines (ie, two VMs on a cloud service provider), requires that every Cassandra node advertises an IP address to the other nodes because the address of the container is behind the docker bridge. The environment variable CASSANDRA\_BROADCAST\_ADDRESS serves that purpose.
 
-The first to do is start by initiating seeds nodes. Theses nodes are responsible for advertising the cluster when new nodes are joining. Without at least one live seed node, no new nodes can join the cluster because the have no idea how to contact non-seed nodes. In the following example we will use two seed nodes in a four node cluster. Assuming that the first machine`s IP is 10.42.42.42, the second 10.42.43.43, the third 10.42.44.44 and the fourth 10.42.45.45, execute the next commands.
+The first to do is start by initiating seeds nodes. Theses nodes are responsible for advertising the cluster when new nodes are joining. Without at least one live seed node, no new nodes can join the cluster because they have no idea how to contact non-seed nodes. In the following example we will use two seed nodes in a four node cluster. Assuming that the first machine`s IP is 10.42.42.42, the second 10.42.43.43, the third 10.42.44.44 and the fourth 10.42.45.45, execute the next commands.
 
 * Seed nodes initialization
 
