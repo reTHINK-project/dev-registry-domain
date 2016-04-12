@@ -44,7 +44,7 @@ The first to do is start by initiating seeds nodes. Theses nodes are responsible
 * Seed nodes initialization
 
 ```
-$ docker run -d -e CASSANDRA_BROADCAST_ADDRESS=10.42.42.42  -e CASSANDRA_ENDPOINT_SNITCH='GossipingPropertyFileSnitch' -p 9042:9042 -p 7000:7000 cassandra:latest
+$ docker run -d -e CASSANDRA_BROADCAST_ADDRESS=10.42.42.42 -e CASSANDRA_ENDPOINT_SNITCH='GossipingPropertyFileSnitch' -p 9042:9042 -p 7000:7000 cassandra:latest
 $ docker run -d -e CASSANDRA_BROADCAST_ADDRESS=10.42.43.43 -e CASSANDRA_ENDPOINT_SNITCH='GossipingPropertyFileSnitch' -p 9042:9042 -p 7000:7000 cassandra:latest
 ```
 
