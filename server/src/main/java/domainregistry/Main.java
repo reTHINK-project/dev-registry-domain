@@ -45,19 +45,21 @@ public class Main {
             }
             else ((CassandraClient) cassandraClient).connect(clusterContactPoinsts);
 
-            HypertyService service = new HypertyService();
+            HypertyService hypertyService = new HypertyService();
+            DataObjectService dataObjectService = new DataObjectService();
             StatusService status = new StatusService(CASSANDRA, cassandraClient);
-            new HypertyController(status, service, cassandraClient);
-            new HeartBeatThread(service, cassandraClient, time).start();
+            new HypertyController(status, hypertyService, cassandraClient, dataObjectService);
+            new HeartBeatThread(hypertyService, cassandraClient, time).start();
         }
 
         if(storageType.equals("RAM")){
             log.info("RAM choosen. Requests will be saved in-memory");
             final Connection ramClient = new RamClient();
             StatusService status = new StatusService(RAM, ramClient);
-            HypertyService service = new HypertyService();
-            new HypertyController(status, service, ramClient);
-            new HeartBeatThread(service, ramClient, time).start();
+            HypertyService hypertyService = new HypertyService();
+            DataObjectService dataObjectService = new DataObjectService();
+            new HypertyController(status, hypertyService, ramClient, dataObjectService);
+            new HeartBeatThread(hypertyService, ramClient, time).start();
         }
     }
 }
