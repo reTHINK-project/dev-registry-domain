@@ -19,93 +19,112 @@ package domainregistry;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Date;
-import java.util.Calendar;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
+import org.apache.log4j.Logger;
 
 public class HypertyService{
+    static Logger log = Logger.getLogger(HypertyService.class.getName());
+    private static final String EXPIRES = "EXPIRES";
 
-    private Map<String, Map<String, HypertyInstance>> userServices = new HashMap<>();
 
-    public Map<String, HypertyInstance> getAllHyperties(String userID) {
-        Map<String, HypertyInstance> services = userServices.get(userID);
-        if(checkObjectExistance(userID) && !services.isEmpty())
-            return services;
+    public Map<String, HypertyInstance> getAllHyperties(Connection connectionClient, String userID) {
+        Map<String, HypertyInstance> allUserHyperties = connectionClient.getUserHyperties(userID);
 
-        else if(!checkObjectExistance(userID))
+        if(connectionClient.userExists(userID)){
+            deleteExpiredHyperties(connectionClient, userID);
+        }
+
+        if(connectionClient.userExists(userID) && !allUserHyperties.isEmpty()){ //if the user still have hyperties
+            return allUserHyperties;
+        }
+
+        else throw new UserNotFoundException();
+    }
+
+    public void createUserHyperty(Connection connectionClient, HypertyInstance newHyperty){
+        long expiresLimit = Long.valueOf(System.getenv(EXPIRES)).longValue();
+        String userID = newHyperty.getUserID();
+        String hypertyID = newHyperty.getHypertyID();
+
+        if(validateExpiresField(newHyperty.getExpires(), expiresLimit)){
+            newHyperty.setExpires((int) expiresLimit);
+            log.info("Expires was set to the max value allowed by the Domain Registry: " + expiresLimit);
+        }
+
+        if(connectionClient.userExists(userID)){
+            checkHypertyExistence(connectionClient, newHyperty);
+            return;
+        }
+
+        if(connectionClient.hypertyExists(hypertyID))
+            throw new CouldNotCreateOrUpdateHypertyException();
+
+        else newHyperty(connectionClient, newHyperty);
+    }
+
+    public void deleteUserHyperty(Connection connectionClient, String userID, String hypertyID){
+        if(!connectionClient.userExists(userID))
             throw new UserNotFoundException();
 
-        else throw new DataNotFoundException();
+        if(!connectionClient.hypertyExists(hypertyID))
+            throw new DataNotFoundException();
+
+        Map<String, HypertyInstance> userHyperties = connectionClient.getUserHyperties(userID);
+        if(userHyperties.keySet().contains(hypertyID)){
+            connectionClient.deleteUserHyperty(hypertyID);
+        }
+
+        else throw new CouldNotRemoveHypertyException();
     }
 
-    public String createUserHyperty(String userID, String hypertyID, HypertyInstance instance){
-        if(checkObjectExistance(userID) && checkObjectExistance(userID, hypertyID)){
-            HypertyInstance hyperty = userServices.get(userID).get(hypertyID);
-            hyperty.setLastModified(getActualDate());
-            hyperty.setDescriptor(instance.getDescriptor());
-            userServices.get(userID).put(hypertyID, hyperty);
-        }
-        else if(checkObjectExistance(userID) && !checkObjectExistance(userID, hypertyID)){
-            instance.setStartingTime(getActualDate());
-            instance.setLastModified(getActualDate());
-            userServices.get(userID).put(hypertyID, instance);
-        }
-        else{
-            Map<String, HypertyInstance> services = new HashMap<>();
-            instance.setStartingTime(getActualDate());
-            instance.setLastModified(getActualDate());
-            services.put(hypertyID, instance);
-            userServices.put(userID, services);
-        }
+    protected void deleteExpiredHyperties(Connection connectionClient, String userID){
+        String actualDate = Dates.getActualDate();
+        Map<String, HypertyInstance> userHyperties = connectionClient.getUserHyperties(userID);
 
-        return hypertyID;
-    }
-
-    public HypertyInstance getUserHyperty(String userID, String hypertyID){
-        if(checkObjectExistance(userID, hypertyID)){
-            return userServices.get(userID).get(hypertyID);
-        }
-
-        else if(!checkObjectExistance(userID))
-            throw new UserNotFoundException();
-
-        else throw new DataNotFoundException();
-    }
-
-    public String deleteUserHyperty(String userID, String hypertyID){
-        if(checkObjectExistance(userID, hypertyID)){
-            userServices.get(userID).remove(hypertyID);
-            return hypertyID;
-        }
-
-        else if(!checkObjectExistance(userID))
-            throw new UserNotFoundException();
-
-        else throw new DataNotFoundException();
-    }
-
-    private boolean checkObjectExistance(String... params){
-        int numberOfArguments = params.length;
-        if(numberOfArguments == 1){
-            return userServices.containsKey(params[0]);
-        }
-        else{
-            return userServices.containsKey(params[0]) &&
-                userServices.get(params[0]).containsKey(params[1]);
+        for (Map.Entry<String, HypertyInstance> entry : userHyperties.entrySet()){
+            String lastModified = entry.getValue().getLastModified();
+            int expires = entry.getValue().getExpires();
+            if(Dates.dateCompare(actualDate, lastModified) > expires){
+                connectionClient.deleteUserHyperty(entry.getKey());
+            }
         }
     }
 
-    private String getActualDate() {
-        Date date = Calendar.getInstance().getTime();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        return sdf.format(date);
+    private void checkHypertyExistence(Connection connectionClient, HypertyInstance hyperty){
+        if(connectionClient.hypertyExists(hyperty.getHypertyID()))
+            checkHypertyOwnership(connectionClient, hyperty);
+
+        else newHyperty(connectionClient, hyperty);
     }
 
-    public Map<String, Map<String, HypertyInstance>> getServices(){
-        return userServices;
+    public void checkHypertyOwnership(Connection connectionClient, HypertyInstance hyperty){
+        String userID = hyperty.getUserID();
+        String hypertyID = hyperty.getHypertyID();
+        Map<String, HypertyInstance> userHyperties = connectionClient.getUserHyperties(userID);
+
+        if(userHyperties.keySet().contains(hypertyID))
+            updateHyperty(connectionClient, hyperty);
+
+        else throw new CouldNotCreateOrUpdateHypertyException();
+    }
+
+    private void newHyperty(Connection connectionClient, HypertyInstance newHyperty){
+        String userID = newHyperty.getUserID();
+        String hypertyID = newHyperty.getHypertyID();
+        newHyperty.setStartingTime(Dates.getActualDate());
+        newHyperty.setLastModified(Dates.getActualDate());
+        connectionClient.insertHyperty(newHyperty);
+    }
+
+    private void updateHyperty(Connection connectionClient, HypertyInstance newHyperty){
+        String userID = newHyperty.getUserID();
+        String hypertyID = newHyperty.getHypertyID();
+        HypertyInstance oldHyperty = connectionClient.getHyperty(hypertyID);
+        newHyperty.setLastModified(Dates.getActualDate());
+        newHyperty.setStartingTime(oldHyperty.getStartingTime());
+        connectionClient.updateHyperty(newHyperty);
+    }
+
+    private boolean validateExpiresField(long expires, long limit){
+        return expires > limit;
     }
 }

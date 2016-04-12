@@ -14,10 +14,51 @@
   * limitations under the License.
 **/
 
-package domainregistry; 
+package domainregistry;
+
+import java.net.*;
+import java.util.*;
+import org.apache.log4j.Logger;
 
 public class Main {
+    static Logger log = Logger.getLogger(Main.class.getName());
+
+    private static final String CASSANDRA = "Cassandra";
+    private static final String RAM = "Ram";
+    private static final String STORAGE = "STORAGE_TYPE";
+    private static final String EXPIRES = "EXPIRES";
+
     public static void main(String[] args) {
-        new HypertyController(new HypertyService());
+        String storageType = System.getenv(STORAGE);
+        String expires = System.getenv(EXPIRES);
+        long time = Long.valueOf(expires).longValue();
+
+        if(storageType.equals("CASSANDRA")){
+            log.info("Cassandra choosen. Requests will be saved in a Cassandra db cluster");
+
+            Collection<InetAddress> clusterContactPoinsts = Addresses.getClusterContactPointsAddresses();
+            final CassandraClient cassandraClient = new CassandraClient();
+
+            if (clusterContactPoinsts.isEmpty()){
+                log.error("No contact points provided. Program will exit.");
+                return;
+            }
+            else ((CassandraClient) cassandraClient).connect(clusterContactPoinsts);
+
+            HypertyService service = new HypertyService();
+            StatusService status = new StatusService(CASSANDRA, cassandraClient);
+            new HypertyController(status, service, cassandraClient);
+            new HeartBeatThread(service, cassandraClient, time).start();
+        }
+
+        if(storageType.equals("RAM")){
+            log.info("RAM choosen. Requests will be saved in-memory");
+            final Connection ramClient = new RamClient();
+            StatusService status = new StatusService(RAM, ramClient);
+            HypertyService service = new HypertyService();
+            new HypertyController(status, service, ramClient);
+            new HeartBeatThread(service, ramClient, time).start();
+        }
     }
 }
+

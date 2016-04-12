@@ -51,6 +51,16 @@
           <artifactId>log4j</artifactId>
           <version>1.2.17</version>
         </dependency>
+        <dependency>
+          <groupId>com.datastax.cassandra</groupId>
+          <artifactId>cassandra-driver-core</artifactId>
+          <version>3.0.0</version>
+        </dependency>
+        <dependency>
+          <groupId>com.datastax.cassandra</groupId>
+          <artifactId>cassandra-driver-mapping</artifactId>
+          <version>3.0.0</version>
+        </dependency>
     </dependencies>
 
     <profiles>
@@ -78,26 +88,26 @@
 
     <build>
 
-    	<filters>
-        <filter>profiles/${build.profile.id}/config.properties</filter>
-    	</filters>
+    <filters>
+      <filter>profiles/${build.profile.id}/config.properties</filter>
+    </filters>
 
-    	<resources>
-    	    <resource>
-    	        <filtering>true</filtering>
-    	        <directory>src/main/resources</directory>
-    	    </resource>
-    	</resources>
+    <resources>
+        <resource>
+            <filtering>true</filtering>
+            <directory>src/main/resources</directory>
+        </resource>
+    </resources>
 
         <plugins>
-        	<plugin>
-        	    <groupId>org.codehaus.mojo</groupId>
-        	    <artifactId>exec-maven-plugin</artifactId>
-        	    <version>1.2.1</version>
-        	    <configuration>
-        	        <mainClass>domainregistry.Main</mainClass>
-        	    </configuration>
-        	</plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <configuration>
+                    <mainClass>domainregistry.Main</mainClass>
+                </configuration>
+            </plugin>
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
