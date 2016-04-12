@@ -143,3 +143,4 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 
+server/log/log.out
