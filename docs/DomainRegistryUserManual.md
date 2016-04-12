@@ -44,15 +44,15 @@ The first to do is start by initiating seeds nodes. Theses nodes are responsible
 * Seed nodes initialization
 
 ```
-$ docker run -d -e CASSANDRA_BROADCAST_ADDRESS=10.42.42.42 -p 7000:7000 cassandra:latest
-$ docker run -d -e CASSANDRA_BROADCAST_ADDRESS=10.42.43.43 -p 7000:7000 cassandra:latest
+$ docker run -d -e CASSANDRA_BROADCAST_ADDRESS=10.42.42.42  -e CASSANDRA_ENDPOINT_SNITCH='GossipingPropertyFileSnitch' -p 9042:9042 -p 7000:7000 cassandra:latest
+$ docker run -d -e CASSANDRA_BROADCAST_ADDRESS=10.42.43.43 -e CASSANDRA_ENDPOINT_SNITCH='GossipingPropertyFileSnitch' -p 9042:9042 -p 7000:7000 cassandra:latest
 ```
 
 * Non-seed nodes initialization. Start these nodes with a two minute delay between them (Cassandra requirement)
 
 ```
-$ docker run -d -e CASSANDRA_BROADCAST_ADDRESS=10.42.44.44 -p 7000:7000 -e CASSANDRA_SEEDS=10.42.42.42,10.42.43.43 cassandra:latest
-$ docker run -d -e CASSANDRA_BROADCAST_ADDRESS=10.42.45.45 -p 7000:7000 -e CASSANDRA_SEEDS=10.42.42.42,10.42.43.43 cassandra:latest
+$ docker run -d -e CASSANDRA_BROADCAST_ADDRESS=10.42.44.44 -p 7000:7000 -e CASSANDRA_SEEDS=10.42.42.42,10.42.43.43 -e CASSANDRA_ENDPOINT_SNITCH='GossipingPropertyFileSnitch' -p 9042:9042 cassandra:latest
+$ docker run -d -e CASSANDRA_BROADCAST_ADDRESS=10.42.45.45 -p 7000:7000 -e CASSANDRA_SEEDS=10.42.42.42,10.42.43.43 -e CASSANDRA_ENDPOINT_SNITCH='GossipingPropertyFileSnitch' -p 9042:9042 cassandra:latest
 ```
 
 Log onto one of the servers and follow the remaining of this manual. Before running the next command, execute _docker ps_ to ensure that the container is indeed running.
