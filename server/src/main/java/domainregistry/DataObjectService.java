@@ -22,17 +22,25 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 public class DataObjectService{
-    static Logger log = Logger.getLogger(HypertyService.class.getName());
+    static Logger log = Logger.getLogger(DataObjectService.class.getName());
 
     private Map<String, DataObjectInstance> dataObjects = new HashMap<>();
 
-    public void createDataObject(DataObjectInstance dataObject, String dataObjectID){
-        dataObjects.put(dataObjectID, dataObject);
+    public void createDataObject(Connection client, DataObjectInstance dataObject){
+        String dataObjectName = dataObject.getName();
+        client.insertDataObject(dataObject, dataObjectName);
     }
 
-    public DataObjectInstance getDataObject(String dataObjectID){
-        if(dataObjects.containsKey(dataObjectID))
-            return dataObjects.get(dataObjectID);
+    public DataObjectInstance getDataObject(Connection client, String dataObjectName){
+        if(client.dataObjectExists(dataObjectName))
+            return client.getDataObject(dataObjectName);
+
+        else throw new DataNotFoundException();
+    }
+
+    public void deleteDataObject(Connection client, String dataObjectName){
+        if(client.dataObjectExists(dataObjectName))
+            client.deleteDataObject(dataObjectName);
 
         else throw new DataNotFoundException();
     }

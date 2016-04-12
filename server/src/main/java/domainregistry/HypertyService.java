@@ -25,7 +25,6 @@ public class HypertyService{
     static Logger log = Logger.getLogger(HypertyService.class.getName());
     private static final String EXPIRES = "EXPIRES";
 
-
     public Map<String, HypertyInstance> getAllHyperties(Connection connectionClient, String userID) {
         Map<String, HypertyInstance> allUserHyperties = connectionClient.getUserHyperties(userID);
 

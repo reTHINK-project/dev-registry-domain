@@ -17,19 +17,35 @@
 package domainregistry;
 
 public class DataObjectInstance {
-    private String descriptor;
+    private String schema;
     private String url;
+    private String reporter;
+    private String name;
 
-    public DataObjectInstance(String url, String descriptor){
-        this.descriptor = descriptor;
+    public DataObjectInstance(String name, String schema, String reporter, String url){
+        this.schema = schema;
         this.url = url;
+        this.reporter = reporter;
+        this.name = name;
+    }
+
+    public void setName(String name){
+        this.name = name;
     }
 
     public String getUrl(){
         return this.url;
     }
 
-    public String getDescriptor(){
-        return this.descriptor;
+    public String getSchema(){
+        return this.schema;
+    }
+
+    public String getReporter(){
+        return this.reporter;
+    }
+
+    public String getName(){
+        return this.name;
     }
 }
