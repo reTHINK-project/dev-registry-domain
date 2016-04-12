@@ -155,6 +155,7 @@ Finally, the /live page could be used to verify up and down Cassandra nodes. A G
   "status": "up"
 }
 ```
+More details about Cassandra and how to deploy a cluster can be found on [Cassandra's offical website](http://cassandra.apache.org) and [Cassandra's docker hub repository](https://hub.docker.com/_/cassandra/).
 #### Storing requests in a single Cassandra node
 
 Starting the Domain Registry backed with a single database node is quite simple:
