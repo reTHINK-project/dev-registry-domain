@@ -37,14 +37,25 @@ Expires global variable defines the maximum amount of time (in seconds) a Hypert
 
 #### Requests saved in a multi-host Cassandra cluster
 
-Starting the database cluster in separate machines (ie, two VMs on a cloud service provider), requires that every Cassandra node advertises an IP address to the other nodes because the address of the container is behind the docker bridge. A [script](https://github.com/reTHINK-project/dev-registry-domain/blob/database-integration/server/start_cassandra_cluster.rb), written in ruby, is provided to setup all this configuration.
+Starting the database cluster in separate machines (ie, two VMs on a cloud service provider), requires that every Cassandra node advertises an IP address to the other nodes because the address of the container is behind the docker bridge. The environment variable CASSANDRA\_BROADCAST\_ADDRESS serves that purpose.
+
+The first to do is start by initiating seeds nodes. Theses nodes are responsible for advertising the cluster when new nodes are joining. Without at least one live seed node, no new nodes can join the cluster because the have no idea how to contact non-seed nodes. In the following example we will use two seed nodes in a four node cluster. Assuming that the first machine`s IP is 10.42.42.42, the second 10.42.43.43, the third 10.43.44.44 and the fourth 10.43.45.45, execute the next commands.
+
+* Seed nodes initialization
 
 ```
-$ ruby start_cassandra_cluster.rb username 82.196.2.146 128.199.35.237 178.62.207.90 128.199.33.57
+$ docker run -d -e CASSANDRA_BROADCAST_ADDRESS=10.42.42.42 -p 7000:7000 cassandra:latest
+$ docker run -d -e CASSANDRA_BROADCAST_ADDRESS=10.42.43.43 -p 7000:7000 cassandra:latest
 ```
-This script takes as arguments the IP addresses of the servers in which the docker containers will run. After a few minutes the cluster should be running. Use SSH to connect to one of the four servers and follow the next steps. The previous script assumes that Docker is installed on the servers and SSH public key authentication is enabled (login without password). Otherwise, it will not work. Alternatively, you can check Cassandra on [docker hub](https://hub.docker.com/_/cassandra/) and follow the instructions presented there.
 
-Before running the next command, execute _docker ps_ to ensure that the container is indeed running. 
+* Non-seed nodes initialization. Start these node with a two minute delay between them (Cassandra requirement)
+
+```
+$ docker run -d -e CASSANDRA_BROADCAST_ADDRESS=10.43.44.44 -p 7000:7000 -e CASSANDRA_SEEDS=10.42.42.42,10.42.43.43 cassandra:latest
+$ docker run -d -e CASSANDRA_BROADCAST_ADDRESS=10.43.45.45 -p 7000:7000 -e CASSANDRA_SEEDS=10.42.42.42,10.42.43.43 cassandra:latest
+```
+
+Log onto one of the servers and follow the remaining of this manual. Before running the next command, execute _docker ps_ to ensure that the container is indeed running.
 
 * Connect to the cluster using cqlsh (Cassandra query language interactive terminal).
 
