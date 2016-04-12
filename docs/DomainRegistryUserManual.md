@@ -101,7 +101,7 @@ CREATE TABLE hyperties_by_user (
 
 SELECT * FROM hyperties_by_id;
 ```
-An empty hyperties table should appear. Again, you may change the replication\_factor to another value. With this configuration (4 nodes with a replication factor of 3), we can tolerate the loss of 2 nodes. 
+An empty hyperties table should appear. You may change the replication\_factor to another value. With this configuration (4 nodes with a replication factor of 3), we can tolerate the loss of 2 nodes. 
 
 The following command provides information about the cluster, such as the state (Normal/Leaving/Joining/Moving), load, and IDs.
 
