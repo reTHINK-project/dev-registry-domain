@@ -60,24 +60,6 @@ public class HypertyController {
             return gson.toJson(new Messages("Hyperty created"));
         });
 
-        put("hyperty/dataobject/:id", (req, res) -> {
-            res.type("application/json");
-            String body = req.body();
-            String dataObjectID = req.params(":id");
-            DataObjectInstance dataObject = gson.fromJson(body, DataObjectInstance.class);
-            dataObjectService.createDataObject(dataObject, dataObjectID);
-            res.status(200);
-            return gson.toJson(new Messages("Data object created"));
-        });
-
-        get("hyperty/dataobject/:id", (req, res) -> {
-            res.type("application/json");
-            String dataObjectID = req.params(":id");
-            DataObjectInstance dataObject = dataObjectService.getDataObject(dataObjectID);
-            res.status(200);
-            return gson.toJson(dataObject);
-        });
-
         delete("/hyperty/user/*", (req,res) -> {
             res.type("application/json");
             String[] encodedURL = req.url().split("/");
@@ -86,6 +68,33 @@ public class HypertyController {
             hypertyService.deleteUserHyperty(connectionClient, userID, hypertyID);
             res.status(200);
             return gson.toJson(new Messages("Hyperty deleted"));
+        });
+
+        put("hyperty/dataobject/:name", (req, res) -> {
+            res.type("application/json");
+            String body = req.body();
+            String dataObjectName = req.params(":name");
+            DataObjectInstance dataObject = gson.fromJson(body, DataObjectInstance.class);
+            dataObject.setName(dataObjectName);
+            dataObjectService.createDataObject(connectionClient, dataObject);
+            res.status(200);
+            return gson.toJson(new Messages("Data object created"));
+        });
+
+        get("hyperty/dataobject/:name", (req, res) -> {
+            res.type("application/json");
+            String dataObjectName = req.params(":name");
+            DataObjectInstance dataObject = dataObjectService.getDataObject(connectionClient, dataObjectName);
+            res.status(200);
+            return gson.toJson(dataObject);
+        });
+
+        delete("/hyperty/dataobject/:name", (req, res) -> {
+            res.type("application/json");
+            String dataObjectName = req.params(":name");
+            dataObjectService.deleteDataObject(connectionClient, dataObjectName);
+            res.status(200);
+            return gson.toJson(new Messages("Data object deleted"));
         });
 
         get("/throwexception", (request, response) -> {
