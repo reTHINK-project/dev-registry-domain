@@ -25,11 +25,15 @@ import org.apache.log4j.Logger;
 public class HypertyController {
     static Logger log = Logger.getLogger(HypertyController.class.getName());
 
+    private int numReads = 0;
+    private int numWrites = 0;
+
     public HypertyController(StatusService status, final HypertyService hypertyService, final Connection connectionClient, final DataObjectService dataObjectService) {
 
         Gson gson = new Gson();
 
         get("/live", (req, res) -> {
+            this.numReads++;
             log.info("Live page requested. Statistics on the way...");
             res.type("application/json");
             Map<String, String> databaseStats = status.getDomainRegistryStats();
@@ -38,6 +42,7 @@ public class HypertyController {
         });
 
         get("/hyperty/user/*", (req,res) -> {
+            this.numReads++;
             res.type("application/json");
             String[] encodedURL = req.url().split("/");
             String userID = decodeUrl(encodedURL[encodedURL.length - 1]);
@@ -47,6 +52,7 @@ public class HypertyController {
         });
 
         put("/hyperty/user/*", (req,res) -> {
+            this.numWrites++;
             res.type("application/json");
             String body = req.body();
             String[] encodedURL = req.url().split("/");
@@ -71,6 +77,7 @@ public class HypertyController {
         });
 
         put("hyperty/dataobject/:name", (req, res) -> {
+            this.numWrites++;
             res.type("application/json");
             String body = req.body();
             String dataObjectName = req.params(":name");
@@ -82,6 +89,7 @@ public class HypertyController {
         });
 
         get("hyperty/dataobject/:name", (req, res) -> {
+            this.numReads++;
             res.type("application/json");
             String dataObjectName = req.params(":name");
             DataObjectInstance dataObject = dataObjectService.getDataObject(connectionClient, dataObjectName);
@@ -136,5 +144,13 @@ public class HypertyController {
 
     private static String decodeUrl(String url) throws java.io.UnsupportedEncodingException {
         return java.net.URLDecoder.decode(url, "UTF-8");
+    }
+
+    public int getNumReads(){
+        return this.numReads;
+    }
+
+    public int getNumWrites(){
+        return this.numWrites;
     }
 }
