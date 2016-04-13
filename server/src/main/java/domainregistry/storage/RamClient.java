@@ -99,7 +99,8 @@ public class RamClient implements Connection{
         return numHyperties;
     }
 
-    public void insertDataObject(DataObjectInstance dataObject, String dataObjectName){
+    public void insertDataObject(DataObjectInstance dataObject){
+        String dataObjectName = dataObject.getName();
         dataObjects.put(dataObjectName, dataObject);
     }
 

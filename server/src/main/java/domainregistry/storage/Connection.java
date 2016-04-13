@@ -30,7 +30,7 @@ interface Connection{
     public void deleteUserHyperty(String hypertyID);
     public int getNumberOfHyperties();
     //dataobjects
-    public void insertDataObject(DataObjectInstance dataObject, String dataObjectName);
+    public void insertDataObject(DataObjectInstance dataObject);
     public boolean dataObjectExists(String dataObjectName);
     public DataObjectInstance getDataObject(String dataObjectName);
     public void deleteDataObject(String dataObjectName);

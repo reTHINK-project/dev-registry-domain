@@ -84,10 +84,13 @@ public class CassandraClient implements Connection{
         else log.error("Invalid cassandra session.");
     }
 
-    public void insertDataObject(DataObjectInstance dataObject, String dataObjectName){
+    public void insertDataObject(DataObjectInstance dataObject){
+        String dataObjectName = dataObject.getName();
         Statement statement = QueryBuilder.insertInto(KEYSPACE, DATAOBJECTS)
             .value("name", dataObjectName)
             .value("schem", dataObject.getSchema())
+            .value("startingTime", dataObject.getStartingTime())
+            .value("lastModified", dataObject.getLastModified())
             .value("reporter", dataObject.getReporter())
             .value("url", dataObject.getUrl());
 
@@ -148,7 +151,7 @@ public class CassandraClient implements Connection{
         ResultSet results = session.execute(select);
         Row row = results.one();
         return new DataObjectInstance(row.getString("name"), row.getString("schem"),
-                row.getString("reporter"), row.getString("url"));
+                row.getString("reporter"), row.getString("url"), row.getString("startingTime"), row.getString("lastModified"));
     }
 
     public boolean hypertyExists(String hypertyID){

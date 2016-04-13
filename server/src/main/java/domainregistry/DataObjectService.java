@@ -28,7 +28,11 @@ public class DataObjectService{
 
     public void createDataObject(Connection client, DataObjectInstance dataObject){
         String dataObjectName = dataObject.getName();
-        client.insertDataObject(dataObject, dataObjectName);
+
+        if(client.dataObjectExists(dataObjectName))
+            updateDataObject(client, dataObject);
+
+        else newDataObject(client, dataObject);
     }
 
     public DataObjectInstance getDataObject(Connection client, String dataObjectName){
@@ -43,5 +47,20 @@ public class DataObjectService{
             client.deleteDataObject(dataObjectName);
 
         else throw new DataNotFoundException();
+    }
+
+    private void newDataObject(Connection client, DataObjectInstance dataObject){
+        String dataObjectName = dataObject.getName();
+        dataObject.setStartingTime(Dates.getActualDate());
+        dataObject.setLastModified(Dates.getActualDate());
+        client.insertDataObject(dataObject);
+    }
+
+    private void updateDataObject(Connection client, DataObjectInstance newDataObject){
+        String dataObjectName = newDataObject.getName();
+        DataObjectInstance oldDataObject = client.getDataObject(dataObjectName);
+        newDataObject.setLastModified(Dates.getActualDate());
+        newDataObject.setStartingTime(oldDataObject.getStartingTime());
+        client.insertDataObject(newDataObject);
     }
 }

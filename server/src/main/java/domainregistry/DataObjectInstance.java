@@ -21,12 +21,26 @@ public class DataObjectInstance {
     private String url;
     private String reporter;
     private String name;
+    private String startingTime;
+    private String lastModified;
+
+    public DataObjectInstance(){
+    }
 
     public DataObjectInstance(String name, String schema, String reporter, String url){
         this.schema = schema;
         this.url = url;
         this.reporter = reporter;
         this.name = name;
+    }
+
+    public DataObjectInstance(String name, String schema, String reporter, String url, String startingTime, String lastModified){
+        this.schema = schema;
+        this.url = url;
+        this.reporter = reporter;
+        this.name = name;
+        this.startingTime = startingTime;
+        this.lastModified = lastModified;
     }
 
     public void setName(String name){
@@ -47,5 +61,21 @@ public class DataObjectInstance {
 
     public String getName(){
         return this.name;
+    }
+
+    public String getStartingTime(){
+        return this.startingTime;
+    }
+
+    public void setStartingTime(String time){
+        this.startingTime = time;
+    }
+
+    public String getLastModified(){
+        return this.lastModified;
+    }
+
+    public void setLastModified(String time){
+        this.lastModified = time;
     }
 }
