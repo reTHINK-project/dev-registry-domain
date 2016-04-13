@@ -25,7 +25,7 @@ import org.apache.log4j.Logger;
 public class HypertyController {
     static Logger log = Logger.getLogger(HypertyController.class.getName());
 
-    public HypertyController(StatusService status, final HypertyService hypertyService, final Connection connectionClient) {
+    public HypertyController(StatusService status, final HypertyService hypertyService, final Connection connectionClient, final DataObjectService dataObjectService) {
 
         Gson gson = new Gson();
 
@@ -68,6 +68,33 @@ public class HypertyController {
             hypertyService.deleteUserHyperty(connectionClient, userID, hypertyID);
             res.status(200);
             return gson.toJson(new Messages("Hyperty deleted"));
+        });
+
+        put("hyperty/dataobject/:name", (req, res) -> {
+            res.type("application/json");
+            String body = req.body();
+            String dataObjectName = req.params(":name");
+            DataObjectInstance dataObject = gson.fromJson(body, DataObjectInstance.class);
+            dataObject.setName(dataObjectName);
+            dataObjectService.createDataObject(connectionClient, dataObject);
+            res.status(200);
+            return gson.toJson(new Messages("Data object created"));
+        });
+
+        get("hyperty/dataobject/:name", (req, res) -> {
+            res.type("application/json");
+            String dataObjectName = req.params(":name");
+            DataObjectInstance dataObject = dataObjectService.getDataObject(connectionClient, dataObjectName);
+            res.status(200);
+            return gson.toJson(dataObject);
+        });
+
+        delete("/hyperty/dataobject/:name", (req, res) -> {
+            res.type("application/json");
+            String dataObjectName = req.params(":name");
+            dataObjectService.deleteDataObject(connectionClient, dataObjectName);
+            res.status(200);
+            return gson.toJson(new Messages("Data object deleted"));
         });
 
         get("/throwexception", (request, response) -> {

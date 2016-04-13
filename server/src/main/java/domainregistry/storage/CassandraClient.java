@@ -37,6 +37,7 @@ public class CassandraClient implements Connection{
     public static final String KEYSPACE  = "rethinkeyspace";
     public static final String IDHYPERTIES = "hyperties_by_id";
     public static final String USERHYPERTIES = "hyperties_by_user";
+    public static final String DATAOBJECTS = "data_objects";
     public static final String DOWN = "DOWN";
 
     private Cluster cluster;
@@ -83,6 +84,24 @@ public class CassandraClient implements Connection{
         else log.error("Invalid cassandra session.");
     }
 
+    public void insertDataObject(DataObjectInstance dataObject){
+        String dataObjectName = dataObject.getName();
+        Statement statement = QueryBuilder.insertInto(KEYSPACE, DATAOBJECTS)
+            .value("name", dataObjectName)
+            .value("schem", dataObject.getSchema())
+            .value("startingTime", dataObject.getStartingTime())
+            .value("lastModified", dataObject.getLastModified())
+            .value("reporter", dataObject.getReporter())
+            .value("url", dataObject.getUrl());
+
+        if(getSession() != null){
+            getSession().execute(statement);
+            log.info("Inserted in database data object with name: " + dataObjectName);
+        }
+        else log.error("Invalid cassandra session.");
+
+    }
+
     public int getNumberOfHyperties(){
         ArrayList<String> data = new ArrayList<String>();
 
@@ -126,9 +145,27 @@ public class CassandraClient implements Connection{
                 row.getString("user"), row.getString("lastModified"), row.getInt("expires"));
     }
 
+    public DataObjectInstance getDataObject(String dataObjectName){
+        Statement select = QueryBuilder.select().all().from(KEYSPACE, DATAOBJECTS)
+                                                      .where(QueryBuilder.eq("name", dataObjectName));
+        ResultSet results = session.execute(select);
+        Row row = results.one();
+        return new DataObjectInstance(row.getString("name"), row.getString("schem"),
+                row.getString("reporter"), row.getString("url"), row.getString("startingTime"), row.getString("lastModified"));
+    }
+
     public boolean hypertyExists(String hypertyID){
         Statement select = QueryBuilder.select().all().from(KEYSPACE, IDHYPERTIES)
                                                       .where(QueryBuilder.eq("hypertyID", hypertyID));
+
+        ResultSet results = session.execute(select);
+        Row row = results.one();
+        return row != null;
+    }
+
+    public boolean dataObjectExists(String dataObjectName){
+        Statement select = QueryBuilder.select().all().from(KEYSPACE, DATAOBJECTS)
+                                                      .where(QueryBuilder.eq("name", dataObjectName));
 
         ResultSet results = session.execute(select);
         Row row = results.one();
@@ -205,6 +242,13 @@ public class CassandraClient implements Connection{
         getSession().execute(deleteFromID);
         getSession().execute(deleteFromUsers);
         log.info("Deleted from database hyperty with ID: " + hypertyID);
+    }
+
+    public void deleteDataObject(String dataObjectName){
+        Statement delete = QueryBuilder.delete().from(KEYSPACE, DATAOBJECTS)
+                                                .where(QueryBuilder.eq("name", dataObjectName));
+        getSession().execute(delete);
+        log.info("Deleted from database dataobject with name: " + dataObjectName);
     }
 
     public Session getSession(){

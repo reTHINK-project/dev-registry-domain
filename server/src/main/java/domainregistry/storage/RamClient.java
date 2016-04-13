@@ -24,6 +24,7 @@ public class RamClient implements Connection{
     static Logger log = Logger.getLogger(RamClient.class.getName());
 
     private Map<String, Map<String, HypertyInstance>> userServices = new HashMap<>();
+    private Map<String, DataObjectInstance> dataObjects = new HashMap<>();
 
     public Map<String, HypertyInstance> getUserHyperties(String userID) {
         log.info("Received request for " + userID + " hyperties");
@@ -96,5 +97,22 @@ public class RamClient implements Connection{
             numHyperties += userServices.get(userID).keySet().size();
         }
         return numHyperties;
+    }
+
+    public void insertDataObject(DataObjectInstance dataObject){
+        String dataObjectName = dataObject.getName();
+        dataObjects.put(dataObjectName, dataObject);
+    }
+
+    public boolean dataObjectExists(String dataObjectName){
+        return dataObjects.containsKey(dataObjectName);
+    }
+
+    public DataObjectInstance getDataObject(String dataObjectName){
+        return dataObjects.get(dataObjectName);
+    }
+
+    public void deleteDataObject(String dataObjectName){
+        dataObjects.remove(dataObjectName);
     }
 }

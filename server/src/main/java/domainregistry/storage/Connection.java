@@ -19,6 +19,7 @@ package domainregistry;
 import java.util.*;
 
 interface Connection{
+    //hyperties
     public ArrayList<String> getAllUsers();
     public HypertyInstance getHyperty(String hypertyID);
     public boolean hypertyExists(String hypertyID);
@@ -28,4 +29,9 @@ interface Connection{
     public Map<String, HypertyInstance> getUserHyperties(String userID);
     public void deleteUserHyperty(String hypertyID);
     public int getNumberOfHyperties();
+    //dataobjects
+    public void insertDataObject(DataObjectInstance dataObject);
+    public boolean dataObjectExists(String dataObjectName);
+    public DataObjectInstance getDataObject(String dataObjectName);
+    public void deleteDataObject(String dataObjectName);
 }
