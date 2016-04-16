@@ -30,9 +30,9 @@ public class HypertyController {
 
     public HypertyController(StatusService status, final HypertyService hypertyService, final Connection connectionClient, final DataObjectService dataObjectService) {
 
-        Gson gson = new Gson();
 
         get("/live", (req, res) -> {
+            Gson gson = new Gson();
             this.numReads++;
             log.info("Live page requested. Statistics on the way...");
             res.type("application/json");
@@ -42,6 +42,7 @@ public class HypertyController {
         });
 
         get("/hyperty/user/*", (req,res) -> {
+            Gson gson = new Gson();
             this.numReads++;
             res.type("application/json");
             String[] encodedURL = req.url().split("/");
@@ -52,6 +53,7 @@ public class HypertyController {
         });
 
         put("/hyperty/user/*", (req,res) -> {
+            Gson gson = new Gson();
             this.numWrites++;
             res.type("application/json");
             String body = req.body();
@@ -67,6 +69,7 @@ public class HypertyController {
         });
 
         delete("/hyperty/user/*", (req,res) -> {
+            Gson gson = new Gson();
             res.type("application/json");
             String[] encodedURL = req.url().split("/");
             String userID = decodeUrl(encodedURL[encodedURL.length - 2]);
@@ -77,6 +80,7 @@ public class HypertyController {
         });
 
         put("hyperty/dataobject/:name", (req, res) -> {
+            Gson gson = new Gson();
             this.numWrites++;
             res.type("application/json");
             String body = req.body();
@@ -89,6 +93,7 @@ public class HypertyController {
         });
 
         get("hyperty/dataobject/:name", (req, res) -> {
+            Gson gson = new Gson();
             this.numReads++;
             res.type("application/json");
             String dataObjectName = req.params(":name");
@@ -98,6 +103,7 @@ public class HypertyController {
         });
 
         delete("/hyperty/dataobject/:name", (req, res) -> {
+            Gson gson = new Gson();
             res.type("application/json");
             String dataObjectName = req.params(":name");
             dataObjectService.deleteDataObject(connectionClient, dataObjectName);
@@ -110,6 +116,7 @@ public class HypertyController {
         });
 
         exception(DataNotFoundException.class, (e, req, res) -> {
+            Gson gson = new Gson();
             res.status(404);
             res.body(gson.toJson(new Messages("Data not found")));
         });
@@ -119,6 +126,7 @@ public class HypertyController {
         });
 
         exception(CouldNotRemoveHypertyException.class, (e, req, res) -> {
+            Gson gson = new Gson();
             res.status(404);
             res.body(gson.toJson(new Messages("Could not remove hyperty")));
         });
@@ -128,6 +136,7 @@ public class HypertyController {
         });
 
         exception(UserNotFoundException.class, (e, req, res) -> {
+            Gson gson = new Gson();
             res.status(404);
             res.body(gson.toJson(new Messages("User not found")));
         });
@@ -137,6 +146,7 @@ public class HypertyController {
         });
 
         exception(CouldNotCreateOrUpdateHypertyException.class, (e, req, res) -> {
+            Gson gson = new Gson();
             res.status(404);
             res.body(gson.toJson(new Messages("Could not create or update hyperty")));
         });

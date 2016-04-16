@@ -16,10 +16,8 @@
 
 package domainregistry;
 
-import java.util.concurrent.TimeUnit;
-
 class MetricsThread extends Thread{
-    private static final int TWO_SECONDS = 2;
+    private static final int TWO_SECONDS = 2000;
     HypertyController controller;
 
     public MetricsThread(HypertyController controller){
@@ -30,7 +28,7 @@ class MetricsThread extends Thread{
     public void run(){
         try{
             while(true){
-                TimeUnit.SECONDS.sleep(TWO_SECONDS);
+                Thread.sleep(TWO_SECONDS);
                 double writes = (double) controller.getNumWrites();
                 double reads =  (double) controller.getNumReads();
                 RiemannCommunicator.send("http get", "http", reads);

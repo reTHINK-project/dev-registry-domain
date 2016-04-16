@@ -28,7 +28,6 @@ public class RiemannCommunicator {
 
     public static void send(String service, String tag, double metric){
         try {
-            log.info("sending event...");
             RiemannClient client = getRiemannClient();
             client.connect();
             client.event().
@@ -36,12 +35,11 @@ public class RiemannCommunicator {
                 state(RUNNING).
                 metric(metric).
                 tags(tag).
-                send().
-                deref(FIVE_SECONDS, java.util.concurrent.TimeUnit.MILLISECONDS);
+                send();
 
             client.close();
         } catch (Exception e){
-            log.error("Could not connect to a riemann client");
+            log.error("Could not send event to riemann");
         }
     }
 
