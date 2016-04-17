@@ -16,7 +16,11 @@
 
 package domainregistry;
 
+import org.apache.log4j.Logger;
+
 class MetricsThread extends Thread{
+    static Logger log = Logger.getLogger(MetricsThread.class.getName());
+
     private static final int TWO_SECONDS = 2000;
     HypertyController controller;
 

@@ -35,7 +35,8 @@ public class RiemannCommunicator {
                 state(RUNNING).
                 metric(metric).
                 tags(tag).
-                send();
+                send().
+                deref(FIVE_SECONDS, java.util.concurrent.TimeUnit.MILLISECONDS);
 
             client.close();
         } catch (Exception e){

@@ -32,7 +32,6 @@ public class Main {
         String storageType = System.getenv(STORAGE);
         String expires = System.getenv(EXPIRES);
         long time = Long.valueOf(expires).longValue();
-        HypertyController controller;
 
         if(storageType.equals("CASSANDRA")){
             log.info("Cassandra choosen. Requests will be saved in a Cassandra db cluster");
@@ -49,7 +48,7 @@ public class Main {
             HypertyService hypertyService = new HypertyService();
             DataObjectService dataObjectService = new DataObjectService();
             StatusService status = new StatusService(CASSANDRA, cassandraClient);
-            controller = new HypertyController(status, hypertyService, cassandraClient, dataObjectService);
+            HypertyController controller = new HypertyController(status, hypertyService, cassandraClient, dataObjectService);
             new HeartBeatThread(hypertyService, cassandraClient, time).start();
             new MetricsThread(controller).start();
         }
@@ -60,9 +59,9 @@ public class Main {
             StatusService status = new StatusService(RAM, ramClient);
             HypertyService hypertyService = new HypertyService();
             DataObjectService dataObjectService = new DataObjectService();
-            controller = new HypertyController(status, hypertyService, ramClient, dataObjectService);
+            HypertyController controller = new HypertyController(status, hypertyService, ramClient, dataObjectService);
             new HeartBeatThread(hypertyService, ramClient, time).start();
-            new MetricsThread(controller);
+            new MetricsThread(controller).start();
         }
     }
 }
