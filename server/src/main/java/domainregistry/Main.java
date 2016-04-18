@@ -50,7 +50,7 @@ public class Main {
             StatusService status = new StatusService(CASSANDRA, cassandraClient);
             HypertyController controller = new HypertyController(status, hypertyService, cassandraClient, dataObjectService);
             new HeartBeatThread(hypertyService, cassandraClient, time).start();
-            new MetricsThread(controller).start();
+            new MetricsThread(controller, cassandraClient).start();
         }
 
         if(storageType.equals("RAM")){
@@ -61,7 +61,7 @@ public class Main {
             DataObjectService dataObjectService = new DataObjectService();
             HypertyController controller = new HypertyController(status, hypertyService, ramClient, dataObjectService);
             new HeartBeatThread(hypertyService, ramClient, time).start();
-            new MetricsThread(controller).start();
+            //new MetricsThread(controller).start();
         }
     }
 }

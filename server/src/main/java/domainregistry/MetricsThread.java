@@ -23,9 +23,11 @@ class MetricsThread extends Thread{
 
     private static final int TWO_SECONDS = 2000;
     HypertyController controller;
+    CassandraClient cassandraClient;
 
-    public MetricsThread(HypertyController controller){
+    public MetricsThread(HypertyController controller, CassandraClient cassandraClient){
         this.controller = controller;
+        this.cassandraClient = cassandraClient;
     }
 
     @Override
@@ -37,6 +39,10 @@ class MetricsThread extends Thread{
                 double reads =  (double) controller.getNumReads();
                 RiemannCommunicator.send("http get", "http", reads);
                 RiemannCommunicator.send("http put", "http", writes);
+                double liveNodes = (double) cassandraClient.getNumLiveNodes();
+                double clusterSize = (double) cassandraClient.getClusterSize();
+                RiemannCommunicator.send("cassandra live nodes", "cassandra", liveNodes);
+                RiemannCommunicator.send("cassandra cluster size", "cassandra", clusterSize);
             }
         }catch(InterruptedException e){
             e.printStackTrace();
