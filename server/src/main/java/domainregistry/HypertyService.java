@@ -118,6 +118,7 @@ public class HypertyService{
         else throw new HypertiesNotFoundException();
     }
 
+
     protected void deleteExpiredHyperties(Connection connectionClient, String userID){
         String actualDate = Dates.getActualDate();
 

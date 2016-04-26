@@ -108,6 +108,7 @@ describe 'domain registry api tests' do
       get '/ruijose@inesc-id.pt'
       expect_status(200)
       expect_json_sizes(3)
+<<<<<<< HEAD
       expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes])
       expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes])
       expect_json_types("hyperty1", dataSchemes: :array_of_strings, resources: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int)
@@ -116,6 +117,15 @@ describe 'domain registry api tests' do
       expect(json_body[:hyperty2][:descriptor]).to eql("descriptor4")
       expect(json_body[:hyperty6][:descriptor]).to eql("descriptor4")
       expect(json_body[:hyperty1][:expires]).to eql(1200)
+=======
+      expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires])
+      expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires])
+      expect_json_types("hyperty1", descriptor: :array_of_strings, startingTime: :string, lastModified: :string, expires: :int)
+      expect_json_types("hyperty2", descriptor: :array_of_strings, startingTime: :string, lastModified: :string, expires: :int)
+      expect(json_body[:hyperty1][:descriptor]).to eql(["chat", "voice", "video"])
+      expect(json_body[:hyperty2][:descriptor]).to eql(["chat", "voice"])
+      expect(json_body[:hyperty1][:expires]).to eql(120)
+>>>>>>> hyperty advanced search done
       expect(json_body[:hyperty2][:expires]).to eql(1200)
       expect(json_body[:hyperty6][:expires]).to eql(1200)
       expect(json_body[:hyperty1][:startingTime]).to eql(json_body[:hyperty1][:lastModified])
@@ -139,6 +149,7 @@ describe 'domain registry api tests' do
   describe 'get specific hyperties' do
 
     it 'should return all user hyperties with voice resource type' do
+<<<<<<< HEAD
       get '/ruijose@inesc-id.pt/hyperty?resources=voice'
       expect_status(200);
       expect_json_sizes(1)
@@ -146,10 +157,14 @@ describe 'domain registry api tests' do
 
     it 'should return all user hyperties with voice resource type' do
       get '/ruijose@inesc-id.pt/hyperty?dataSchemes=comm'
+=======
+      get '/ruijose@inesc-id.pt/voice'
+>>>>>>> hyperty advanced search done
       expect_status(200);
       expect_json_sizes(3)
     end
 
+<<<<<<< HEAD
     it 'should return all user hyperties with voice resource type' do
       get '/ruijose@inesc-id.pt/hyperty?dataSchemes=comm&resources=chat,video'
       expect_status(200);
@@ -196,6 +211,18 @@ describe 'domain registry api tests' do
       get '/ruijose@inesc-id.pt/messaging'
       expect_status(404);
       expect_json(:message => "URL malformed. A query string is needed.")
+=======
+    it 'should return all user hyperties with chat resource type' do
+      get '/ruijose@inesc-id.pt/video'
+      expect_status(200);
+      expect_json_sizes(1)
+    end
+
+    it 'should return a hyperties not found error' do
+      get '/ruijose@inesc-id.pt/messaging'
+      expect_status(404);
+      expect_json(:message => "Hyperties not found.")
+>>>>>>> hyperty advanced search done
     end
   end
 
@@ -212,6 +239,7 @@ describe 'domain registry api tests' do
       get '/ruijose@inesc-id.pt'
       expect_status(200)
       expect_json_sizes(3)
+<<<<<<< HEAD
       expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes])
       expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes])
       expect_json_types("hyperty1", resources: :array_of_strings, dataSchemes: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int)
@@ -220,6 +248,15 @@ describe 'domain registry api tests' do
       expect(json_body[:hyperty1][:dataSchemes]).to eql(["comm", "fake"])
       expect(json_body[:hyperty1][:expires]).to eql(1200)
       expect(json_body[:hyperty1][:descriptor]).to eql("descriptor3")
+=======
+      expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires])
+      expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires])
+      expect_json_types("hyperty1", descriptor: :array_of_strings, startingTime: :string, lastModified: :string, expires: :int)
+      expect_json_types("hyperty2", descriptor: :array_of_strings, startingTime: :string, lastModified: :string, expires: :int)
+      expect(json_body[:hyperty1][:descriptor]).to eql(["chat", "video"])
+      expect(json_body[:hyperty2][:descriptor]).to eql(["chat", "voice"])
+      expect(json_body[:hyperty1][:expires]).to eql(120)
+>>>>>>> hyperty advanced search done
       expect(json_body[:hyperty2][:expires]).to eql(1200)
       expect(json_body[:hyperty2][:startingTime]).to eql(json_body[:hyperty2][:lastModified])
       expect(json_body[:hyperty1][:startingTime]).to be < (json_body[:hyperty1][:lastModified])

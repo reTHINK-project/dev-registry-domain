@@ -40,6 +40,7 @@ public class HypertyController {
             return gson.toJson(databaseStats);
         });
 
+
         get("/hyperty/user/*", (req,res) -> {
             res.type("application/json");
             String[] encodedURL = req.url().split("/");
