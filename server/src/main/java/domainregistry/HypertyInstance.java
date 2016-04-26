@@ -16,11 +16,10 @@
 
 package domainregistry;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class HypertyInstance {
-    private String descriptor;
+    private List<String> descriptor;
     private String startingTime;
     private String hypertyID;
     private String userID;
@@ -30,7 +29,7 @@ public class HypertyInstance {
     public HypertyInstance(){
     }
 
-    public HypertyInstance(String descriptor,
+    public HypertyInstance(List<String> descriptor,
                            String startingTime,
                            String lastModified,
                            int expires){
@@ -41,7 +40,7 @@ public class HypertyInstance {
         this.expires = expires;
     }
 
-    public HypertyInstance(String descriptor,
+    public HypertyInstance(List<String> descriptor,
                            String startingTime,
                            String userID,
                            String lastModified,
@@ -54,15 +53,15 @@ public class HypertyInstance {
         this.userID = userID;
     }
 
-    public HypertyInstance(String descriptor){
+    public HypertyInstance(List<String> descriptor){
         this.descriptor = descriptor;
     }
 
-    public String getDescriptor(){
+    public List<String> getDescriptor(){
         return this.descriptor;
     }
 
-    public void setDescriptor(String descriptor){
+    public void setDescriptor(List<String> descriptor){
         this.descriptor = descriptor;
     }
 

@@ -22,22 +22,22 @@ describe 'domain registry api tests' do
 
   before {
     @hyperty_details = {
-      descriptor: "descriptor1",
+      descriptor: ["chat", "voice", "video"],
       expires: 120
     }
 
     @hyperty_two_details = {
-      descriptor: "descriptor2",
+      descriptor: ["chat", "voice"],
       expires: 120
     }
 
     @hyperty_three_details = {
-      descriptor: "descriptor3",
+      descriptor: ["chat", "video"],
       expires: 120
     }
 
     @hyperty_four_details = {
-      descriptor: "descriptor4",
+      descriptor: ["chat", "voice", "video"],
       expires: 1200
     }
   }
@@ -89,10 +89,10 @@ describe 'domain registry api tests' do
       expect_json_sizes(3)
       expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires])
       expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires])
-      expect_json_types("hyperty1", descriptor: :string, startingTime: :string, lastModified: :string, expires: :int)
-      expect_json_types("hyperty2", descriptor: :string, startingTime: :string, lastModified: :string, expires: :int)
-      expect(json_body[:hyperty1][:descriptor]).to eql("descriptor1")
-      expect(json_body[:hyperty2][:descriptor]).to eql("descriptor4")
+      expect_json_types("hyperty1", descriptor: :array_of_strings, startingTime: :string, lastModified: :string, expires: :int)
+      expect_json_types("hyperty2", descriptor: :array_of_strings, startingTime: :string, lastModified: :string, expires: :int)
+      expect(json_body[:hyperty1][:descriptor]).to eql(["chat", "voice", "video"])
+      expect(json_body[:hyperty2][:descriptor]).to eql(["chat", "voice", "video"])
       expect(json_body[:hyperty1][:expires]).to eql(120)
       expect(json_body[:hyperty2][:expires]).to eql(1200)
       expect(json_body[:hyperty1][:startingTime]).to eql(json_body[:hyperty1][:lastModified])
@@ -121,10 +121,10 @@ describe 'domain registry api tests' do
       expect_json_sizes(3)
       expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires])
       expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires])
-      expect_json_types("hyperty1", descriptor: :string, startingTime: :string, lastModified: :string, expires: :int)
-      expect_json_types("hyperty2", descriptor: :string, startingTime: :string, lastModified: :string, expires: :int)
-      expect(json_body[:hyperty1][:descriptor]).to eql("descriptor3")
-      expect(json_body[:hyperty2][:descriptor]).to eql("descriptor4")
+      expect_json_types("hyperty1", descriptor: :array_of_strings, startingTime: :string, lastModified: :string, expires: :int)
+      expect_json_types("hyperty2", descriptor: :array_of_strings, startingTime: :string, lastModified: :string, expires: :int)
+      expect(json_body[:hyperty1][:descriptor]).to eql(["chat", "video"])
+      expect(json_body[:hyperty2][:descriptor]).to eql(["chat", "voice", "video"])
       expect(json_body[:hyperty1][:expires]).to eql(120)
       expect(json_body[:hyperty2][:expires]).to eql(1200)
       expect(json_body[:hyperty2][:startingTime]).to eql(json_body[:hyperty2][:lastModified])

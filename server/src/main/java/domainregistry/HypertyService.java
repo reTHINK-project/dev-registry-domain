@@ -32,7 +32,7 @@ public class HypertyService{
             deleteExpiredHyperties(connectionClient, userID);
         }
 
-        if(connectionClient.userExists(userID) && !allUserHyperties.isEmpty()){ //if the user still have hyperties
+        if(connectionClient.userExists(userID) && !allUserHyperties.isEmpty()){
             return allUserHyperties;
         }
 
