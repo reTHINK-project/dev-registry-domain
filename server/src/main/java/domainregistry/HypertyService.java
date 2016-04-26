@@ -16,9 +16,7 @@
 
 package domainregistry;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import org.apache.log4j.Logger;
 
 public class HypertyService{
@@ -75,6 +73,22 @@ public class HypertyService{
         else throw new CouldNotRemoveHypertyException();
     }
 
+    public Map<String, HypertyInstance> getSpecificHyperties(Connection connectionClient, String userID, String hypertyType){
+        Map<String, HypertyInstance> foundHyperties = new HashMap();
+        Map<String, HypertyInstance> allUserHyperties = connectionClient.getUserHyperties(userID);
+
+        for (Map.Entry<String, HypertyInstance> entry : allUserHyperties.entrySet()){
+            if(entry.getValue().getDescriptor().contains(hypertyType)){
+                foundHyperties.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        if(!foundHyperties.isEmpty())
+            return foundHyperties;
+
+        else throw new HypertiesNotFoundException();
+    }
+
     protected void deleteExpiredHyperties(Connection connectionClient, String userID){
         String actualDate = Dates.getActualDate();
         Map<String, HypertyInstance> userHyperties = connectionClient.getUserHyperties(userID);
@@ -95,7 +109,7 @@ public class HypertyService{
         else newHyperty(connectionClient, hyperty);
     }
 
-    public void checkHypertyOwnership(Connection connectionClient, HypertyInstance hyperty){
+    private void checkHypertyOwnership(Connection connectionClient, HypertyInstance hyperty){
         String userID = hyperty.getUserID();
         String hypertyID = hyperty.getHypertyID();
         Map<String, HypertyInstance> userHyperties = connectionClient.getUserHyperties(userID);

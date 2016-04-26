@@ -25,6 +25,9 @@ import org.apache.log4j.Logger;
 public class HypertyController {
     static Logger log = Logger.getLogger(HypertyController.class.getName());
 
+    public static final int ALL_HYPERTIES_PATH_SIZE = 6;
+    public static final int SPECIFIC_HYPERTIES_PATH_SIZE = 7;
+
     public HypertyController(StatusService status, final HypertyService hypertyService, final Connection connectionClient, final DataObjectService dataObjectService) {
 
         Gson gson = new Gson();
@@ -40,10 +43,27 @@ public class HypertyController {
         get("/hyperty/user/*", (req,res) -> {
             res.type("application/json");
             String[] encodedURL = req.url().split("/");
-            String userID = decodeUrl(encodedURL[encodedURL.length - 1]);
-            Map<String, HypertyInstance> userHyperties = hypertyService.getAllHyperties(connectionClient, userID);
-            res.status(200);
-            return gson.toJson(userHyperties);
+
+            if(encodedURL.length == ALL_HYPERTIES_PATH_SIZE){
+                String userID = decodeUrl(encodedURL[encodedURL.length - 1]);
+                Map<String, HypertyInstance> userHyperties = hypertyService.getAllHyperties(connectionClient, userID);
+                res.status(200);
+                return gson.toJson(userHyperties);
+            }
+
+            else if(encodedURL.length == SPECIFIC_HYPERTIES_PATH_SIZE){
+                String userID = decodeUrl(encodedURL[encodedURL.length - 2]);
+                String hypertyType = decodeUrl(encodedURL[encodedURL.length - 1]);
+                Map<String, HypertyInstance> userHyperties = hypertyService.getSpecificHyperties(connectionClient, userID, hypertyType);
+                res.status(200);
+                return gson.toJson(userHyperties);
+            }
+
+            else{
+                res.status(400);
+                return gson.toJson(new Messages("URL malformed."));
+            }
+
         });
 
         put("/hyperty/user/*", (req,res) -> {
@@ -104,6 +124,15 @@ public class HypertyController {
         exception(DataNotFoundException.class, (e, req, res) -> {
             res.status(404);
             res.body(gson.toJson(new Messages("Data not found")));
+        });
+
+        get("/throwexception", (request, response) -> {
+            throw new HypertiesNotFoundException();
+        });
+
+        exception(HypertiesNotFoundException.class, (e, req, res) -> {
+            res.status(404);
+            res.body(gson.toJson(new Messages("Hyperties not found.")));
         });
 
         get("/throwexception", (request, response) -> {

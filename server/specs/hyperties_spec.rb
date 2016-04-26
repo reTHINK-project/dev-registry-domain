@@ -37,7 +37,7 @@ describe 'domain registry api tests' do
     }
 
     @hyperty_four_details = {
-      descriptor: ["chat", "voice", "video"],
+      descriptor: ["chat", "voice"],
       expires: 1200
     }
   }
@@ -92,7 +92,7 @@ describe 'domain registry api tests' do
       expect_json_types("hyperty1", descriptor: :array_of_strings, startingTime: :string, lastModified: :string, expires: :int)
       expect_json_types("hyperty2", descriptor: :array_of_strings, startingTime: :string, lastModified: :string, expires: :int)
       expect(json_body[:hyperty1][:descriptor]).to eql(["chat", "voice", "video"])
-      expect(json_body[:hyperty2][:descriptor]).to eql(["chat", "voice", "video"])
+      expect(json_body[:hyperty2][:descriptor]).to eql(["chat", "voice"])
       expect(json_body[:hyperty1][:expires]).to eql(120)
       expect(json_body[:hyperty2][:expires]).to eql(1200)
       expect(json_body[:hyperty1][:startingTime]).to eql(json_body[:hyperty1][:lastModified])
@@ -103,6 +103,27 @@ describe 'domain registry api tests' do
       get '/nuno@inesc-id.pt'
       expect_status(404)
       expect_json(:message => "User not found")
+    end
+  end
+
+  describe 'get specific hyperties' do
+
+    it 'should return all user hyperties with voice resource type' do
+      get '/ruijose@inesc-id.pt/voice'
+      expect_status(200);
+      expect_json_sizes(3)
+    end
+
+    it 'should return all user hyperties with chat resource type' do
+      get '/ruijose@inesc-id.pt/video'
+      expect_status(200);
+      expect_json_sizes(1)
+    end
+
+    it 'should return a hyperties not found error' do
+      get '/ruijose@inesc-id.pt/messaging'
+      expect_status(404);
+      expect_json(:message => "Hyperties not found.")
     end
   end
 
@@ -124,7 +145,7 @@ describe 'domain registry api tests' do
       expect_json_types("hyperty1", descriptor: :array_of_strings, startingTime: :string, lastModified: :string, expires: :int)
       expect_json_types("hyperty2", descriptor: :array_of_strings, startingTime: :string, lastModified: :string, expires: :int)
       expect(json_body[:hyperty1][:descriptor]).to eql(["chat", "video"])
-      expect(json_body[:hyperty2][:descriptor]).to eql(["chat", "voice", "video"])
+      expect(json_body[:hyperty2][:descriptor]).to eql(["chat", "voice"])
       expect(json_body[:hyperty1][:expires]).to eql(120)
       expect(json_body[:hyperty2][:expires]).to eql(1200)
       expect(json_body[:hyperty2][:startingTime]).to eql(json_body[:hyperty2][:lastModified])
