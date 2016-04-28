@@ -161,7 +161,7 @@ Finally, the /live page could be used to verify up and down Cassandra nodes. A G
 More details about Cassandra and how to deploy a cluster can be found on [Cassandra's offical website](http://cassandra.apache.org) and [Cassandra's docker hub repository](https://hub.docker.com/_/cassandra/).
 #### Storing requests in a single Cassandra node
 
-Starting the Domain Registry backed with a single database node is quite simple:
+A single Cassandra node may be used to provide persistante information storage. However, with a single node, no redundancy is provided. Starting the Domain Registry backed with a single database node is quite simple:
 
 ```
 $ docker run --name cassandra-node -d cassandra:latest
@@ -291,7 +291,7 @@ Deletes a Hyperty Instance from a user indicated by the user_id parameter.
 
 **Example_value**: user://inesc-id.pt/ruijose
 
-**hyperty_id**: The ID of the Hyperty to be created.
+**hyperty_id**: The ID of the Hyperty to be deleted.
 
 **Example_value**: hyperty://ua.pt/428bee1b-887a8ee8cb32
 
