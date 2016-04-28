@@ -86,6 +86,8 @@ CREATE TABLE hyperties_by_id (
     startingTime text,
     lastModified text,
     expires int,
+    resources list<text>,
+    dataSchemes list<text>,
     PRIMARY KEY(hypertyid)
 );
 
@@ -96,6 +98,8 @@ CREATE TABLE hyperties_by_user (
     startingTime text,
     lastModified text,
     expires int,
+    resources list<text>,
+    dataSchemes list<text>,
     PRIMARY KEY(user, hypertyid)
 );
 
@@ -118,18 +122,17 @@ Datacenter: datacenter1
 Status=Up/Down
 |/ State=Normal/Leaving/Joining/Moving
 --  Address       Load       Tokens       Owns (effective)  Host ID                               Rack
-UN  172.17.2.131  167.54 KB  256          60.0%             04111fc6-4dfa-496c-b904-0defde6d3b92  rack1
-UN  172.17.2.133  298.41 KB  256          61.4%             b5b98cd9-dea0-4413-9387-1050dd3dafc3  rack1
-UN  172.17.2.132  270.25 KB  256          66.1%             f771448e-2a93-4726-af0a-21d1577ca3d9  rack1
-UN  172.17.2.135  258.53 KB  256          58.0%             4e6a07c9-dd3b-43e2-9cc0-32e39122a82d  rack1
-UN  172.17.2.134  283.42 KB  256          54.5%             ec5bf2ea-37f8-4751-a578-dd09fd073a3f  rack1
+UN  10.42.42.42   167.54 KB  256          75.0%             04111fc6-4dfa-496c-b904-0defde6d3b92  rack1
+UN  10.42.43.43   298.41 KB  256          75.4%             b5b98cd9-dea0-4413-9387-1050dd3dafc3  rack1
+UN  10.42.44.44   270.25 KB  256          75.0%             f771448e-2a93-4726-af0a-21d1577ca3d9  rack1
+UN  10.42.45.45   258.53 KB  256          75.0%             4e6a07c9-dd3b-43e2-9cc0-32e39122a82d  rack1
 ```
 
 With the database cluster running we can start the Domain Registry with the following commands:
 
 ```
 $ docker build -t domain-registry .
-$ docker run -e STORAGE_TYPE=CASSANDRA -e CONTACT_POINTS_IPS=ip1,ip2,ip3 -e EXPIRES=3600 -p 4568:4567 domain-registry
+$ docker run -e STORAGE_TYPE=CASSANDRA -e CONTACT_POINTS_IPS=IP1,...,IPn -e EXPIRES=3600 -p 4568:4567 domain-registry
 ```
 The environment variable CONTACT\_POINTS\_IPS comprises a set of IP addresses belonging to some database nodes. The Domain Registry server will use these IP's to discover and establish a connection with the database. The server will only use one IP, but providing the client more IPs will increase the chance for the client to continue to work with the database in case of node failures.
 

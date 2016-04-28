@@ -48,12 +48,25 @@ describe 'domain registry api tests' do
       descriptor: "descriptor4",
       expires: 1200
     }
+
+    @hyperty_five_details = {
+      resources: ["chat", "voice"],
+      dataSchemes: ["comm"],
+      descriptor: "descriptor5",
+      expires: 1200
+    }
   }
 
   describe 'create user hyperty' do
 
     it 'should add a new hyperty' do #non-existent user creates non-existent hyperty
       put '/ruijose@inesc-id.pt/hyperty1', @hyperty_details
+      expect_status(200)
+      expect_json(:message => "Hyperty created")
+    end
+
+    it 'should add a new hyperty' do
+      put '/ruigil@inesc-id.pt/hyperty11', @hyperty_five_details
       expect_status(200)
       expect_json(:message => "Hyperty created")
     end
@@ -173,6 +186,12 @@ describe 'domain registry api tests' do
       expect_json(:message => "Hyperties not found.")
     end
 
+    it 'should return a hyperties not found error' do
+      get '/ruigil@inesc-id.pt/hyperty?dataSchemes=comm&resources=video'
+      expect_status(404);
+      expect_json(:message => "Hyperties not found.")
+    end
+
     it 'should return a missing query string error' do
       get '/ruijose@inesc-id.pt/messaging'
       expect_status(404);
@@ -204,6 +223,12 @@ describe 'domain registry api tests' do
       expect(json_body[:hyperty2][:expires]).to eql(1200)
       expect(json_body[:hyperty2][:startingTime]).to eql(json_body[:hyperty2][:lastModified])
       expect(json_body[:hyperty1][:startingTime]).to be < (json_body[:hyperty1][:lastModified])
+    end
+
+    it 'should return all user hyperties with voice resource type' do
+      get '/ruijose@inesc-id.pt/hyperty?dataSchemes=comm,fake&resources=voice,chat,voice'
+      expect_status(200);
+      expect_json_sizes(1)
     end
 
     it 'should return an error, user not found' do
