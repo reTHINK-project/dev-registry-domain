@@ -144,10 +144,10 @@ When executing the _docker run_ command, if something like this appear, it means
 
 ```
 Connected to cluster: Test Cluster
-Datacenter: datacenter1; Host: /172.17.2.131; Rack: rack1
-Datacenter: datacenter1; Host: /172.17.2.132; Rack: rack1
-Datacenter: datacenter1; Host: /172.17.2.135; Rack: rack1
-Datacenter: datacenter1; Host: /172.17.2.134; Rack: rack1
+Datacenter: datacenter1; Host: /10.42.42.42; Rack: rack1
+Datacenter: datacenter1; Host: /10.42.43.43; Rack: rack1
+Datacenter: datacenter1; Host: /10.42.44.44; Rack: rack1
+Datacenter: datacenter1; Host: /10.42.45.45; Rack: rack1
 ```
 
 Finally, the /live page could be used to verify up and down Cassandra nodes. A GET /live should return the following JSON object:
