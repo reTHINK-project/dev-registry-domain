@@ -19,7 +19,7 @@ The Domain Registry is deployed using Docker. All commands must be executed  ins
 
 ### How to deploy using docker
 
-A Dockerfile is provided, so is possible to run the Domain Registry through a Docker container. Since several ways of storing requests are available, there are three possible ways to run the Domain Registry.
+A Dockerfile is provided, so it is possible to run the Domain Registry through a Docker container. Since several ways of storing requests are available, there are three possible ways to run the Domain Registry.
 
 1. Storing requests in-memory;
 2. Storing requests in a multi-host Cassandra database cluster.
@@ -27,13 +27,13 @@ A Dockerfile is provided, so is possible to run the Domain Registry through a Do
 
 #### Requests saved in-memory
 
-Similarly to the last Domain registry version, requests may be saved in-memory. It is the simplest way to deploy the server. The commands are the following:
+Requests may be saved in-memory. It is the simplest way to deploy the server. However, when the server is shutdown, all information stored there is lost. The commands are the following:
 
 ```
 $ docker build -t domain-registry .
 $ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -p 4568:4567 domain-registry
 ```
-Expires global variable defines the maximum amount of time (in seconds) a Hyperty stays in the server (see [soft state issue](https://github.com/reTHINK-project/dev-registry-domain/issues/7)). Note that the published port 4568 may be changed to another port that better suits your needs. Running the server with this configuration will work exactly as the last version.
+Expires global variable defines the maximum amount of time (in seconds) a Hyperty stays in the server (see [soft state issue](https://github.com/reTHINK-project/dev-registry-domain/issues/7)). Note that the published port 4568 may be changed to another port that better suits your needs. Running the server with this configuration will work exactly as the last version (R0.1.0).
 
 #### Requests saved in a multi-host Cassandra cluster
 
@@ -134,7 +134,7 @@ With the database cluster running we can start the Domain Registry with the foll
 $ docker build -t domain-registry .
 $ docker run -e STORAGE_TYPE=CASSANDRA -e CONTACT_POINTS_IPS=IP1,...,IPn -e EXPIRES=3600 -p 4568:4567 domain-registry
 ```
-The environment variable CONTACT\_POINTS\_IPS comprises a set of IP addresses belonging to some database nodes. The Domain Registry server will use these IP's to discover and establish a connection with the database. The server will only use one IP, but providing the client more IPs will increase the chance for the client to continue to work with the database in case of node failures.
+The environment variable CONTACT\_POINTS\_IPS comprises a set of IP addresses belonging to some database nodes. The Domain Registry server will use these IP's to discover and establish a connection with the database. The server will only use one IP, but providing the client with more IPs will increase the chance for the client to continue to work with the database in case of node failures.
 
 When executing the _docker run_ command, if something like this appear, it means that the client successfully connected with the database cluster.
 
