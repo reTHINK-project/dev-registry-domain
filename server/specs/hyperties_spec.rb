@@ -109,6 +109,9 @@ describe 'domain registry api tests' do
       expect_status(200)
       expect_json_sizes(3)
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> added advanced search with multiple parameters query strings
       expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes])
       expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes])
       expect_json_types("hyperty1", dataSchemes: :array_of_strings, resources: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int)
@@ -117,6 +120,7 @@ describe 'domain registry api tests' do
       expect(json_body[:hyperty2][:descriptor]).to eql("descriptor4")
       expect(json_body[:hyperty6][:descriptor]).to eql("descriptor4")
       expect(json_body[:hyperty1][:expires]).to eql(1200)
+<<<<<<< HEAD
 =======
       expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires])
       expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires])
@@ -126,6 +130,8 @@ describe 'domain registry api tests' do
       expect(json_body[:hyperty2][:descriptor]).to eql(["chat", "voice"])
       expect(json_body[:hyperty1][:expires]).to eql(120)
 >>>>>>> hyperty advanced search done
+=======
+>>>>>>> added advanced search with multiple parameters query strings
       expect(json_body[:hyperty2][:expires]).to eql(1200)
       expect(json_body[:hyperty6][:expires]).to eql(1200)
       expect(json_body[:hyperty1][:startingTime]).to eql(json_body[:hyperty1][:lastModified])
@@ -150,6 +156,9 @@ describe 'domain registry api tests' do
 
     it 'should return all user hyperties with voice resource type' do
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> added advanced search with multiple parameters query strings
       get '/ruijose@inesc-id.pt/hyperty?resources=voice'
       expect_status(200);
       expect_json_sizes(1)
@@ -157,14 +166,20 @@ describe 'domain registry api tests' do
 
     it 'should return all user hyperties with voice resource type' do
       get '/ruijose@inesc-id.pt/hyperty?dataSchemes=comm'
+<<<<<<< HEAD
 =======
       get '/ruijose@inesc-id.pt/voice'
 >>>>>>> hyperty advanced search done
+=======
+>>>>>>> added advanced search with multiple parameters query strings
       expect_status(200);
       expect_json_sizes(3)
     end
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> added advanced search with multiple parameters query strings
     it 'should return all user hyperties with voice resource type' do
       get '/ruijose@inesc-id.pt/hyperty?dataSchemes=comm&resources=chat,video'
       expect_status(200);
@@ -197,12 +212,15 @@ describe 'domain registry api tests' do
 
     it 'should return a hyperties not found error' do
       get '/ruijose@inesc-id.pt/hyperty?resources=messaging'
+<<<<<<< HEAD
       expect_status(404);
       expect_json(:message => "Hyperties not found.")
     end
 
     it 'should return a hyperties not found error' do
       get '/ruigil@inesc-id.pt/hyperty?dataSchemes=comm&resources=video'
+=======
+>>>>>>> added advanced search with multiple parameters query strings
       expect_status(404);
       expect_json(:message => "Hyperties not found.")
     end
@@ -240,6 +258,9 @@ describe 'domain registry api tests' do
       expect_status(200)
       expect_json_sizes(3)
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> added advanced search with multiple parameters query strings
       expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes])
       expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes])
       expect_json_types("hyperty1", resources: :array_of_strings, dataSchemes: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int)
@@ -248,6 +269,7 @@ describe 'domain registry api tests' do
       expect(json_body[:hyperty1][:dataSchemes]).to eql(["comm", "fake"])
       expect(json_body[:hyperty1][:expires]).to eql(1200)
       expect(json_body[:hyperty1][:descriptor]).to eql("descriptor3")
+<<<<<<< HEAD
 =======
       expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires])
       expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires])
@@ -257,6 +279,8 @@ describe 'domain registry api tests' do
       expect(json_body[:hyperty2][:descriptor]).to eql(["chat", "voice"])
       expect(json_body[:hyperty1][:expires]).to eql(120)
 >>>>>>> hyperty advanced search done
+=======
+>>>>>>> added advanced search with multiple parameters query strings
       expect(json_body[:hyperty2][:expires]).to eql(1200)
       expect(json_body[:hyperty2][:startingTime]).to eql(json_body[:hyperty2][:lastModified])
       expect(json_body[:hyperty1][:startingTime]).to be < (json_body[:hyperty1][:lastModified])

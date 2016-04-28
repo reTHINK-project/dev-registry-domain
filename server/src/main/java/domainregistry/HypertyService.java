@@ -26,6 +26,7 @@ public class HypertyService{
     private static final String EXPIRES = "EXPIRES";
     private static final String SCHEMES = "dataSchemes";
     private static final String RESOURCES = "resources";
+
     private static final String SCHEMES_PREFIX = "s.";
     private static final String RESOURCES_PREFIX = "r.";
 
