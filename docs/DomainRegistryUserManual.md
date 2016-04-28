@@ -37,6 +37,8 @@ Expires global variable defines the maximum amount of time (in seconds) a Hypert
 
 #### Requests saved in a multi-host Cassandra cluster
 
+The Domain Registry database can be stored in a persistante maner using the Casandra noSQL database. A cluster of Cassandra nodes can be used to ensure resilience to node failure (high-availability) and load-balancing of the database.
+
 ![Domain Registry Architecture](database-cluster.png)
 
 Starting the database cluster in separate machines (ie, two VMs on a cloud service provider), requires that every Cassandra node advertises an IP address to the other nodes because the address of the container is behind the docker bridge. The environment variable CASSANDRA\_BROADCAST\_ADDRESS serves that purpose.
