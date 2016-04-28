@@ -206,12 +206,25 @@ GET /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose
 ```
 {
   "hyperty://inesc-id.pt/b7b3rs4-3245-42gn-4327-238jhdq83d8": {
+    "resources" : [
+      "chat",
+      "voice"
+    ],
+    "dataSchemes" : [
+      "comm"
+    ]
     "descriptor": "hyperty-catalogue://localhost/HelloHyperty",
     "startingTime": "2016-02-08T13:40:26Z",
     "lastModified": "2016-02-08T13:41:27Z,
     "expires" : 3600
   }
   "hyperty://inesc-id.pt/b7b3rs4-3245-42gn-4127-238jhdq83d8": {
+    "resources" : [
+      "video",
+    ],
+    "dataSchemes" : [
+      "comm"
+    ]
     "descriptor": "hyperty-catalogue://localhost/HelloHyperty",
     "startingTime": "2016-02-08T13:42:00Z",
     "lastModified": "2016-02-08T13:42:53Z",
