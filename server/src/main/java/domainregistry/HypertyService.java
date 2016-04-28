@@ -96,8 +96,6 @@ public class HypertyService{
         List<String> hypertyPrefixParams = new ArrayList<String>(prefixResourceType);
         hypertyPrefixParams.addAll(prefixSchemeType);
 
-        log.info("OLA " + Arrays.asList(hypertyPrefixParams));
-
         for (Map.Entry<String, HypertyInstance> entry : allUserHyperties.entrySet()){
             HypertyInstance hyperty = entry.getValue();
 
@@ -108,10 +106,8 @@ public class HypertyService{
             hypertyParams.addAll(resourcesTypes);
             Set hypertyParamsSet = new HashSet(hypertyParams);
 
-            log.info("OLA2 " + Arrays.asList(hypertyParamsSet));
-
             if(hypertyParamsSet.containsAll(new HashSet<String>(hypertyPrefixParams))){
-                foundHyperties.put(hyperty.getHypertyID(), hyperty);
+                foundHyperties.put(entry.getKey(), hyperty);
             }
         }
 
@@ -183,3 +179,4 @@ public class HypertyService{
         return finalList;
     }
 }
+

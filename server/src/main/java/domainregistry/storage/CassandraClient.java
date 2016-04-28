@@ -73,6 +73,8 @@ public class CassandraClient implements Connection{
             .value("hypertyID", hyperty.getHypertyID())
             .value("user", hyperty.getUserID())
             .value("descriptor", hyperty.getDescriptor())
+            .value("resources", hyperty.getResources())
+            .value("dataSchemes", hyperty.getDataSchemes())
             .value("startingTime", hyperty.getStartingTime())
             .value("lastModified", hyperty.getLastModified())
             .value("expires", hyperty.getExpires());
@@ -192,6 +194,8 @@ public class CassandraClient implements Connection{
         Statement update = QueryBuilder.update(KEYSPACE, table)
                                        .with(QueryBuilder.set("descriptor", hyperty.getDescriptor()))
                                        .and(QueryBuilder.set("lastModified", hyperty.getLastModified()))
+                                       .and(QueryBuilder.set("resources", hyperty.getResources()))
+                                       .and(QueryBuilder.set("dataSchemes", hyperty.getDataSchemes()))
                                        .and(QueryBuilder.set("expires", hyperty.getExpires()))
                                        .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()));
         if(getSession() != null){
@@ -204,6 +208,8 @@ public class CassandraClient implements Connection{
         Statement update = QueryBuilder.update(KEYSPACE, table)
                                        .with(QueryBuilder.set("descriptor", hyperty.getDescriptor()))
                                        .and(QueryBuilder.set("lastModified", hyperty.getLastModified()))
+                                       .and(QueryBuilder.set("resources", hyperty.getResources()))
+                                       .and(QueryBuilder.set("dataSchemes", hyperty.getDataSchemes()))
                                        .and(QueryBuilder.set("expires", hyperty.getExpires()))
                                        .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()))
                                        .and(QueryBuilder.eq("user", hyperty.getUserID()));
