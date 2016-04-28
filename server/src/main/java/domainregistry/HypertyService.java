@@ -18,10 +18,13 @@ package domainregistry;
 
 import java.util.*;
 import org.apache.log4j.Logger;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class HypertyService{
     static Logger log = Logger.getLogger(HypertyService.class.getName());
     private static final String EXPIRES = "EXPIRES";
+    private static final String SCHEMES = "dataSchemes";
+    private static final String RESOURCES = "resources";
 
     public Map<String, HypertyInstance> getAllHyperties(Connection connectionClient, String userID) {
         Map<String, HypertyInstance> allUserHyperties = connectionClient.getUserHyperties(userID);
@@ -73,19 +76,31 @@ public class HypertyService{
         else throw new CouldNotRemoveHypertyException();
     }
 
-    public Map<String, HypertyInstance> getSpecificHyperties(Connection connectionClient, String userID, String resourceTypes){
-        String[] hypertyTypes = resourceTypes.split(",");
-        Set types = new HashSet(Arrays.asList(hypertyTypes));
-
+    public Map<String, HypertyInstance> getSpecificHyperties(Connection connectionClient, String userID, Map<String, String> parameters){
         Map<String, HypertyInstance> foundHyperties = new HashMap();
         Map<String, HypertyInstance> allUserHyperties = connectionClient.getUserHyperties(userID);
 
         if(allUserHyperties.isEmpty()) throw new DataNotFoundException();
 
+        String res = parameters.get(RESOURCES);
+        String schemes = parameters.get(SCHEMES);
+
+        String[] resourceTypes = (res != null) ? res.split(","): new String[0];
+        String[] dataSchemes = (schemes != null) ? schemes.split(",") : new String[0];
+
+        String[] allParameters = ArrayUtils.addAll(resourceTypes, dataSchemes);
+        Set parametersSet = new HashSet(Arrays.asList(allParameters));
+
         for (Map.Entry<String, HypertyInstance> entry : allUserHyperties.entrySet()){
-            Set descriptorTypes = new HashSet(entry.getValue().getDescriptor());
-            if(descriptorTypes.containsAll(types)){
-                foundHyperties.put(entry.getKey(), entry.getValue());
+            HypertyInstance hyperty = entry.getValue();
+            List<String> hypertyParams = new ArrayList<String>(hyperty.getDataSchemes());
+            hypertyParams.addAll(hyperty.getResources());
+            Set hypertyParamsSet = new HashSet(hypertyParams);
+
+            log.info(hypertyParamsSet);
+
+            if(hypertyParamsSet.containsAll(parametersSet)){
+                foundHyperties.put(hyperty.getHypertyID(), hyperty);
             }
         }
 

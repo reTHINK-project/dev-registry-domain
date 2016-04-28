@@ -17,7 +17,7 @@
 package domainregistry;
 
 import static spark.Spark.*;
-import java.util.Map;
+import java.util.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
@@ -51,15 +51,26 @@ public class HypertyController {
                 return gson.toJson(userHyperties);
             }
 
-            String resourceTypes = req.queryParams("type");
+            Set<String> queryParams = req.queryParams();
 
-            if(resourceTypes == null){
+            if(queryParams.isEmpty()){
                 res.status(404);
                 return gson.toJson(new Messages("URL malformed. A query string is needed."));
             }
 
+            if(!validateQueryParams(queryParams)){
+                res.status(400);
+                return gson.toJson(new Messages("URL malformed."));
+            }
+
+            Map<String, String> allParameters = new HashMap();
+
+            for(String type : queryParams){
+                allParameters.put(type, req.queryParams(type));
+            }
+
             String userID = decodeUrl(encodedURL[encodedURL.length - 2]);
-            Map<String, HypertyInstance> userHyperties = hypertyService.getSpecificHyperties(connectionClient, userID, resourceTypes);
+            Map<String, HypertyInstance> userHyperties = hypertyService.getSpecificHyperties(connectionClient, userID, allParameters);
             res.status(200);
             return gson.toJson(userHyperties);
         });
@@ -163,5 +174,17 @@ public class HypertyController {
 
     private static String decodeUrl(String url) throws java.io.UnsupportedEncodingException {
         return java.net.URLDecoder.decode(url, "UTF-8");
+    }
+
+    private boolean validateQueryParams(Set<String> params){
+        if(params.size() == 1){
+            return params.contains("dataSchemes") || params.contains("resources");
+        }
+
+        else if(params.size() == 2){
+            return params.contains("dataSchemes") && params.contains("resources");
+        }
+
+        else return false;
     }
 }

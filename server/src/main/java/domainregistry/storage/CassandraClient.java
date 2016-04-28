@@ -141,8 +141,10 @@ public class CassandraClient implements Connection{
                                                       .where(QueryBuilder.eq("hypertyID", hypertyID));
         ResultSet results = session.execute(select);
         Row row = results.one();
-        return new HypertyInstance(row.getList("descriptor", String.class), row.getString("startingTime"),
-                row.getString("user"), row.getString("lastModified"), row.getInt("expires"));
+        return new HypertyInstance(row.getString("descriptor"), row.getString("startingTime"),
+                row.getString("user"), row.getList("resources", String.class), row.getList("dataSchemes", String.class),
+                row.getString("lastModified"), row.getInt("expires"));
+
     }
 
     public DataObjectInstance getDataObject(String dataObjectName){
@@ -221,7 +223,9 @@ public class CassandraClient implements Connection{
         if(results == null) return Collections.emptyMap();
 
         for(Row row : results){
-            allUserHyperties.put(row.getString("hypertyID"), new HypertyInstance(row.getList("descriptor", String.class),
+            allUserHyperties.put(row.getString("hypertyID"), new HypertyInstance(row.getString("descriptor"),
+                                                                                 row.getList("resources", String.class),
+                                                                                 row.getList("dataSchemes", String.class),
                                                                                  row.getString("startingTime"),
                                                                                  row.getString("lastModified"),
                                                                                  row.getInt("expires")));
