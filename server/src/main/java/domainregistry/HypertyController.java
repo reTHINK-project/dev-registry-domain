@@ -51,19 +51,17 @@ public class HypertyController {
                 return gson.toJson(userHyperties);
             }
 
-            else if(encodedURL.length == SPECIFIC_HYPERTIES_PATH_SIZE){
-                String userID = decodeUrl(encodedURL[encodedURL.length - 2]);
-                String hypertyType = decodeUrl(encodedURL[encodedURL.length - 1]);
-                Map<String, HypertyInstance> userHyperties = hypertyService.getSpecificHyperties(connectionClient, userID, hypertyType);
-                res.status(200);
-                return gson.toJson(userHyperties);
+            String resourceTypes = req.queryParams("type");
+
+            if(resourceTypes == null){
+                res.status(404);
+                return gson.toJson(new Messages("URL malformed. A query string is needed."));
             }
 
-            else{
-                res.status(400);
-                return gson.toJson(new Messages("URL malformed."));
-            }
-
+            String userID = decodeUrl(encodedURL[encodedURL.length - 2]);
+            Map<String, HypertyInstance> userHyperties = hypertyService.getSpecificHyperties(connectionClient, userID, resourceTypes);
+            res.status(200);
+            return gson.toJson(userHyperties);
         });
 
         put("/hyperty/user/*", (req,res) -> {

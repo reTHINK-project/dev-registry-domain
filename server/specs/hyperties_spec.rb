@@ -109,21 +109,45 @@ describe 'domain registry api tests' do
   describe 'get specific hyperties' do
 
     it 'should return all user hyperties with voice resource type' do
-      get '/ruijose@inesc-id.pt/voice'
+      get '/ruijose@inesc-id.pt/hyperty?type=voice'
       expect_status(200);
       expect_json_sizes(3)
     end
 
-    it 'should return all user hyperties with chat resource type' do
-      get '/ruijose@inesc-id.pt/video'
+    it 'should return all user hyperties with voice and chat as resource type' do
+      get '/ruijose@inesc-id.pt/hyperty?type=voice,chat'
+      expect_status(200);
+      expect_json_sizes(3)
+    end
+
+    it 'should return all user hyperties with voice, char and video as resource type' do
+      get '/ruijose@inesc-id.pt/hyperty?type=chat,voice,video'
       expect_status(200);
       expect_json_sizes(1)
     end
 
+    it 'should return all user hyperties with video resource type' do
+      get '/ruijose@inesc-id.pt/hyperty?type=video'
+      expect_status(200);
+      expect_json_sizes(1)
+    end
+
+    it 'should return all user hyperties with chat resource type' do
+      get '/ruijose@inesc-id.pt/hyperty?type=chat'
+      expect_status(200);
+      expect_json_sizes(3)
+    end
+
     it 'should return a hyperties not found error' do
-      get '/ruijose@inesc-id.pt/messaging'
+      get '/ruijose@inesc-id.pt/hyperty?type=messaging'
       expect_status(404);
       expect_json(:message => "Hyperties not found.")
+    end
+
+    it 'should return a missing query string error' do
+      get '/ruijose@inesc-id.pt/messaging'
+      expect_status(404);
+      expect_json(:message => "URL malformed. A query string is needed.")
     end
   end
 

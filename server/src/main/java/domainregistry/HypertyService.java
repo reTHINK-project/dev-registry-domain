@@ -73,12 +73,18 @@ public class HypertyService{
         else throw new CouldNotRemoveHypertyException();
     }
 
-    public Map<String, HypertyInstance> getSpecificHyperties(Connection connectionClient, String userID, String hypertyType){
+    public Map<String, HypertyInstance> getSpecificHyperties(Connection connectionClient, String userID, String resourceTypes){
+        String[] hypertyTypes = resourceTypes.split(",");
+        Set types = new HashSet(Arrays.asList(hypertyTypes));
+
         Map<String, HypertyInstance> foundHyperties = new HashMap();
         Map<String, HypertyInstance> allUserHyperties = connectionClient.getUserHyperties(userID);
 
+        if(allUserHyperties.isEmpty()) throw new DataNotFoundException();
+
         for (Map.Entry<String, HypertyInstance> entry : allUserHyperties.entrySet()){
-            if(entry.getValue().getDescriptor().contains(hypertyType)){
+            Set descriptorTypes = new HashSet(entry.getValue().getDescriptor());
+            if(descriptorTypes.containsAll(types)){
                 foundHyperties.put(entry.getKey(), entry.getValue());
             }
         }
