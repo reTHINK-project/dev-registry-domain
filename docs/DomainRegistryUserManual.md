@@ -297,7 +297,7 @@ Creates or updates a Hyperty Instance. It also creates a user if it doesn’t ex
 
 #### Example request
 
-PUT /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose/hyperty%3A%2F%2Fua. pt %2F428bee1b-887a8ee8cb32
+PUT /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose/hyperty%3A%2F%2Fua.pt %2F428bee1b-887a8ee8cb32
 
 ```
 {
@@ -334,7 +334,7 @@ Deletes a Hyperty Instance from a user indicated by the user_id parameter.
 
 #### Example request
 
-DELETE /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose/hyperty %3A %2F%2Fua.pt%2F428bee1b-887a8ee8cb32
+DELETE /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose/hyperty%3A%2F%2Fua.pt%2F428bee1b-887a8ee8cb32
 
 #### Example result
 
@@ -350,4 +350,4 @@ Note that the requested URL’s are encoded.
 
 The current version is missing any authentication mechanisms. Currently, it is assumed that the Message Node is the only one capable of interacting with the Local Registry, with the former being trusted by the latter to verify the user’s authorization to perform the requests. This model will have to be replaced with a secure mechanism where either the identity of the Message Node or of the user is verified.
 
-A load balancer will also be added to distribute network traffic across the Domain Registry servers. Thereby, we hope to increase capacity (concurrent users) and application’s reliability.
+A load balancer will also be added to distribute network traffic across the Domain Registry servers. Thereby, we hope to increase capacity (concurrent users) and application’s reliability. Another feature yet to be documented is advanced monitoring with [ riemann](http://riemann.io/).
