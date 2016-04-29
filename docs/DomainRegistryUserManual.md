@@ -218,7 +218,7 @@ GET /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose
     ],
     "dataSchemes" : [
       "comm"
-    ]
+    ],
     "descriptor": "hyperty-catalogue://localhost/HelloHyperty",
     "startingTime": "2016-02-08T13:40:26Z",
     "lastModified": "2016-02-08T13:41:27Z,
@@ -276,6 +276,15 @@ Creates or updates a Hyperty Instance. It also creates a user if it doesn’t ex
 #### Example request
 
 PUT /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose/hyperty%3A%2F%2Fua. pt %2F428bee1b-887a8ee8cb32
+
+```
+{
+    "resources" : ["chat", "voice"],
+    "dataSchemes" : ["comm"],
+    "descriptor": "hyperty-catalogue://localhost/HelloHyperty",
+    "expires" : 3600
+}
+```
 
 #### Example result
 
