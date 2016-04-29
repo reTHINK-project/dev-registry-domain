@@ -202,7 +202,7 @@ Retrieves all Hyperties instances from a user indicated by the user_id parameter
 
 #### Parameters
 
-**user_id**: The ID of the user for whom to return results for.
+**user_id**: The owner of the Hyperty.
 
 **Example_value**: user://inesc-id.pt/ruijose
 
@@ -287,7 +287,7 @@ Creates or updates a Hyperty Instance. It also creates a user if it doesn’t ex
 
 #### Parameters
 
-**user_id**: The ID of the user for whom to return results for.
+**user_id**: The owner of the Hyperty.
 
 **Example_value**: user://inesc-id.pt/ruijose
 
@@ -324,7 +324,7 @@ Deletes a Hyperty Instance from a user indicated by the user_id parameter.
 
 #### Parameters
 
-**user_id**: The ID of the user for whom to return results for.
+**user_id**: The owner of the Hyperty.
 
 **Example_value**: user://inesc-id.pt/ruijose
 
