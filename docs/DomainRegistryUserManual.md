@@ -184,6 +184,9 @@ $ docker run -e STORAGE_TYPE=CASSANDRA -e CONTACT_POINTS_IPS=ip -e EXPIRES=3600 
 The Domain Registry is a REST server that allows to create, update and remove data (users and Hyperty Instances in this case). Next, are described the three available API endpoints.
 
 * GET /hyperty/user/:user_id
+* GET /hyperty/user/:user_id/hyperty?resources=R1,...,Rn&dataSchemes=DS1,...,DSn
+* GET /hyperty/user/:user_id/hyperty?dataSchemes=DS1,...,DSn
+* GET /hyperty/user/:user_id/hyperty?resources=R1,...,Rn
 * PUT /hyperty/user/:user_id/:hyperty_instance_id
 * DELETE /hyperty/user/:user_id/:hyperty_instance_id
 
@@ -258,6 +261,23 @@ If the server could not find what was requested, along with the HTTP status code
   “message” : “data not found”
 }
 ```
+### GET GET /hyperty/user/:user_id/hyperty?resources=R1,...,Rn&dataSchemes=DS1,...,DSn
+
+Returns Hyperties which possess the specified resources, data schemes and user identifier.
+
+#### Parameters
+
+**user_id**: The owner of the Hyperties.
+**resources**: Hyperty resource types (e.g. voice, video).
+**data schemes**: Data objects schemes.
+
+#### Example request
+
+GET /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose/hyperty?resources=chat,voice&dataSchemes=comm
+
+#### Example response
+
+Same as above.
 
 ### PUT /hyperty/user/:user_id/:hyperty_instance_id
 
