@@ -261,14 +261,16 @@ If the server could not find what was requested, along with the HTTP status code
   “message” : “data not found”
 }
 ```
-### GET GET /hyperty/user/:user_id/hyperty?resources=R1,...,Rn&dataSchemes=DS1,...,DSn
+### GET /hyperty/user/:user_id/hyperty?resources=R1,...,Rn&dataSchemes=DS1,...,DSn
 
 Returns Hyperties which possess the specified resources, data schemes and user identifier.
 
 #### Parameters
 
 **user_id**: The owner of the Hyperties.
+
 **resources**: Hyperty resource types (e.g. voice, video).
+
 **data schemes**: Data objects schemes.
 
 #### Example request
