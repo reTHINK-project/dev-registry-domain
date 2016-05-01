@@ -76,7 +76,6 @@ RegistryConnector.prototype.processMessage = function(msg, callback) {
 
 RegistryConnector.prototype.getUser = function(userid, callback) {
   this._request.get(this._registryURL + '/hyperty/user/' + encodeURIComponent(userid), function(err, response, statusCode) {
-    print("Get user: " + response);
 
     var body = {
       'code': statusCode,
@@ -95,7 +94,6 @@ RegistryConnector.prototype.addHyperty = function(userid, hypertyid, hypertyDesc
   };
 
   this._request.put(this._registryURL + endpoint, JSON.stringify(data), function(err, response, statusCode) {
-    print("Add hyperty: " + response);
 
     var body = {
       'code': statusCode
@@ -109,7 +107,6 @@ RegistryConnector.prototype.deleteHyperty = function(userid, hypertyid, callback
   var endpoint = '/hyperty/user/' + encodeURIComponent(userid) + '/' + encodeURIComponent(hypertyid);
 
   this._request.del(this._registryURL + endpoint, function(err, response, statusCode) {
-    print("Delete hyperty: " + response);
 
     var body = {
       'code': statusCode
@@ -123,7 +120,6 @@ RegistryConnector.prototype.getDataObject = function(resource, callback) {
   var dataobj = resource.split("://")[1];
 
   this._request.get(this._registryURL + '/hyperty/dataobject/' + encodeURIComponent(dataobj), function(err, response, statusCode) {
-    print("Get Data Object: " + response);
 
     var body = {
       'code': statusCode,
@@ -145,7 +141,6 @@ RegistryConnector.prototype.addDataObject = function(dataobjName, schema, expire
   };
 
   this._request.put(this._registryURL + endpoint, JSON.stringify(data), function(err, response, statusCode) {
-    print("Add data object: " + response);
 
     var body = {
       'code': statusCode
@@ -159,7 +154,6 @@ RegistryConnector.prototype.deleteDataObject = function(dataObjectName, callback
   var endpoint = '/hyperty/dataobject/' + encodeURIComponent(dataObjectName);
 
   this._request.del(this._registryURL + endpoint, function(err, response, statusCode) {
-    print("Delete Data Object: " + response);
 
     var body = {
       'code': statusCode
