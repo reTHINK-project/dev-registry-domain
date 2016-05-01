@@ -4,7 +4,7 @@
   "description": "Domain Registry connector",
   "main": "RegistryConnector.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "author": "reThink Project",
   "license": "ISC",
