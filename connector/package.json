@@ -3,16 +3,24 @@
   "version": "0.1.0",
   "description": "Domain Registry connector",
   "main": "RegistryConnector.js",
+  "repository": {
+      "type": "git",
+      "url": "git+ssh://git@github.com:reTHINK-project/dev-registry-domain.git"
+  },
   "scripts": {
     "test": "./node_modules/.bin/mocha --reporter spec"
   },
+  "keywords": [
+      "reThink"
+  ],
   "author": "reThink Project",
-  "license": "ISC",
+  "license": "APSL-2.0",
   "dependencies": {
+    "requestify": "^0.1.17",
+  },
+  "devDependencies": {
     "chai": "^3.5.0",
     "mocha": "^2.4.5",
-    "mockery": "^1.6.2",
-    "requestify": "^0.1.17",
     "sinon": "^1.17.3"
   }
 }
