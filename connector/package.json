@@ -1,11 +1,18 @@
 {
   "name": "domain-registry-connector",
-  "version": "0.3.0",
+  "version": "0.1.0",
   "description": "Domain Registry connector",
   "main": "RegistryConnector.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "reThink Project",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5",
+    "mockery": "^1.6.2",
+    "requestify": "^0.1.17",
+    "sinon": "^1.17.3"
+  }
 }
