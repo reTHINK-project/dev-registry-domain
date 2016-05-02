@@ -19,7 +19,7 @@ The Domain Registry is deployed using Docker. All commands must be executed  ins
 
 ### How to deploy using docker
 
-A Dockerfile is provided, so is possible to run the Domain Registry through a Docker container. Since several ways of storing requests are available, there are three possible ways to run the Domain Registry.
+A Dockerfile is provided, so it is possible to run the Domain Registry through a Docker container. Since several ways of storing requests are available, there are three possible ways to run the Domain Registry.
 
 1. Storing requests in-memory;
 2. Storing requests in a multi-host Cassandra database cluster.
@@ -27,15 +27,21 @@ A Dockerfile is provided, so is possible to run the Domain Registry through a Do
 
 #### Requests saved in-memory
 
-Similarly to the last Domain registry version, requests may be saved in-memory. It is the simplest way to deploy the server. The commands are the following:
+Requests may be saved in-memory. It is the simplest way to deploy the server. However, when the server is shutdown, all information stored there is lost. The commands are the following:
 
 ```
 $ docker build -t domain-registry .
 $ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -p 4568:4567 domain-registry
 ```
-Expires global variable defines the maximum amount of time (in seconds) a Hyperty stays in the server (see [soft state issue](https://github.com/reTHINK-project/dev-registry-domain/issues/7)). Note that the published port 4568 may be changed to another port that better suits your needs. Running the server with this configuration will work exactly as the last version.
+Expires global variable defines the maximum amount of time (in seconds) a Hyperty stays in the server (see [soft state issue](https://github.com/reTHINK-project/dev-registry-domain/issues/7)). Note that the published port 4568 may be changed to another port that better suits your needs. Running the server with this configuration will work exactly as the last version (R0.1.0).
 
 #### Requests saved in a multi-host Cassandra cluster
+
+The Domain Registry database can be stored in a persistante maner using the Casandra noSQL database. A cluster of Cassandra nodes can be used to ensure resilience to node failure (high-availability) and load-balancing of the database.
+
+The following diagram show what will be achieved by doing this section of the tutorial. A four node Cassandra cluster will be deployed, the Domain Registry data model will be issued to the cluster and finally the Domain Registry application server will be started and linked to the cluster. Along the way, some pictures will be provided to ensure that everything is working as expected.
+
+![Domain Registry Architecture](database-cluster.png)
 
 Starting the database cluster in separate machines (ie, two VMs on a cloud service provider), requires that every Cassandra node advertises an IP address to the other nodes because the address of the container is behind the docker bridge. The environment variable CASSANDRA\_BROADCAST\_ADDRESS serves that purpose.
 
@@ -86,6 +92,8 @@ CREATE TABLE hyperties_by_id (
     startingTime text,
     lastModified text,
     expires int,
+    resources list<text>,
+    dataSchemes list<text>,
     PRIMARY KEY(hypertyid)
 );
 
@@ -96,6 +104,8 @@ CREATE TABLE hyperties_by_user (
     startingTime text,
     lastModified text,
     expires int,
+    resources list<text>,
+    dataSchemes list<text>,
     PRIMARY KEY(user, hypertyid)
 );
 
@@ -118,29 +128,28 @@ Datacenter: datacenter1
 Status=Up/Down
 |/ State=Normal/Leaving/Joining/Moving
 --  Address       Load       Tokens       Owns (effective)  Host ID                               Rack
-UN  172.17.2.131  167.54 KB  256          60.0%             04111fc6-4dfa-496c-b904-0defde6d3b92  rack1
-UN  172.17.2.133  298.41 KB  256          61.4%             b5b98cd9-dea0-4413-9387-1050dd3dafc3  rack1
-UN  172.17.2.132  270.25 KB  256          66.1%             f771448e-2a93-4726-af0a-21d1577ca3d9  rack1
-UN  172.17.2.135  258.53 KB  256          58.0%             4e6a07c9-dd3b-43e2-9cc0-32e39122a82d  rack1
-UN  172.17.2.134  283.42 KB  256          54.5%             ec5bf2ea-37f8-4751-a578-dd09fd073a3f  rack1
+UN  10.42.42.42   167.54 KB  256          75.0%             04111fc6-4dfa-496c-b904-0defde6d3b92  rack1
+UN  10.42.43.43   298.41 KB  256          75.4%             b5b98cd9-dea0-4413-9387-1050dd3dafc3  rack1
+UN  10.42.44.44   270.25 KB  256          75.0%             f771448e-2a93-4726-af0a-21d1577ca3d9  rack1
+UN  10.42.45.45   258.53 KB  256          75.0%             4e6a07c9-dd3b-43e2-9cc0-32e39122a82d  rack1
 ```
 
 With the database cluster running we can start the Domain Registry with the following commands:
 
 ```
 $ docker build -t domain-registry .
-$ docker run -e STORAGE_TYPE=CASSANDRA -e CONTACT_POINTS_IPS=ip1,ip2,ip3 -e EXPIRES=3600 -p 4568:4567 domain-registry
+$ docker run -e STORAGE_TYPE=CASSANDRA -e CONTACT_POINTS_IPS=IP1,...,IPn -e EXPIRES=3600 -p 4568:4567 domain-registry
 ```
-The environment variable CONTACT\_POINTS\_IPS comprises a set of IP addresses belonging to some database nodes. The Domain Registry server will use these IP's to discover and establish a connection with the database. The server will only use one IP, but providing the client more IPs will increase the chance for the client to continue to work with the database in case of node failures.
+The environment variable CONTACT\_POINTS\_IPS comprises a set of IP addresses belonging to some database nodes. The Domain Registry server will use these IP's to discover and establish a connection with the database. The server will only use one IP, but providing the client with more IPs will increase the chance for the client to continue to work with the database in case of node failures.
 
 When executing the _docker run_ command, if something like this appear, it means that the client successfully connected with the database cluster.
 
 ```
 Connected to cluster: Test Cluster
-Datacenter: datacenter1; Host: /172.17.2.131; Rack: rack1
-Datacenter: datacenter1; Host: /172.17.2.132; Rack: rack1
-Datacenter: datacenter1; Host: /172.17.2.135; Rack: rack1
-Datacenter: datacenter1; Host: /172.17.2.134; Rack: rack1
+Datacenter: datacenter1; Host: /10.42.42.42; Rack: rack1
+Datacenter: datacenter1; Host: /10.42.43.43; Rack: rack1
+Datacenter: datacenter1; Host: /10.42.44.44; Rack: rack1
+Datacenter: datacenter1; Host: /10.42.45.45; Rack: rack1
 ```
 
 Finally, the /live page could be used to verify up and down Cassandra nodes. A GET /live should return the following JSON object:
@@ -158,7 +167,7 @@ Finally, the /live page could be used to verify up and down Cassandra nodes. A G
 More details about Cassandra and how to deploy a cluster can be found on [Cassandra's offical website](http://cassandra.apache.org) and [Cassandra's docker hub repository](https://hub.docker.com/_/cassandra/).
 #### Storing requests in a single Cassandra node
 
-Starting the Domain Registry backed with a single database node is quite simple:
+A single Cassandra node may be used to provide persistante information storage. However, with a single node, no redundancy is provided. Starting the Domain Registry backed with a single database node is quite simple:
 
 ```
 $ docker run --name cassandra-node -d cassandra:latest
@@ -175,6 +184,9 @@ $ docker run -e STORAGE_TYPE=CASSANDRA -e CONTACT_POINTS_IPS=ip -e EXPIRES=3600 
 The Domain Registry is a REST server that allows to create, update and remove data (users and Hyperty Instances in this case). Next, are described the three available API endpoints.
 
 * GET /hyperty/user/:user_id
+* GET /hyperty/user/:user_id/hyperty?resources=R1,...,Rn&dataSchemes=DS1,...,DSn
+* GET /hyperty/user/:user_id/hyperty?dataSchemes=DS1,...,DSn
+* GET /hyperty/user/:user_id/hyperty?resources=R1,...,Rn
 * PUT /hyperty/user/:user_id/:hyperty_instance_id
 * DELETE /hyperty/user/:user_id/:hyperty_instance_id
 
@@ -190,7 +202,7 @@ Retrieves all Hyperties instances from a user indicated by the user_id parameter
 
 #### Parameters
 
-**user_id**: The ID of the user for whom to return results for.
+**user_id**: The owner of the Hyperty.
 
 **Example_value**: user://inesc-id.pt/ruijose
 
@@ -203,12 +215,25 @@ GET /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose
 ```
 {
   "hyperty://inesc-id.pt/b7b3rs4-3245-42gn-4327-238jhdq83d8": {
+    "resources" : [
+      "chat",
+      "voice"
+    ],
+    "dataSchemes" : [
+      "comm"
+    ],
     "descriptor": "hyperty-catalogue://localhost/HelloHyperty",
     "startingTime": "2016-02-08T13:40:26Z",
     "lastModified": "2016-02-08T13:41:27Z,
     "expires" : 3600
   }
   "hyperty://inesc-id.pt/b7b3rs4-3245-42gn-4127-238jhdq83d8": {
+    "resources" : [
+      "video",
+    ],
+    "dataSchemes" : [
+      "comm"
+    ]
     "descriptor": "hyperty-catalogue://localhost/HelloHyperty",
     "startingTime": "2016-02-08T13:42:00Z",
     "lastModified": "2016-02-08T13:42:53Z",
@@ -236,6 +261,25 @@ If the server could not find what was requested, along with the HTTP status code
   “message” : “data not found”
 }
 ```
+### GET /hyperty/user/:user_id/hyperty?resources=R1,...,Rn&dataSchemes=DS1,...,DSn
+
+Returns Hyperties which possess the specified resources, data schemes and user identifier.
+
+#### Parameters
+
+**user_id**: The owner of the Hyperties.
+
+**resources**: Hyperty resource types (e.g. voice, video).
+
+**data schemes**: Data objects schemes.
+
+#### Example request
+
+GET /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose/hyperty?resources=chat,voice&dataSchemes=comm
+
+#### Example response
+
+Same as above.
 
 ### PUT /hyperty/user/:user_id/:hyperty_instance_id
 
@@ -243,7 +287,7 @@ Creates or updates a Hyperty Instance. It also creates a user if it doesn’t ex
 
 #### Parameters
 
-**user_id**: The ID of the user for whom to return results for.
+**user_id**: The owner of the Hyperty.
 
 **Example_value**: user://inesc-id.pt/ruijose
 
@@ -253,7 +297,16 @@ Creates or updates a Hyperty Instance. It also creates a user if it doesn’t ex
 
 #### Example request
 
-PUT /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose/hyperty%3A%2F%2Fua. pt %2F428bee1b-887a8ee8cb32
+PUT /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose/hyperty%3A%2F%2Fua.pt %2F428bee1b-887a8ee8cb32
+
+```
+{
+    "resources" : ["chat", "voice"],
+    "dataSchemes" : ["comm"],
+    "descriptor": "hyperty-catalogue://localhost/HelloHyperty",
+    "expires" : 3600
+}
+```
 
 #### Example result
 
@@ -271,17 +324,17 @@ Deletes a Hyperty Instance from a user indicated by the user_id parameter.
 
 #### Parameters
 
-**user_id**: The ID of the user for whom to return results for.
+**user_id**: The owner of the Hyperty.
 
 **Example_value**: user://inesc-id.pt/ruijose
 
-**hyperty_id**: The ID of the Hyperty to be created.
+**hyperty_id**: The ID of the Hyperty to be deleted.
 
 **Example_value**: hyperty://ua.pt/428bee1b-887a8ee8cb32
 
 #### Example request
 
-DELETE /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose/hyperty %3A %2F%2Fua.pt%2F428bee1b-887a8ee8cb32
+DELETE /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose/hyperty%3A%2F%2Fua.pt%2F428bee1b-887a8ee8cb32
 
 #### Example result
 
@@ -297,4 +350,4 @@ Note that the requested URL’s are encoded.
 
 The current version is missing any authentication mechanisms. Currently, it is assumed that the Message Node is the only one capable of interacting with the Local Registry, with the former being trusted by the latter to verify the user’s authorization to perform the requests. This model will have to be replaced with a secure mechanism where either the identity of the Message Node or of the user is verified.
 
-A load balancer will also be added to distribute network traffic across the Domain Registry servers. Thereby, we hope to increase capacity (concurrent users) and application’s reliability.
+A load balancer will also be added to distribute network traffic across the Domain Registry servers. Thereby, we hope to increase capacity (concurrent users) and application’s reliability. Another feature yet to be documented is advanced monitoring with [ riemann](http://riemann.io/).

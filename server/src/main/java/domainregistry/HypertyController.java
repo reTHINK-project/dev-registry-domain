@@ -17,7 +17,7 @@
 package domainregistry;
 
 import static spark.Spark.*;
-import java.util.Map;
+import java.util.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
@@ -27,6 +27,9 @@ public class HypertyController {
 
     private int numReads = 0;
     private int numWrites = 0;
+
+    public static final int ALL_HYPERTIES_PATH_SIZE = 6;
+    public static final int SPECIFIC_HYPERTIES_PATH_SIZE = 7;
 
     public HypertyController(StatusService status, final HypertyService hypertyService, final Connection connectionClient, final DataObjectService dataObjectService) {
 
@@ -46,8 +49,34 @@ public class HypertyController {
             this.numReads++;
             res.type("application/json");
             String[] encodedURL = req.url().split("/");
-            String userID = decodeUrl(encodedURL[encodedURL.length - 1]);
-            Map<String, HypertyInstance> userHyperties = hypertyService.getAllHyperties(connectionClient, userID);
+
+            if(encodedURL.length == ALL_HYPERTIES_PATH_SIZE){
+                String userID = decodeUrl(encodedURL[encodedURL.length - 1]);
+                Map<String, HypertyInstance> userHyperties = hypertyService.getAllHyperties(connectionClient, userID);
+                res.status(200);
+                return gson.toJson(userHyperties);
+            }
+
+            Set<String> queryParams = req.queryParams();
+
+            if(queryParams.isEmpty()){
+                res.status(404);
+                return gson.toJson(new Messages("URL malformed. A query string is needed."));
+            }
+
+            if(!validateQueryParams(queryParams)){
+                res.status(400);
+                return gson.toJson(new Messages("URL malformed."));
+            }
+
+            Map<String, String> allParameters = new HashMap();
+
+            for(String type : queryParams){
+                allParameters.put(type, req.queryParams(type));
+            }
+
+            String userID = decodeUrl(encodedURL[encodedURL.length - 2]);
+            Map<String, HypertyInstance> userHyperties = hypertyService.getSpecificHyperties(connectionClient, userID, allParameters);
             res.status(200);
             return gson.toJson(userHyperties);
         });
@@ -122,6 +151,15 @@ public class HypertyController {
         });
 
         get("/throwexception", (request, response) -> {
+            throw new HypertiesNotFoundException();
+        });
+
+        exception(HypertiesNotFoundException.class, (e, req, res) -> {
+            res.status(404);
+            res.body(gson.toJson(new Messages("Hyperties not found.")));
+        });
+
+        get("/throwexception", (request, response) -> {
             throw new CouldNotRemoveHypertyException();
         });
 
@@ -162,5 +200,16 @@ public class HypertyController {
 
     public int getNumWrites(){
         return this.numWrites;
+
+    private boolean validateQueryParams(Set<String> params){
+        if(params.size() == 1){
+            return params.contains("dataSchemes") || params.contains("resources");
+        }
+
+        else if(params.size() == 2){
+            return params.contains("dataSchemes") && params.contains("resources");
+        }
+
+        else return false;
     }
 }

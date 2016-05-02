@@ -28,7 +28,12 @@ public class RamClient implements Connection{
 
     public Map<String, HypertyInstance> getUserHyperties(String userID) {
         log.info("Received request for " + userID + " hyperties");
-        return userServices.get(userID);
+
+        Map<String, HypertyInstance> hyperties = userServices.get(userID);
+
+        if(hyperties == null) return Collections.emptyMap();
+
+        return hyperties;
     }
 
     public boolean userExists(String userID){

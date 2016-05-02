@@ -16,14 +16,17 @@
 
 package domainregistry;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import org.apache.log4j.Logger;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class HypertyService{
     static Logger log = Logger.getLogger(HypertyService.class.getName());
     private static final String EXPIRES = "EXPIRES";
+    private static final String SCHEMES = "dataSchemes";
+    private static final String RESOURCES = "resources";
+    private static final String SCHEMES_PREFIX = "s.";
+    private static final String RESOURCES_PREFIX = "r.";
 
     public Map<String, HypertyInstance> getAllHyperties(Connection connectionClient, String userID) {
         Map<String, HypertyInstance> allUserHyperties = connectionClient.getUserHyperties(userID);
@@ -32,7 +35,7 @@ public class HypertyService{
             deleteExpiredHyperties(connectionClient, userID);
         }
 
-        if(connectionClient.userExists(userID) && !allUserHyperties.isEmpty()){ //if the user still have hyperties
+        if(connectionClient.userExists(userID) && !allUserHyperties.isEmpty()){
             return allUserHyperties;
         }
 
@@ -75,6 +78,45 @@ public class HypertyService{
         else throw new CouldNotRemoveHypertyException();
     }
 
+    public Map<String, HypertyInstance> getSpecificHyperties(Connection connectionClient, String userID, Map<String, String> parameters){
+        Map<String, HypertyInstance> foundHyperties = new HashMap();
+        Map<String, HypertyInstance> allUserHyperties = connectionClient.getUserHyperties(userID);
+
+        if(allUserHyperties.isEmpty()) throw new DataNotFoundException();
+
+        String res = parameters.get(RESOURCES);
+        String schemes = parameters.get(SCHEMES);
+
+        String[] resourceTypes = (res != null) ? res.split(","): new String[0];
+        String[] dataSchemes = (schemes != null) ? schemes.split(",") : new String[0];
+
+        List<String> prefixResourceType = javaMapImplementation(Arrays.asList(resourceTypes), RESOURCES_PREFIX);
+        List<String> prefixSchemeType = javaMapImplementation(Arrays.asList(dataSchemes), SCHEMES_PREFIX);
+
+        List<String> hypertyPrefixParams = new ArrayList<String>(prefixResourceType);
+        hypertyPrefixParams.addAll(prefixSchemeType);
+
+        for (Map.Entry<String, HypertyInstance> entry : allUserHyperties.entrySet()){
+            HypertyInstance hyperty = entry.getValue();
+
+            List<String> dataSchemesTypes = javaMapImplementation(hyperty.getDataSchemes(), SCHEMES_PREFIX);
+            List<String> resourcesTypes = javaMapImplementation(hyperty.getResources(), RESOURCES_PREFIX);
+
+            List<String> hypertyParams = new ArrayList<String>(dataSchemesTypes);
+            hypertyParams.addAll(resourcesTypes);
+            Set hypertyParamsSet = new HashSet(hypertyParams);
+
+            if(hypertyParamsSet.containsAll(new HashSet<String>(hypertyPrefixParams))){
+                foundHyperties.put(entry.getKey(), hyperty);
+            }
+        }
+
+        if(!foundHyperties.isEmpty())
+            return foundHyperties;
+
+        else throw new HypertiesNotFoundException();
+    }
+
     protected void deleteExpiredHyperties(Connection connectionClient, String userID){
         String actualDate = Dates.getActualDate();
         Map<String, HypertyInstance> userHyperties = connectionClient.getUserHyperties(userID);
@@ -95,7 +137,7 @@ public class HypertyService{
         else newHyperty(connectionClient, hyperty);
     }
 
-    public void checkHypertyOwnership(Connection connectionClient, HypertyInstance hyperty){
+    private void checkHypertyOwnership(Connection connectionClient, HypertyInstance hyperty){
         String userID = hyperty.getUserID();
         String hypertyID = hyperty.getHypertyID();
         Map<String, HypertyInstance> userHyperties = connectionClient.getUserHyperties(userID);
@@ -126,4 +168,15 @@ public class HypertyService{
     private boolean validateExpiresField(long expires, long limit){
         return expires > limit;
     }
+
+    private List<String> javaMapImplementation(List<String> originalResourceStruct, String prefix){
+        List<String> finalList = new ArrayList<String>();
+
+        for(String paramType : originalResourceStruct){
+            finalList.add(prefix + paramType);
+        }
+
+        return finalList;
+    }
 }
+

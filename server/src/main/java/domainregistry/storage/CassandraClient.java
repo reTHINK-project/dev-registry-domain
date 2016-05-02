@@ -73,6 +73,8 @@ public class CassandraClient implements Connection{
             .value("hypertyID", hyperty.getHypertyID())
             .value("user", hyperty.getUserID())
             .value("descriptor", hyperty.getDescriptor())
+            .value("resources", hyperty.getResources())
+            .value("dataSchemes", hyperty.getDataSchemes())
             .value("startingTime", hyperty.getStartingTime())
             .value("lastModified", hyperty.getLastModified())
             .value("expires", hyperty.getExpires());
@@ -142,7 +144,9 @@ public class CassandraClient implements Connection{
         ResultSet results = session.execute(select);
         Row row = results.one();
         return new HypertyInstance(row.getString("descriptor"), row.getString("startingTime"),
-                row.getString("user"), row.getString("lastModified"), row.getInt("expires"));
+                row.getString("user"), row.getList("resources", String.class), row.getList("dataSchemes", String.class),
+                row.getString("lastModified"), row.getInt("expires"));
+
     }
 
     public DataObjectInstance getDataObject(String dataObjectName){
@@ -190,6 +194,8 @@ public class CassandraClient implements Connection{
         Statement update = QueryBuilder.update(KEYSPACE, table)
                                        .with(QueryBuilder.set("descriptor", hyperty.getDescriptor()))
                                        .and(QueryBuilder.set("lastModified", hyperty.getLastModified()))
+                                       .and(QueryBuilder.set("resources", hyperty.getResources()))
+                                       .and(QueryBuilder.set("dataSchemes", hyperty.getDataSchemes()))
                                        .and(QueryBuilder.set("expires", hyperty.getExpires()))
                                        .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()));
         if(getSession() != null){
@@ -202,6 +208,8 @@ public class CassandraClient implements Connection{
         Statement update = QueryBuilder.update(KEYSPACE, table)
                                        .with(QueryBuilder.set("descriptor", hyperty.getDescriptor()))
                                        .and(QueryBuilder.set("lastModified", hyperty.getLastModified()))
+                                       .and(QueryBuilder.set("resources", hyperty.getResources()))
+                                       .and(QueryBuilder.set("dataSchemes", hyperty.getDataSchemes()))
                                        .and(QueryBuilder.set("expires", hyperty.getExpires()))
                                        .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()))
                                        .and(QueryBuilder.eq("user", hyperty.getUserID()));
@@ -222,6 +230,8 @@ public class CassandraClient implements Connection{
 
         for(Row row : results){
             allUserHyperties.put(row.getString("hypertyID"), new HypertyInstance(row.getString("descriptor"),
+                                                                                 row.getList("resources", String.class),
+                                                                                 row.getList("dataSchemes", String.class),
                                                                                  row.getString("startingTime"),
                                                                                  row.getString("lastModified"),
                                                                                  row.getInt("expires")));
