@@ -236,6 +236,7 @@ public class CassandraClient implements Connection{
                                                                                  row.getString("lastModified"),
                                                                                  row.getInt("expires")));
         }
+        log.info("get");
         return allUserHyperties;
     }
 
