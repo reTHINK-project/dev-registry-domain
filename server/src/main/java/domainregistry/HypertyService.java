@@ -19,6 +19,7 @@ package domainregistry;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.log4j.Logger;
 
 public class HypertyService{
@@ -77,9 +78,13 @@ public class HypertyService{
 
     protected void deleteExpiredHyperties(Connection connectionClient, String userID){
         String actualDate = Dates.getActualDate();
-        Map<String, HypertyInstance> userHyperties = connectionClient.getUserHyperties(userID);
 
-        for (Map.Entry<String, HypertyInstance> entry : userHyperties.entrySet()){
+        Map<String, HypertyInstance> userHyperties = connectionClient.getUserHyperties(userID);
+        Map<String, HypertyInstance> hyperties = new ConcurrentHashMap<String, HypertyInstance>(userHyperties);
+
+        log.info(hyperties.getClass());
+
+        for (Map.Entry<String, HypertyInstance> entry : hyperties.entrySet()){
             String lastModified = entry.getValue().getLastModified();
             int expires = entry.getValue().getExpires();
             if(Dates.dateCompare(actualDate, lastModified) > expires){
