@@ -156,6 +156,7 @@ public class HypertyController {
         });
 
         exception(HypertiesNotFoundException.class, (e, req, res) -> {
+            Gson gson = new Gson();
             res.status(404);
             res.body(gson.toJson(new Messages("Hyperties not found.")));
         });
@@ -201,6 +202,7 @@ public class HypertyController {
 
     public int getNumWrites(){
         return this.numWrites;
+    }
 
     private boolean validateQueryParams(Set<String> params){
         if(params.size() == 1){
