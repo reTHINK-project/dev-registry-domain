@@ -42,17 +42,16 @@ class MetricsThread extends Thread{
                 Thread.sleep(THREE_SECONDS);
                 double writes = (double) controller.getNumWrites();
                 double reads =  (double) controller.getNumReads();
-                this.riemann.addEvent("http get", "http", reads);
-                this.riemann.addEvent("http put", "http", writes);
+                this.riemann.send("http get", "http", reads);
+                this.riemann.send("http put", "http", writes);
                 double liveNodes = (double) cassandraClient.getNumLiveNodes();
                 double clusterSize = (double) cassandraClient.getClusterSize();
-                this.riemann.addEvent("cassandra live nodes", "cassandra", liveNodes);
-                this.riemann.addEvent("cassandra cluster size", "cassandra", clusterSize);
-
-                this.riemann.sendEvents();
+                this.riemann.send("cassandra live nodes", "cassandra", liveNodes);
+                this.riemann.send("cassandra cluster size", "cassandra", clusterSize);
             }
         }catch(InterruptedException e){
             e.printStackTrace();
         }
     }
+
 }
