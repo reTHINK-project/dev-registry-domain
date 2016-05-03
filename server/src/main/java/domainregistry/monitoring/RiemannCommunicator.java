@@ -17,6 +17,10 @@
 package domainregistry;
 
 import com.aphyr.riemann.client.RiemannClient;
+import com.aphyr.riemann.Proto;
+import com.aphyr.riemann.client.EventDSL;
+
+import java.util.*;
 import org.apache.log4j.Logger;
 
 public class RiemannCommunicator {
@@ -24,7 +28,7 @@ public class RiemannCommunicator {
 
     private static final String RUNNING = "running";
     private static final int PORT = 5555;
-    private static final int FIVE_SECONDS = 5000;
+    private List<Proto.Event> eventList = new ArrayList<Proto.Event>();
 
     private RiemannClient riemannClient;
 
@@ -32,28 +36,31 @@ public class RiemannCommunicator {
         setRiemannClient();
     }
 
-    public void send(String service, String tag, double metric){
+    public void sendEvents(){
         try {
-            this.riemannClient.connect();
-            this.riemannClient.event().
-                service(service).
-                state(RUNNING).
-                metric(metric).
-                tags(tag).
-                send().
-                deref(FIVE_SECONDS, java.util.concurrent.TimeUnit.MILLISECONDS);
-
-            this.riemannClient.close();
+            this.riemannClient.sendEvents(this.eventList);
         } catch (Exception e){
+            this.riemannClient.close();
             log.error("Could not send event to riemann. Reconnecting...");
             setRiemannClient();
         }
+    }
+
+    public void addEvent(String service, String tag, double metric){
+        EventDSL event = this.riemannClient.event();
+        event.service(service).
+            state(RUNNING).
+            metric(metric).
+            tags(tag);
+
+        this.eventList.add(event.build());
     }
 
     private void setRiemannClient(){
         String address = Addresses.getRiemannServerName();
         try{
             this.riemannClient = RiemannClient.tcp(address, PORT);
+            this.riemannClient.connect();
         } catch(Exception e){
             log.error("Could not connect to a riemann server. Is " + address + " running?");
         }

@@ -17,14 +17,17 @@
 package domainregistry;
 
 import org.apache.log4j.Logger;
+import java.util.List;
 
 class MetricsThread extends Thread{
     static Logger log = Logger.getLogger(MetricsThread.class.getName());
 
-    private static final int TWO_SECONDS = 2000;
-    HypertyController controller;
-    CassandraClient cassandraClient;
-    RiemannCommunicator riemann;
+    private static final int FIVE_SECONDS = 5000;
+    private static final String RUNNING = "running";
+
+    private HypertyController controller;
+    private CassandraClient cassandraClient;
+    private RiemannCommunicator riemann;
 
     public MetricsThread(HypertyController controller, CassandraClient cassandraClient, RiemannCommunicator riemann){
         this.controller = controller;
@@ -36,15 +39,17 @@ class MetricsThread extends Thread{
     public void run(){
         try{
             while(true){
-                Thread.sleep(TWO_SECONDS);
+                Thread.sleep(FIVE_SECONDS);
                 double writes = (double) controller.getNumWrites();
                 double reads =  (double) controller.getNumReads();
-                this.riemann.send("http get", "http", reads);
-                this.riemann.send("http put", "http", writes);
+                this.riemann.addEvent("http get", "http", reads);
+                this.riemann.addEvent("http put", "http", writes);
                 double liveNodes = (double) cassandraClient.getNumLiveNodes();
                 double clusterSize = (double) cassandraClient.getClusterSize();
-                this.riemann.send("cassandra live nodes", "cassandra", liveNodes);
-                this.riemann.send("cassandra cluster size", "cassandra", clusterSize);
+                this.riemann.addEvent("cassandra live nodes", "cassandra", liveNodes);
+                this.riemann.addEvent("cassandra cluster size", "cassandra", clusterSize);
+
+                this.riemann.sendEvents();
             }
         }catch(InterruptedException e){
             e.printStackTrace();
