@@ -49,8 +49,9 @@ public class Main {
             DataObjectService dataObjectService = new DataObjectService();
             StatusService status = new StatusService(CASSANDRA, cassandraClient);
             HypertyController controller = new HypertyController(status, hypertyService, cassandraClient, dataObjectService);
+            RiemannCommunicator riemann = new RiemannCommunicator();
             new HeartBeatThread(hypertyService, cassandraClient, time).start();
-            new MetricsThread(controller, cassandraClient).start();
+            new MetricsThread(controller, cassandraClient, riemann).start();
         }
 
         if(storageType.equals("RAM")){
@@ -61,7 +62,6 @@ public class Main {
             DataObjectService dataObjectService = new DataObjectService();
             HypertyController controller = new HypertyController(status, hypertyService, ramClient, dataObjectService);
             new HeartBeatThread(hypertyService, ramClient, time).start();
-            //new MetricsThread(controller).start();
         }
     }
 }

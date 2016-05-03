@@ -24,10 +24,12 @@ class MetricsThread extends Thread{
     private static final int TWO_SECONDS = 2000;
     HypertyController controller;
     CassandraClient cassandraClient;
+    RiemannCommunicator riemann;
 
-    public MetricsThread(HypertyController controller, CassandraClient cassandraClient){
+    public MetricsThread(HypertyController controller, CassandraClient cassandraClient, RiemannCommunicator riemann){
         this.controller = controller;
         this.cassandraClient = cassandraClient;
+        this.riemann = riemann;
     }
 
     @Override
@@ -37,12 +39,12 @@ class MetricsThread extends Thread{
                 Thread.sleep(TWO_SECONDS);
                 double writes = (double) controller.getNumWrites();
                 double reads =  (double) controller.getNumReads();
-                RiemannCommunicator.send("http get", "http", reads);
-                RiemannCommunicator.send("http put", "http", writes);
+                this.riemann.send("http get", "http", reads);
+                this.riemann.send("http put", "http", writes);
                 double liveNodes = (double) cassandraClient.getNumLiveNodes();
                 double clusterSize = (double) cassandraClient.getClusterSize();
-                RiemannCommunicator.send("cassandra live nodes", "cassandra", liveNodes);
-                RiemannCommunicator.send("cassandra cluster size", "cassandra", clusterSize);
+                this.riemann.send("cassandra live nodes", "cassandra", liveNodes);
+                this.riemann.send("cassandra cluster size", "cassandra", clusterSize);
             }
         }catch(InterruptedException e){
             e.printStackTrace();

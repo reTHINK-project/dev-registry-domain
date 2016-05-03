@@ -26,11 +26,16 @@ public class RiemannCommunicator {
     private static final int PORT = 5555;
     private static final int FIVE_SECONDS = 5000;
 
-    public static void send(String service, String tag, double metric){
+    private RiemannClient riemannClient;
+
+    public RiemannCommunicator(){
+        setRiemannClient();
+    }
+
+    public void send(String service, String tag, double metric){
         try {
-            RiemannClient client = getRiemannClient();
-            client.connect();
-            client.event().
+            this.riemannClient.connect();
+            this.riemannClient.event().
                 service(service).
                 state(RUNNING).
                 metric(metric).
@@ -38,15 +43,20 @@ public class RiemannCommunicator {
                 send().
                 deref(FIVE_SECONDS, java.util.concurrent.TimeUnit.MILLISECONDS);
 
-            client.close();
+            this.riemannClient.close();
         } catch (Exception e){
-            log.error("Could not send event to riemann");
+            log.error("Could not send event to riemann. Reconnecting...");
+            setRiemannClient();
         }
     }
 
-    private static RiemannClient getRiemannClient() throws Exception {
+    private void setRiemannClient(){
         String address = Addresses.getRiemannServerName();
-        return RiemannClient.tcp(address, PORT);
+        try{
+            this.riemannClient = RiemannClient.tcp(address, PORT);
+        } catch(Exception e){
+            log.error("Could not connect to a riemann server. Is " + address + " running?");
+        }
     }
 
 }
