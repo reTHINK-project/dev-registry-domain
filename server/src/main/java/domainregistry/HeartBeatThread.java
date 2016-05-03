@@ -19,8 +19,10 @@ package domainregistry;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.*;
+import org.apache.log4j.Logger;
 
 class HeartBeatThread extends Thread {
+    static Logger log = Logger.getLogger(HeartBeatThread.class.getName());
     HypertyService service;
     Connection storageClient;
     long time;
