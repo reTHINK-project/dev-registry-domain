@@ -44,6 +44,7 @@ class HeartBeatThread extends Thread {
     }
 
     private void removeOldHyperties(Connection storageClient){
+        log.info("Expired hyperties verification has started...");
         ArrayList<String> users = storageClient.getAllUsers();
 
         if(!users.isEmpty()){

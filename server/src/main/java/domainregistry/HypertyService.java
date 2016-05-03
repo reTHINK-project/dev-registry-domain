@@ -126,8 +126,6 @@ public class HypertyService{
         Map<String, HypertyInstance> userHyperties = connectionClient.getUserHyperties(userID);
         Map<String, HypertyInstance> hyperties = new ConcurrentHashMap<String, HypertyInstance>(userHyperties);
 
-        log.info(hyperties.getClass());
-
         for (Map.Entry<String, HypertyInstance> entry : hyperties.entrySet()){
             String lastModified = entry.getValue().getLastModified();
             int expires = entry.getValue().getExpires();

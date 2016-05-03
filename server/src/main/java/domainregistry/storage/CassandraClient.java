@@ -81,7 +81,7 @@ public class CassandraClient implements Connection{
 
         if(getSession() != null){
             getSession().execute(statement);
-            log.info("Inserted in database hyperty with ID: " + hyperty.getHypertyID());
+            log.info("Inserted in database hyperty with ID: " + hyperty.getHypertyID() + " from user " + hyperty.getUserID());
         }
         else log.error("Invalid cassandra session.");
     }
@@ -187,7 +187,6 @@ public class CassandraClient implements Connection{
     public void updateHyperty(HypertyInstance hyperty){
         updateTableIDs(hyperty, IDHYPERTIES);
         updateTableUsers(hyperty, USERHYPERTIES);
-        log.info("Updated in database hyperty with ID: " + hyperty.getHypertyID());
     }
 
     private void updateTableIDs(HypertyInstance hyperty, String table){
@@ -200,6 +199,7 @@ public class CassandraClient implements Connection{
                                        .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()));
         if(getSession() != null){
             getSession().execute(update);
+            log.info("Updated in database hyperty with ID: " + hyperty.getHypertyID() + " from user " + hyperty.getUserID());
         }
         else log.error("Invalid cassandra session.");
     }
@@ -215,11 +215,13 @@ public class CassandraClient implements Connection{
                                        .and(QueryBuilder.eq("user", hyperty.getUserID()));
         if(getSession() != null){
             getSession().execute(update);
+            log.info("Updated in database hyperty with ID: " + hyperty.getHypertyID() + " from user " + hyperty.getUserID());
         }
         else log.error("Invalid cassandra session.");
     }
 
     public Map<String, HypertyInstance> getUserHyperties(String userID){
+        log.info("Requested hyperties from user: " + userID);
         Map<String, HypertyInstance> allUserHyperties = new HashMap();
 
         Statement select = QueryBuilder.select().all().from(KEYSPACE, USERHYPERTIES)
@@ -236,7 +238,6 @@ public class CassandraClient implements Connection{
                                                                                  row.getString("lastModified"),
                                                                                  row.getInt("expires")));
         }
-        log.info("get");
         return allUserHyperties;
     }
 

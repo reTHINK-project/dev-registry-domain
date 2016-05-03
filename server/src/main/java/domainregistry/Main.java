@@ -27,6 +27,7 @@ public class Main {
     private static final String RAM = "Ram";
     private static final String STORAGE = "STORAGE_TYPE";
     private static final String EXPIRES = "EXPIRES";
+    private static final String RIEMANN = "RIEMANN_SERVER";
 
     public static void main(String[] args) {
         String storageType = System.getenv(STORAGE);
@@ -49,9 +50,13 @@ public class Main {
             DataObjectService dataObjectService = new DataObjectService();
             StatusService status = new StatusService(CASSANDRA, cassandraClient);
             HypertyController controller = new HypertyController(status, hypertyService, cassandraClient, dataObjectService);
-            RiemannCommunicator riemann = new RiemannCommunicator();
             new HeartBeatThread(hypertyService, cassandraClient, time).start();
-            new MetricsThread(controller, cassandraClient, riemann).start();
+
+            if(System.getenv(RIEMANN) != null){
+                log.info("Riemann env variable was set. Events will begin to be sent to " + System.getenv(RIEMANN));
+                RiemannCommunicator riemann = new RiemannCommunicator();
+                new MetricsThread(controller, cassandraClient, riemann).start();
+            }
         }
 
         if(storageType.equals("RAM")){

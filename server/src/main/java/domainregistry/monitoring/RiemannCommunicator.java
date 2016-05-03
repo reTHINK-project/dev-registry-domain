@@ -61,6 +61,7 @@ public class RiemannCommunicator {
         try{
             this.riemannClient = RiemannClient.tcp(address, PORT);
             this.riemannClient.connect();
+            log.info("Connection to a riemann client has succeeded");
         } catch(Exception e){
             log.error("Could not connect to a riemann server. Is " + address + " running?");
         }

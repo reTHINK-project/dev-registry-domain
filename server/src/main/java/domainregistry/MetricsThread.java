@@ -22,7 +22,7 @@ import java.util.List;
 class MetricsThread extends Thread{
     static Logger log = Logger.getLogger(MetricsThread.class.getName());
 
-    private static final int FIVE_SECONDS = 5000;
+    private static final int THREE_SECONDS = 3000;
     private static final String RUNNING = "running";
 
     private HypertyController controller;
@@ -39,7 +39,7 @@ class MetricsThread extends Thread{
     public void run(){
         try{
             while(true){
-                Thread.sleep(FIVE_SECONDS);
+                Thread.sleep(THREE_SECONDS);
                 double writes = (double) controller.getNumWrites();
                 double reads =  (double) controller.getNumReads();
                 this.riemann.addEvent("http get", "http", reads);
