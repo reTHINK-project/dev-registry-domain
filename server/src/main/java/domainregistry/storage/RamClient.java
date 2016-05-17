@@ -105,19 +105,34 @@ public class RamClient implements Connection{
     }
 
     public void insertDataObject(DataObjectInstance dataObject){
-        String dataObjectName = dataObject.getName();
-        dataObjects.put(dataObjectName, dataObject);
+        String dataObjectUrl = dataObject.getUrl();
+        dataObjects.put(dataObjectUrl, dataObject);
     }
 
-    public boolean dataObjectExists(String dataObjectName){
-        return dataObjects.containsKey(dataObjectName);
+    public boolean dataObjectExists(String dataObjectUrl){
+        return dataObjects.containsKey(dataObjectUrl);
     }
 
-    public DataObjectInstance getDataObject(String dataObjectName){
-        return dataObjects.get(dataObjectName);
+    public DataObjectInstance getDataObjectByUrl(String dataObjectUrl){
+        return dataObjects.get(dataObjectUrl);
     }
 
-    public void deleteDataObject(String dataObjectName){
-        dataObjects.remove(dataObjectName);
+    public Map<String, DataObjectInstance> getDataObjectsByHyperty(String hypertyReporter){
+        Map<String, DataObjectInstance> dataObjectsToBeReturned = new HashMap<>();
+
+        for(DataObjectInstance dataObjectInstance : dataObjects.values()){
+            if(dataObjectInstance.getReporter().equals(hypertyReporter)){
+                dataObjectsToBeReturned.put(dataObjectInstance.getUrl(), dataObjectInstance);
+            }
+        }
+
+        if(dataObjectsToBeReturned.isEmpty())
+            return Collections.emptyMap();
+
+        else return dataObjectsToBeReturned;
+    }
+
+    public void deleteDataObject(String dataObjectUrl){
+        dataObjects.remove(dataObjectUrl);
     }
 }

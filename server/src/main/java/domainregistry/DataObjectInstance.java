@@ -51,6 +51,10 @@ public class DataObjectInstance {
         return this.url;
     }
 
+    public void setUrl(String url){
+        this.url = url;
+    }
+
     public String getSchema(){
         return this.schema;
     }

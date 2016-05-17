@@ -23,32 +23,44 @@ describe 'domain registry api tests' do
   before {
     @data_object_details = {
       schema: "schema",
-      url: "url",
-      reporter: "reporter"
+      name: "name1",
+      reporter: "reporter1"
     }
 
     @data_object_two_details = {
       schema: "schema2",
-      url: "url2",
+      name: "name2",
       reporter: "reporter2"
     }
 
     @data_object_three_details = {
       schema: "schema3",
-      url: "url3",
-      reporter: "reporter3"
+      name: "name3",
+      reporter: "reporter1"
+    }
+
+    @data_object_four_details = {
+      schema: "schema3",
+      name: "name3",
+      reporter: "reporter1"
     }
   }
 
   describe 'create data object' do
     it 'should create a new data object' do
-      put '/mychat', @data_object_details
+      put '/url1', @data_object_details
       expect_status(200)
       expect_json(:message => "Data object created")
     end
 
     it 'should create a second data object' do
-      put '/mychat2', @data_object_two_details
+      put '/url2', @data_object_two_details
+      expect_status(200)
+      expect_json(:message => "Data object created")
+    end
+
+    it 'should create a new data object' do
+      put '/url4', @data_object_four_details
       expect_status(200)
       expect_json(:message => "Data object created")
     end
@@ -56,19 +68,39 @@ describe 'domain registry api tests' do
 
   describe 'get data object' do
     it 'should return a data object' do
-      get '/mychat'
+      get '/url/url1'
       expect_status(200)
       expect_json_sizes(6)
     end
 
     it 'should return a data object' do
-      get '/mychat2'
+      get '/url/url2'
       expect_status(200)
       expect_json_sizes(6)
     end
 
     it 'should return a data not found error' do
-      get '/mychat23'
+      get '/url/url23'
+      expect_status(404)
+      expect_json(:message => "Data not found")
+    end
+  end
+
+  describe 'get data object by hypertyReporter' do
+    it 'should return a data object' do
+      get '/reporter/reporter1'
+      expect_status(200)
+      expect_json_sizes(2)
+    end
+
+    it 'should return a data object' do
+      get '/reporter/reporter2'
+      expect_status(200)
+      expect_json_sizes(1)
+    end
+
+    it 'should return a data not found error' do
+      get '/reporter/reporter12'
       expect_status(404)
       expect_json(:message => "Data not found")
     end
@@ -76,13 +108,13 @@ describe 'domain registry api tests' do
 
   describe 'delete data objects' do
     it 'sould delete a data object' do
-      delete '/mychat'
+      delete '/url/url1'
       expect_status(200)
       expect_json(:message => "Data object deleted")
     end
 
     it 'sould return a data not found error' do
-      delete '/mychat'
+      delete '/url/url234'
       expect_status(404)
       expect_json(:message => "Data not found")
     end
