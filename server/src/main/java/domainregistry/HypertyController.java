@@ -109,12 +109,13 @@ public class HypertyController {
             return gson.toJson(new Messages("Hyperty deleted"));
         });
 
-        put("hyperty/dataobject/:url", (req, res) -> {
+        put("hyperty/dataobject/*", (req, res) -> {
             Gson gson = new Gson();
             this.numWrites++;
             res.type("application/json");
             String body = req.body();
-            String dataObjectUrl = req.params(":url");
+            String[] encodedURL = req.url().split("/");
+            String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
             DataObjectInstance dataObject = gson.fromJson(body, DataObjectInstance.class);
             dataObject.setUrl(dataObjectUrl);
             dataObjectService.createDataObject(connectionClient, dataObject);
@@ -122,30 +123,33 @@ public class HypertyController {
             return gson.toJson(new Messages("Data object created"));
         });
 
-        get("hyperty/dataobject/url/:url", (req, res) -> {
+        get("hyperty/dataobject/url/*", (req, res) -> {
             Gson gson = new Gson();
             this.numReads++;
             res.type("application/json");
-            String dataObjectUrl = req.params(":url");
+            String[] encodedURL = req.url().split("/");
+            String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
             DataObjectInstance dataObject = dataObjectService.getDataObject(connectionClient, dataObjectUrl);
             res.status(200);
             return gson.toJson(dataObject);
         });
 
-        get("hyperty/dataobject/reporter/:reporter", (req, res) -> {
+        get("hyperty/dataobject/reporter/*", (req, res) -> {
             Gson gson = new Gson();
             this.numReads++;
             res.type("application/json");
-            String hypertyReporter = req.params(":reporter");
+            String[] encodedURL = req.url().split("/");
+            String hypertyReporter = decodeUrl(encodedURL[encodedURL.length - 1]);
             Map<String, DataObjectInstance> dataObjects = dataObjectService.getDataObjectsByHyperty(connectionClient, hypertyReporter);
             res.status(200);
             return gson.toJson(dataObjects);
         });
 
-        delete("/hyperty/dataobject/url/:url", (req, res) -> {
+        delete("/hyperty/dataobject/url/*", (req, res) -> {
             Gson gson = new Gson();
             res.type("application/json");
-            String dataObjectUrl = req.params(":url");
+            String[] encodedURL = req.url().split("/");
+            String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
             dataObjectService.deleteDataObject(connectionClient, dataObjectUrl);
             res.status(200);
             return gson.toJson(new Messages("Data object deleted"));
