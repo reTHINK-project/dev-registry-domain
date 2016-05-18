@@ -43,6 +43,8 @@ RegistryConnector.prototype.processMessage = function(msg, callback) {
     case "read":
       if(msg.body.resource.startsWith("dataObject://")) {
         this.getDataObject(msg.body.resource, callback);
+      }else if(msg.body.value.search) {
+        this.hypertySearch(msg.body.resource.user, msg.body.value.resources, msg.body.value.dataSchemes, callback);
       }else {
         this.getUser(msg.body.resource, callback);
       }
@@ -161,6 +163,22 @@ RegistryConnector.prototype.deleteDataObject = function(dataObjectName, callback
 
     callback(body);
   });
+};
+
+RegistryConnector.prototype.hypertySearch = function(userid, resources, dataschemes, callback) {
+  var endpoint = '/hyperty/user/' + encodeURIComponent(userid) + '/hyperty';
+  var querystring = '?resources=' + resources.join(',') + '&dataSchemes=' + resources.join(',');
+
+  this._request.get(this._registryURL + endpoint + querystring, function(err, response, statusCode) {
+
+    var body = {
+      'code': statusCode,
+      'value': JSON.parse(response)
+    };
+
+    callback(body);
+  });
+
 };
 
 module.exports = RegistryConnector;
