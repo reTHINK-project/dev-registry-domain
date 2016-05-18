@@ -43,7 +43,9 @@ RegistryConnector.prototype.processMessage = function(msg, callback) {
     case "read":
       if(msg.body.search != 'undefined' && msg.body.search === 'hypertyResourcesDataSchemes') {
         this.hypertySearch(msg.body.resource.user, msg.body.resource.resources, msg.body.resource.dataSchemes, callback);
-      }else if(msg.body.resource.startsWith("dataObject://")) {
+      }else if(msg.body.search != 'undefined' && msg.body.search === 'dataObjectPerReporter') {
+        this.getDataObjectByReporter(msg.body.resource, callback);
+      }else if(msg.body.search != 'undefined' && msg.body.search === 'dataObjectPerURL') {
         this.getDataObject(msg.body.resource, callback);
       }else {
         this.getUser(msg.body.resource, callback);
@@ -121,9 +123,21 @@ RegistryConnector.prototype.deleteHyperty = function(userid, hypertyid, callback
 };
 
 RegistryConnector.prototype.getDataObject = function(resource, callback) {
-  var dataobj = resource.split("://")[1];
 
-  this._request.get(this._registryURL + '/hyperty/dataobject/' + encodeURIComponent(dataobj), function(err, response, statusCode) {
+  this._request.get(this._registryURL + '/hyperty/dataobject/url/' + encodeURIComponent(resource), function(err, response, statusCode) {
+
+    var body = {
+      'code': statusCode,
+      'value': JSON.parse(response)
+    };
+
+    callback(body);
+  });
+};
+
+RegistryConnector.prototype.getDataObjectByReporter = function(reporter, callback) {
+
+  this._request.get(this._registryURL + '/hyperty/dataobject/reporter/' + encodeURIComponent(reporter), function(err, response, statusCode) {
 
     var body = {
       'code': statusCode,
@@ -155,7 +169,7 @@ RegistryConnector.prototype.addDataObject = function(dataobjName, schema, expire
 };
 
 RegistryConnector.prototype.deleteDataObject = function(dataObjectName, callback) {
-  var endpoint = '/hyperty/dataobject/' + encodeURIComponent(dataObjectName);
+  var endpoint = '/hyperty/dataobject/url/' + encodeURIComponent(dataObjectName);
 
   this._request.del(this._registryURL + endpoint, function(err, response, statusCode) {
 
