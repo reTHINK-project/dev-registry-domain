@@ -43,6 +43,8 @@ RegistryConnector.prototype.processMessage = function(msg, callback) {
     case "read":
       if(msg.body.resource.startsWith("dataObject://")) {
         this.getDataObject(msg.body.resource, callback);
+      }else if(msg.body.search != 'undefined' && msg.body.search === 'hypertyResourcesDataSchemes') {
+        this.hypertySearch(msg.body.resource.user, msg.body.value.resources, msg.body.value.dataSchemes, callback);
       }else {
         this.getUser(msg.body.resource, callback);
       }
@@ -161,6 +163,88 @@ RegistryConnector.prototype.deleteDataObject = function(dataObjectName, callback
 
     callback(body);
   });
+};
+
+RegistryConnector.prototype.getDataObject = function(resource, callback) {
+  var dataobj = resource.split("://")[1];
+
+  this._request.get(this._registryURL + '/hyperty/dataobject/' + encodeURIComponent(dataobj), function(err, response, statusCode) {
+
+    var body = {
+      'code': statusCode,
+      'value': JSON.parse(response)
+    };
+
+    callback(body);
+  });
+};
+
+RegistryConnector.prototype.addDataObject = function(dataobjName, schema, expires, url, reporter, callback) {
+  var endpoint = '/hyperty/dataobject/' + encodeURIComponent(dataobjName);
+  var data = {
+    'name': dataobjName,
+    'schema': schema,
+    'url': url,
+    'reporter': reporter,
+    'expires': expires
+  };
+
+  this._request.put(this._registryURL + endpoint, JSON.stringify(data), function(err, response, statusCode) {
+
+    var body = {
+      'code': statusCode
+    };
+
+    callback(body);
+  });
+};
+
+RegistryConnector.prototype.deleteDataObject = function(dataObjectName, callback) {
+  var endpoint = '/hyperty/dataobject/' + encodeURIComponent(dataObjectName);
+
+  this._request.del(this._registryURL + endpoint, function(err, response, statusCode) {
+
+    var body = {
+      'code': statusCode
+    };
+
+    callback(body);
+  });
+};
+
+RegistryConnector.prototype.hypertySearch = function(userid, resources, dataschemes, callback) {
+  var endpoint = '/hyperty/user/' + encodeURIComponent(userid) + '/hyperty';
+
+  var qsResources = '';
+  var qsDataschemes = '';
+  var querystring = '';
+
+  if(typeof resources != "undefined" && resources != null && resources.length > 0) {
+    var qsResources = 'resources=' + resources.join(',');
+  }
+
+  if(typeof dataschemes != "undefined" && dataschemes != null && dataschemes.length > 0) {
+    var qsDataschemes = 'dataSchemes=' + dataschemes.join(',');
+  }
+
+  if(qsResources != "" && qsDataschemes != "") {
+    var querystring = '?' + qsResources + '&' + qsDataschemes;
+  }else if(qsResources != "") {
+    var querystring = '?' + qsResources;
+  }else if(qsDataschemes != "") {
+    var querystring = '?' + qsDataschemes;
+  }
+
+  this._request.get(this._registryURL + endpoint + querystring, function(err, response, statusCode) {
+
+    var body = {
+      'code': statusCode,
+      'value': JSON.parse(response)
+    };
+
+    callback(body);
+  });
+
 };
 
 module.exports = RegistryConnector;
