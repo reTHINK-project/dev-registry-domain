@@ -125,11 +125,6 @@ public class HypertyService{
 
         Map<String, HypertyInstance> userHyperties = connectionClient.getUserHyperties(userID);
         Map<String, HypertyInstance> hyperties = new ConcurrentHashMap<String, HypertyInstance>(userHyperties);
-<<<<<<< HEAD
-=======
-
-        log.info(hyperties.getClass());
->>>>>>> master
 
         for (Map.Entry<String, HypertyInstance> entry : hyperties.entrySet()){
             String lastModified = entry.getValue().getLastModified();
