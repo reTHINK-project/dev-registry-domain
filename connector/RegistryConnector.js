@@ -43,7 +43,7 @@ RegistryConnector.prototype.processMessage = function(msg, callback) {
     case "read":
       if(msg.body.resource.startsWith("dataObject://")) {
         this.getDataObject(msg.body.resource, callback);
-      }else if(msg.body.value.search) {
+      }else if(msg.body.search != 'undefined' && msg.body.search === 'hypertyResourcesDataSchemes') {
         this.hypertySearch(msg.body.resource.user, msg.body.value.resources, msg.body.value.dataSchemes, callback);
       }else {
         this.getUser(msg.body.resource, callback);
@@ -167,7 +167,26 @@ RegistryConnector.prototype.deleteDataObject = function(dataObjectName, callback
 
 RegistryConnector.prototype.hypertySearch = function(userid, resources, dataschemes, callback) {
   var endpoint = '/hyperty/user/' + encodeURIComponent(userid) + '/hyperty';
-  var querystring = '?resources=' + resources.join(',') + '&dataSchemes=' + resources.join(',');
+
+  var qsResources = '';
+  var qsDataschemes = '';
+  var querystring = '';
+
+  if(typeof resources != "undefined" && resources != null && resources.length > 0) {
+    var qsResources = 'resources=' + resources.join(',');
+  }
+
+  if(typeof dataschemes != "undefined" && dataschemes != null && dataschemes.length > 0) {
+    var qsDataschemes = 'dataSchemes=' + dataschemes.join(',');
+  }
+
+  if(qsResources != "" && qsDataschemes != "") {
+    var querystring = '?' + qsResources + '&' + qsDataschemes;
+  }else if(qsResources != "") {
+    var querystring = '?' + qsResources;
+  }else if(qsDataschemes != "") {
+    var querystring = '?' + qsDataschemes;
+  }
 
   this._request.get(this._registryURL + endpoint + querystring, function(err, response, statusCode) {
 

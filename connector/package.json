@@ -16,7 +16,7 @@
   "author": "reThink Project",
   "license": "APSL-2.0",
   "dependencies": {
-    "requestify": "^0.1.17",
+    "requestify": "^0.1.17"
   },
   "devDependencies": {
     "chai": "^3.5.0",
