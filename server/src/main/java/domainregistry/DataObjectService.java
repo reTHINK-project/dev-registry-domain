@@ -43,7 +43,6 @@ public class DataObjectService{
     }
 
     public Map<String, DataObjectInstance> getDataObjectsByHyperty(Connection client, String hypertyReporter){
-        log.info("entrou");
         Map<String, DataObjectInstance> dObjects = client.getDataObjectsByHyperty(hypertyReporter);
 
         if(dObjects.isEmpty())
