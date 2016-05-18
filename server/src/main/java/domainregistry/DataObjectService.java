@@ -27,38 +27,46 @@ public class DataObjectService{
     private Map<String, DataObjectInstance> dataObjects = new HashMap<>();
 
     public void createDataObject(Connection client, DataObjectInstance dataObject){
-        String dataObjectName = dataObject.getName();
+        String dataObjectUrl = dataObject.getUrl();
 
-        if(client.dataObjectExists(dataObjectName))
+        if(client.dataObjectExists(dataObjectUrl))
             updateDataObject(client, dataObject);
 
         else newDataObject(client, dataObject);
     }
 
-    public DataObjectInstance getDataObject(Connection client, String dataObjectName){
-        if(client.dataObjectExists(dataObjectName))
-            return client.getDataObject(dataObjectName);
+    public DataObjectInstance getDataObject(Connection client, String dataObjectUrl){
+        if(client.dataObjectExists(dataObjectUrl))
+            return client.getDataObjectByUrl(dataObjectUrl);
 
         else throw new DataNotFoundException();
     }
 
-    public void deleteDataObject(Connection client, String dataObjectName){
-        if(client.dataObjectExists(dataObjectName))
-            client.deleteDataObject(dataObjectName);
+    public Map<String, DataObjectInstance> getDataObjectsByHyperty(Connection client, String hypertyReporter){
+        Map<String, DataObjectInstance> dObjects = client.getDataObjectsByHyperty(hypertyReporter);
+
+        if(dObjects.isEmpty())
+            throw new DataNotFoundException();
+
+        else return dObjects;
+    }
+
+    public void deleteDataObject(Connection client, String dataObjectUrl){
+        if(client.dataObjectExists(dataObjectUrl))
+            client.deleteDataObject(dataObjectUrl);
 
         else throw new DataNotFoundException();
     }
 
     private void newDataObject(Connection client, DataObjectInstance dataObject){
-        String dataObjectName = dataObject.getName();
         dataObject.setStartingTime(Dates.getActualDate());
         dataObject.setLastModified(Dates.getActualDate());
         client.insertDataObject(dataObject);
     }
 
     private void updateDataObject(Connection client, DataObjectInstance newDataObject){
-        String dataObjectName = newDataObject.getName();
-        DataObjectInstance oldDataObject = client.getDataObject(dataObjectName);
+        String dataObjectUrl = newDataObject.getUrl();
+        DataObjectInstance oldDataObject = client.getDataObjectByUrl(dataObjectUrl);
         newDataObject.setLastModified(Dates.getActualDate());
         newDataObject.setStartingTime(oldDataObject.getStartingTime());
         client.insertDataObject(newDataObject);

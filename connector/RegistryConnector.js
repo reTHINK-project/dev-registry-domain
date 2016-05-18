@@ -165,6 +165,53 @@ RegistryConnector.prototype.deleteDataObject = function(dataObjectName, callback
   });
 };
 
+RegistryConnector.prototype.getDataObject = function(resource, callback) {
+  var dataobj = resource.split("://")[1];
+
+  this._request.get(this._registryURL + '/hyperty/dataobject/' + encodeURIComponent(dataobj), function(err, response, statusCode) {
+
+    var body = {
+      'code': statusCode,
+      'value': JSON.parse(response)
+    };
+
+    callback(body);
+  });
+};
+
+RegistryConnector.prototype.addDataObject = function(dataobjName, schema, expires, url, reporter, callback) {
+  var endpoint = '/hyperty/dataobject/' + encodeURIComponent(dataobjName);
+  var data = {
+    'name': dataobjName,
+    'schema': schema,
+    'url': url,
+    'reporter': reporter,
+    'expires': expires
+  };
+
+  this._request.put(this._registryURL + endpoint, JSON.stringify(data), function(err, response, statusCode) {
+
+    var body = {
+      'code': statusCode
+    };
+
+    callback(body);
+  });
+};
+
+RegistryConnector.prototype.deleteDataObject = function(dataObjectName, callback) {
+  var endpoint = '/hyperty/dataobject/' + encodeURIComponent(dataObjectName);
+
+  this._request.del(this._registryURL + endpoint, function(err, response, statusCode) {
+
+    var body = {
+      'code': statusCode
+    };
+
+    callback(body);
+  });
+};
+
 RegistryConnector.prototype.hypertySearch = function(userid, resources, dataschemes, callback) {
   var endpoint = '/hyperty/user/' + encodeURIComponent(userid) + '/hyperty';
 

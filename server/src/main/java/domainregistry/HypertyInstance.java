@@ -16,10 +16,11 @@
 
 package domainregistry;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class HypertyInstance {
+    private List<String> resources;
+    private List<String> dataSchemes;
     private String descriptor;
     private String startingTime;
     private String hypertyID;
@@ -31,11 +32,15 @@ public class HypertyInstance {
     }
 
     public HypertyInstance(String descriptor,
+                           List<String> resources,
+                           List<String> dataSchemes,
                            String startingTime,
                            String lastModified,
                            int expires){
 
         this.descriptor = descriptor;
+        this.dataSchemes = dataSchemes;
+        this.resources = resources;
         this.startingTime = startingTime;
         this.lastModified = lastModified;
         this.expires = expires;
@@ -44,10 +49,14 @@ public class HypertyInstance {
     public HypertyInstance(String descriptor,
                            String startingTime,
                            String userID,
+                           List<String> resources,
+                           List<String> dataSchemes,
                            String lastModified,
                            int expires){
 
         this.descriptor = descriptor;
+        this.resources = resources;
+        this.dataSchemes = dataSchemes;
         this.startingTime = startingTime;
         this.lastModified = lastModified;
         this.expires = expires;
@@ -96,6 +105,22 @@ public class HypertyInstance {
 
     public void setLastModified(String time){
         this.lastModified = time;
+    }
+
+    public List<String> getResources(){
+        return this.resources;
+    }
+
+    public void setResources(List<String> resources){
+        this.resources = resources;
+    }
+
+    public List<String> getDataSchemes(){
+        return this.dataSchemes;
+    }
+
+    public void setDataSchemes(List<String> dataSchemes){
+        this.dataSchemes = dataSchemes;
     }
 
     public int getExpires(){

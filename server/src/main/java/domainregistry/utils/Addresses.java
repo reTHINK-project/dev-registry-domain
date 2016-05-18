@@ -29,6 +29,7 @@ public class Addresses{
 
     private static final String CONTACT_POINTS = "CONTACT_POINTS_IPS";
     private static final String APP_SERVERS = "APP_SERVERS_IPS";
+    private static final String RIEMANN = "RIEMANN_SERVER";
     private static final int TIMEOUT = 100;
 
     protected static Collection<InetAddress> getClusterContactPointsAddresses(){
@@ -39,6 +40,10 @@ public class Addresses{
     protected static Collection<InetAddress> getAppServersAddresses(){
         String adds = System.getenv(APP_SERVERS);
         return getAddresses(adds);
+    }
+
+    protected static String getRiemannServerName(){
+        return System.getenv(RIEMANN);
     }
 
     protected static boolean isHostReachable(InetAddress host){

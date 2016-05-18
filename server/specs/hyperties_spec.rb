@@ -22,22 +22,37 @@ describe 'domain registry api tests' do
 
   before {
     @hyperty_details = {
+      resources: ["chat", "voice"],
+      dataSchemes: ["comm"],
       descriptor: "descriptor1",
-      expires: 120
+      expires: 1200
     }
 
     @hyperty_two_details = {
+      resources: ["chat", "voice", "video"],
+      dataSchemes: ["comm"],
       descriptor: "descriptor2",
-      expires: 120
+      expires: 1200
     }
 
     @hyperty_three_details = {
+      resources: ["chat", "voice", "video"],
+      dataSchemes: ["comm", "fake"],
       descriptor: "descriptor3",
-      expires: 120
+      expires: 1200
     }
 
     @hyperty_four_details = {
+      resources: ["chat", "video"],
+      dataSchemes: ["comm"],
       descriptor: "descriptor4",
+      expires: 1200
+    }
+
+    @hyperty_five_details = {
+      resources: ["chat", "voice"],
+      dataSchemes: ["comm"],
+      descriptor: "descriptor5",
       expires: 1200
     }
   }
@@ -46,6 +61,12 @@ describe 'domain registry api tests' do
 
     it 'should add a new hyperty' do #non-existent user creates non-existent hyperty
       put '/ruijose@inesc-id.pt/hyperty1', @hyperty_details
+      expect_status(200)
+      expect_json(:message => "Hyperty created")
+    end
+
+    it 'should add a new hyperty' do
+      put '/ruigil@inesc-id.pt/hyperty11', @hyperty_five_details
       expect_status(200)
       expect_json(:message => "Hyperty created")
     end
@@ -81,28 +102,100 @@ describe 'domain registry api tests' do
     end
   end
 
-  describe 'get all user hyperties' do
+  describe 'get all hyperties' do
 
     it 'should return all the hyperties' do
       get '/ruijose@inesc-id.pt'
       expect_status(200)
       expect_json_sizes(3)
-      expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires])
-      expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires])
-      expect_json_types("hyperty1", descriptor: :string, startingTime: :string, lastModified: :string, expires: :int)
-      expect_json_types("hyperty2", descriptor: :string, startingTime: :string, lastModified: :string, expires: :int)
+      expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes])
+      expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes])
+      expect_json_types("hyperty1", dataSchemes: :array_of_strings, resources: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int)
+      expect_json_types("hyperty2", dataSchemes: :array_of_strings, resources: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int)
       expect(json_body[:hyperty1][:descriptor]).to eql("descriptor1")
       expect(json_body[:hyperty2][:descriptor]).to eql("descriptor4")
-      expect(json_body[:hyperty1][:expires]).to eql(120)
+      expect(json_body[:hyperty6][:descriptor]).to eql("descriptor4")
+      expect(json_body[:hyperty1][:expires]).to eql(1200)
       expect(json_body[:hyperty2][:expires]).to eql(1200)
+      expect(json_body[:hyperty6][:expires]).to eql(1200)
       expect(json_body[:hyperty1][:startingTime]).to eql(json_body[:hyperty1][:lastModified])
       expect(json_body[:hyperty2][:startingTime]).to eql(json_body[:hyperty2][:lastModified])
+      expect(json_body[:hyperty6][:startingTime]).to eql(json_body[:hyperty6][:lastModified])
+      expect(json_body[:hyperty1][:resources]).to eql(["chat", "voice"])
+      expect(json_body[:hyperty2][:resources]).to eql(["chat", "video"])
+      expect(json_body[:hyperty6][:resources]).to eql(["chat", "video"])
+      expect(json_body[:hyperty1][:dataSchemes]).to eql(["comm"])
+      expect(json_body[:hyperty2][:dataSchemes]).to eql(["comm"])
+      expect(json_body[:hyperty6][:dataSchemes]).to eql(["comm"])
     end
 
     it 'should return an error, user not found' do
       get '/nuno@inesc-id.pt'
       expect_status(404)
       expect_json(:message => "User not found")
+    end
+  end
+
+  describe 'get specific hyperties' do
+
+    it 'should return all user hyperties with voice resource type' do
+      get '/ruijose@inesc-id.pt/hyperty?resources=voice'
+      expect_status(200);
+      expect_json_sizes(1)
+    end
+
+    it 'should return all user hyperties with voice resource type' do
+      get '/ruijose@inesc-id.pt/hyperty?dataSchemes=comm'
+      expect_status(200);
+      expect_json_sizes(3)
+    end
+
+    it 'should return all user hyperties with voice resource type' do
+      get '/ruijose@inesc-id.pt/hyperty?dataSchemes=comm&resources=chat,video'
+      expect_status(200);
+      expect_json_sizes(2)
+    end
+
+    it 'should return all user hyperties with voice resource type' do
+      get '/ruijose@inesc-id.pt/hyperty?dataSchemes=comm&resources=voice'
+      expect_status(200);
+      expect_json_sizes(1)
+    end
+
+    it 'should return all user hyperties with voice and chat as resource type' do
+      get '/ruijose@inesc-id.pt/hyperty?resources=voice,chat'
+      expect_status(200);
+      expect_json_sizes(1)
+    end
+
+    it 'should return all user hyperties with video resource type' do
+      get '/ruijose@inesc-id.pt/hyperty?resources=video'
+      expect_status(200);
+      expect_json_sizes(2)
+    end
+
+    it 'should return all user hyperties with chat resource type' do
+      get '/ruijose@inesc-id.pt/hyperty?resources=chat'
+      expect_status(200);
+      expect_json_sizes(3)
+    end
+
+    it 'should return a hyperties not found error' do
+      get '/ruijose@inesc-id.pt/hyperty?resources=messaging'
+      expect_status(404);
+      expect_json(:message => "Hyperties not found.")
+    end
+
+    it 'should return a hyperties not found error' do
+      get '/ruigil@inesc-id.pt/hyperty?dataSchemes=comm&resources=video'
+      expect_status(404);
+      expect_json(:message => "Hyperties not found.")
+    end
+
+    it 'should return a missing query string error' do
+      get '/ruijose@inesc-id.pt/messaging'
+      expect_status(404);
+      expect_json(:message => "URL malformed. A query string is needed.")
     end
   end
 
@@ -119,16 +212,23 @@ describe 'domain registry api tests' do
       get '/ruijose@inesc-id.pt'
       expect_status(200)
       expect_json_sizes(3)
-      expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires])
-      expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires])
-      expect_json_types("hyperty1", descriptor: :string, startingTime: :string, lastModified: :string, expires: :int)
-      expect_json_types("hyperty2", descriptor: :string, startingTime: :string, lastModified: :string, expires: :int)
+      expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes])
+      expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes])
+      expect_json_types("hyperty1", resources: :array_of_strings, dataSchemes: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int)
+      expect_json_types("hyperty2", resources: :array_of_strings, dataSchemes: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int)
+      expect(json_body[:hyperty1][:resources]).to eql(["chat", "voice", "video"])
+      expect(json_body[:hyperty1][:dataSchemes]).to eql(["comm", "fake"])
+      expect(json_body[:hyperty1][:expires]).to eql(1200)
       expect(json_body[:hyperty1][:descriptor]).to eql("descriptor3")
-      expect(json_body[:hyperty2][:descriptor]).to eql("descriptor4")
-      expect(json_body[:hyperty1][:expires]).to eql(120)
       expect(json_body[:hyperty2][:expires]).to eql(1200)
       expect(json_body[:hyperty2][:startingTime]).to eql(json_body[:hyperty2][:lastModified])
       expect(json_body[:hyperty1][:startingTime]).to be < (json_body[:hyperty1][:lastModified])
+    end
+
+    it 'should return all user hyperties with voice resource type' do
+      get '/ruijose@inesc-id.pt/hyperty?dataSchemes=comm,fake&resources=voice,chat,voice'
+      expect_status(200);
+      expect_json_sizes(1)
     end
 
     it 'should return an error, user not found' do
@@ -182,3 +282,4 @@ describe 'domain registry api tests' do
     end
   end
 end
+
