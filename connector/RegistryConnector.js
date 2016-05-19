@@ -149,7 +149,7 @@ RegistryConnector.prototype.getDataObjectByReporter = function(reporter, callbac
 };
 
 RegistryConnector.prototype.addDataObject = function(dataobjName, schema, expires, url, reporter, callback) {
-  var endpoint = '/hyperty/dataobject/' + encodeURIComponent(dataobjName);
+  var endpoint = '/hyperty/dataobject/' + encodeURIComponent(url);
   var data = {
     'name': dataobjName,
     'schema': schema,
