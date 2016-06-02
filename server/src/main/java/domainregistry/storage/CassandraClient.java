@@ -165,24 +165,6 @@ public class CassandraClient implements Connection{
                 row.getString("reporter"), row.getString("url"), row.getString("startingTime"), row.getString("lastModified"));
     }
 
-    // public DataObjectInstance getDataObjectByHyperty(String hypertyReporter){
-    //     Statement select = QueryBuilder.select().all().from(KEYSPACE, REPORTERDATAOBJECTS)
-    //                                                   .where(QueryBuilder.eq("url", hypertyReporter));
-    //     ResultSet results = session.execute(select);
-    //     Row row = results.one();
-    //     return new DataObjectInstance(row.getString("name"), row.getString("schem"),
-    //             row.getString("reporter"), row.getString("url"), row.getString("startingTime"), row.getString("lastModified"));
-    // }
-    //
-    // public DataObjectInstance getDataObjectByName(String dataObjectName){
-    //     Statement select = QueryBuilder.select().all().from(KEYSPACE, NAMEDATAOBJECTS)
-    //                                                   .where(QueryBuilder.eq("name", dataObjectName));
-    //     ResultSet results = session.execute(select);
-    //     Row row = results.one();
-    //     return new DataObjectInstance(row.getString("name"), row.getString("schem"),
-    //             row.getString("reporter"), row.getString("url"), row.getString("startingTime"), row.getString("lastModified"));
-    // }
-
     public boolean hypertyExists(String hypertyID){
         Statement select = QueryBuilder.select().all().from(KEYSPACE, IDHYPERTIES)
                                                       .where(QueryBuilder.eq("hypertyID", hypertyID));
@@ -282,6 +264,24 @@ public class CassandraClient implements Connection{
                                                                               row.getString("startingTime"), row.getString("lastModified")));
         }
         return allHypertyDataObjects;
+    }
+
+    public Map<String, DataObjectInstance> getDataObjectsByName(String dataObjectName){
+        log.info("Requested data objects from with name: " + dataObjectName);
+        Map<String, DataObjectInstance> foundDataObjects = new HashMap();
+
+        Statement select = QueryBuilder.select().all().from(KEYSPACE, NAMEDATAOBJECTS)
+                                                      .where(QueryBuilder.eq("name", dataObjectName));
+        ResultSet results = session.execute(select);
+
+        if(results == null) return Collections.emptyMap();
+
+        for(Row row : results){
+            foundDataObjects.put(row.getString("url"), new DataObjectInstance(row.getString("name"), row.getString("schem"),
+                                                                              row.getString("reporter"), row.getString("url"),
+                                                                              row.getString("startingTime"), row.getString("lastModified")));
+        }
+        return foundDataObjects;
     }
 
     public void deleteUserHyperty(String hypertyID){

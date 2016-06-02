@@ -132,6 +132,21 @@ public class RamClient implements Connection{
         else return dataObjectsToBeReturned;
     }
 
+    public Map<String, DataObjectInstance> getDataObjectsByName(String dataObjectName){
+        Map<String, DataObjectInstance> dataObjectsToBeReturned = new HashMap<>();
+
+        for(DataObjectInstance dataObjectInstance : dataObjects.values()){
+            if(dataObjectInstance.getName().equals(dataObjectName)){
+                dataObjectsToBeReturned.put(dataObjectInstance.getUrl(), dataObjectInstance);
+            }
+        }
+
+        if(dataObjectsToBeReturned.isEmpty())
+            return Collections.emptyMap();
+
+        else return dataObjectsToBeReturned;
+    }
+
     public void deleteDataObject(String dataObjectUrl){
         dataObjects.remove(dataObjectUrl);
     }

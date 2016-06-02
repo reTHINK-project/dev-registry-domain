@@ -53,6 +53,12 @@ describe 'domain registry api tests' do
       expect_json(:message => "Data object created")
     end
 
+    it 'should create a new data object' do
+      put '/url3', @data_object_three_details
+      expect_status(200)
+      expect_json(:message => "Data object created")
+    end
+
     it 'should create a second data object' do
       put '/url2', @data_object_two_details
       expect_status(200)
@@ -90,7 +96,7 @@ describe 'domain registry api tests' do
     it 'should return a data object' do
       get '/reporter/reporter1'
       expect_status(200)
-      expect_json_sizes(2)
+      expect_json_sizes(3)
     end
 
     it 'should return a data object' do
@@ -101,6 +107,32 @@ describe 'domain registry api tests' do
 
     it 'should return a data not found error' do
       get '/reporter/reporter12'
+      expect_status(404)
+      expect_json(:message => "Data not found")
+    end
+  end
+
+  describe 'get data object by name' do
+    it 'should return a data object' do
+      get '/name/name1'
+      expect_status(200)
+      expect_json_sizes(1)
+    end
+
+    it 'should return a data object' do
+      get '/name/name2'
+      expect_status(200)
+      expect_json_sizes(1)
+    end
+
+    it 'should return a data object' do
+      get '/name/name3'
+      expect_status(200)
+      expect_json_sizes(2)
+    end
+
+    it 'should return a data not found error' do
+      get '/name/name12'
       expect_status(404)
       expect_json(:message => "Data not found")
     end

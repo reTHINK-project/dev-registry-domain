@@ -51,6 +51,15 @@ public class DataObjectService{
         else return dObjects;
     }
 
+    public Map<String, DataObjectInstance> getDataObjectsByName(Connection client, String dataObjectName){
+        Map<String, DataObjectInstance> dObjects = client.getDataObjectsByName(dataObjectName);
+
+        if(dObjects.isEmpty())
+            throw new DataNotFoundException();
+
+        else return dObjects;
+    }
+
     public void deleteDataObject(Connection client, String dataObjectUrl){
         if(client.dataObjectExists(dataObjectUrl))
             client.deleteDataObject(dataObjectUrl);

@@ -145,6 +145,17 @@ public class HypertyController {
             return gson.toJson(dataObjects);
         });
 
+        get("hyperty/dataobject/name/*", (req, res) -> {
+            Gson gson = new Gson();
+            this.numReads++;
+            res.type("application/json");
+            String[] encodedURL = req.url().split("/");
+            String dataObjectName = decodeUrl(encodedURL[encodedURL.length - 1]);
+            Map<String, DataObjectInstance> dataObjects = dataObjectService.getDataObjectsByName(connectionClient, dataObjectName);
+            res.status(200);
+            return gson.toJson(dataObjects);
+        });
+
         delete("/hyperty/dataobject/url/*", (req, res) -> {
             Gson gson = new Gson();
             res.type("application/json");
