@@ -80,8 +80,7 @@ public class HypertyService{
 
         if(allUserHyperties.isEmpty()) throw new DataNotFoundException();
 
-        AdvancedSearch advancedSearch = new AdvancedSearch(parameters, allUserHyperties);
-        Map<String, HypertyInstance> foundHyperties = advancedSearch.getHyperties();
+        Map<String, HypertyInstance> foundHyperties = AdvancedSearch.getHyperties(parameters, allUserHyperties);
 
         if(!foundHyperties.isEmpty())
             return foundHyperties;

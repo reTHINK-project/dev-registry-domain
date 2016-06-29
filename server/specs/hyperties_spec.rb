@@ -195,7 +195,7 @@ describe 'domain registry api tests' do
     it 'should return a missing query string error' do
       get '/ruijose@inesc-id.pt/messaging'
       expect_status(404);
-      expect_json(:message => "URL malformed. A query string is needed.")
+      expect_json(:message => "URL malformed. Query string is either empty or malformed.")
     end
   end
 

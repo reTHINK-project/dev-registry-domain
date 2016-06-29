@@ -16,12 +16,15 @@
 
 package domainregistry;
 
+import java.util.List;
+
 public class DataObjectInstance {
     private String schema;
     private String url;
     private String reporter;
     private String name;
     private String startingTime;
+    private List<String> resources;
     private String lastModified;
 
     public DataObjectInstance(){
@@ -34,13 +37,22 @@ public class DataObjectInstance {
         this.name = name;
     }
 
-    public DataObjectInstance(String name, String schema, String reporter, String url, String startingTime, String lastModified){
+    public DataObjectInstance(String name, String schema, List<String> resources, String reporter, String url, String startingTime, String lastModified){
         this.schema = schema;
         this.url = url;
+        this.resources = resources;
         this.reporter = reporter;
         this.name = name;
         this.startingTime = startingTime;
         this.lastModified = lastModified;
+    }
+
+    public List<String> getResources(){
+        return this.resources;
+    }
+
+    public void setResources(List<String> resources){
+        this.resources = resources;
     }
 
     public void setName(String name){

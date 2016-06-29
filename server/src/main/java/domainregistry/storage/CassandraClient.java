@@ -99,6 +99,7 @@ public class CassandraClient implements Connection{
         Statement statement = QueryBuilder.insertInto(KEYSPACE, table)
             .value("name", dataObjectName)
             .value("schem", dataObject.getSchema())
+            .value("resources", dataObject.getResources())
             .value("startingTime", dataObject.getStartingTime())
             .value("lastModified", dataObject.getLastModified())
             .value("reporter", dataObject.getReporter())
@@ -161,7 +162,7 @@ public class CassandraClient implements Connection{
                                                       .where(QueryBuilder.eq("url", dataObjectUrl));
         ResultSet results = session.execute(select);
         Row row = results.one();
-        return new DataObjectInstance(row.getString("name"), row.getString("schem"),
+        return new DataObjectInstance(row.getString("name"), row.getString("schem"), row.getList("resources", String.class),
                 row.getString("reporter"), row.getString("url"), row.getString("startingTime"), row.getString("lastModified"));
     }
 
@@ -259,7 +260,7 @@ public class CassandraClient implements Connection{
         if(results == null) return Collections.emptyMap();
 
         for(Row row : results){
-            allHypertyDataObjects.put(row.getString("url"), new DataObjectInstance(row.getString("name"), row.getString("schem"),
+            allHypertyDataObjects.put(row.getString("url"), new DataObjectInstance(row.getString("name"), row.getString("schem"), row.getList("resources", String.class),
                                                                               row.getString("reporter"), row.getString("url"),
                                                                               row.getString("startingTime"), row.getString("lastModified")));
         }
@@ -277,7 +278,7 @@ public class CassandraClient implements Connection{
         if(results == null) return Collections.emptyMap();
 
         for(Row row : results){
-            foundDataObjects.put(row.getString("url"), new DataObjectInstance(row.getString("name"), row.getString("schem"),
+            foundDataObjects.put(row.getString("url"), new DataObjectInstance(row.getString("name"), row.getString("schem"), row.getList("resources", String.class),
                                                                               row.getString("reporter"), row.getString("url"),
                                                                               row.getString("startingTime"), row.getString("lastModified")));
         }
