@@ -97,6 +97,39 @@ CREATE TABLE hyperties_by_id (
     PRIMARY KEY(hypertyid)
 );
 
+CREATE TABLE data_objects_by_url (
+    name text,
+    schem text,
+    startingTime text,
+    lastModified text,
+    reporter text,
+    url text,
+    resources list<text>,
+    PRIMARY KEY(url)
+);
+
+CREATE TABLE data_objects_by_reporter (
+    name text,
+    schem text,
+    startingTime text,
+    lastModified text,
+    reporter text,
+    url text,
+    resources list<text>,
+    PRIMARY KEY(reporter, url)
+);
+
+CREATE TABLE data_objects_by_name (
+    name text,
+    schem text,
+    startingTime text,
+    lastModified text,
+    reporter text,
+    url text,
+    resources list<text>,
+    PRIMARY KEY(name, url)
+);
+
 CREATE TABLE hyperties_by_user (
     hypertyid text,
     user text,
