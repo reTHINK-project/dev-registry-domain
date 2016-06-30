@@ -8,7 +8,7 @@ describe('Add Data Object', function() {
 
   it('returns data successfully', (done) => {
 
-    let connector = new RegistryConnector('http://test');
+    let connector = new RegistryConnector('http://test.com');
 
     let putStub = sinon.stub(connector._request, 'put');
 
@@ -33,7 +33,7 @@ describe('Add Data Object', function() {
     connector.addDataObject(input.name, input.schema, input.expires, input.url, input.reporter, (result) => {
       expect(result.code).to.equals(200);
       expect(putStub.calledOnce).to.be.true;
-      expect(putStub.calledWith('http://test/hyperty/dataobject/user1-do',
+      expect(putStub.calledWith('http://test.com/hyperty/dataobject/do-url',
                                 JSON.stringify(sentData))).to.be.true;
 
       done();

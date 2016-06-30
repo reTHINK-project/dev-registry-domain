@@ -45,6 +45,7 @@ describe('Process message method', function() {
     let message = {
       type: 'READ',
       body: {
+        search: 'dataObjectPerURL',
         resource: 'dataObject://test'
       }
     };
@@ -76,13 +77,15 @@ describe('Process message method', function() {
           user: 'user1',
           hypertyURL: 'hyperty://testest1',
           hypertyDescriptorURL: 'hyperty-descriptor://testtest',
-          expires: 19000
+          expires: 19000,
+          resources: ['resource1', 'resource2'],
+          dataSchemes: ['scheme1']
         }
       }
     };
 
 
-    hypertyStub.callsArg(4);
+    hypertyStub.callsArg(6);
 
     connector.processMessage(message, callback);
 
@@ -90,6 +93,7 @@ describe('Process message method', function() {
     expect(doStub.calledOnce).to.be.false;
     expect(hypertyStub.calledWith(message.body.value.user, message.body.value.hypertyURL,
                                   message.body.value.hypertyDescriptorURL, message.body.value.expires,
+                                  message.body.value.resources, message.body.value.dataSchemes,
                                   callback)).to.be.true;
 
   });
