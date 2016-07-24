@@ -54,8 +54,6 @@ public class HypertyController {
             res.type("application/json");
             String[] encodedURL = req.url().split("/");
 
-            System.out.println(res.getClass());
-
             if(encodedURL.length == ALL_HYPERTIES_PATH_SIZE){
                 String userID = decodeUrl(encodedURL[encodedURL.length - 1]);
                 Map<String, HypertyInstance> userHyperties = hypertyService.getAllHyperties(connectionClient, userID);
@@ -67,7 +65,7 @@ public class HypertyController {
 
             if(validatePathUrl(queryParams)){
                 res.status(404);
-                return gson.toJson(new Messages("URL malformed. Query string is either empty or malformed."));
+                return gson.toJson(new Messages("Not Found"));
             }
 
             Map<String, String> allParameters = new HashMap();
@@ -140,7 +138,7 @@ public class HypertyController {
 
             if(validatePathUrl(queryParams)){
                 res.status(404);
-                return gson.toJson(new Messages("URL malformed. Query string is either empty or malformed."));
+                return gson.toJson(new Messages("Not Found"));
             }
 
             Map<String, String> allParameters = new HashMap();
@@ -172,7 +170,7 @@ public class HypertyController {
 
             if(validatePathUrl(queryParams)){
                 res.status(404);
-                return gson.toJson(new Messages("URL malformed. Query string is either empty or malformed."));
+                return gson.toJson(new Messages("Not Found"));
             }
 
             Map<String, String> allParameters = new HashMap();
@@ -204,7 +202,7 @@ public class HypertyController {
 
             if(validatePathUrl(queryParams)){
                 res.status(404);
-                return gson.toJson(new Messages("URL malformed. Query string is either empty or malformed."));
+                return gson.toJson(new Messages("Not Found"));
             }
 
             Map<String, String> allParameters = new HashMap();
@@ -236,7 +234,7 @@ public class HypertyController {
         exception(DataNotFoundException.class, (e, req, res) -> {
             Gson gson = new Gson();
             res.status(404);
-            res.body(gson.toJson(new Messages("Data not found")));
+            res.body(gson.toJson(new Messages("Not Found")));
         });
 
         get("/throwexception", (request, response) -> {
@@ -246,7 +244,7 @@ public class HypertyController {
         exception(HypertiesNotFoundException.class, (e, req, res) -> {
             Gson gson = new Gson();
             res.status(404);
-            res.body(gson.toJson(new Messages("Hyperties not found.")));
+            res.body(gson.toJson(new Messages("Not Found")));
         });
 
         get("/throwexception", (request, response) -> {
@@ -256,7 +254,7 @@ public class HypertyController {
         exception(DataObjectNotFoundException.class, (e, req, res) -> {
             Gson gson = new Gson();
             res.status(404);
-            res.body(gson.toJson(new Messages("Data Objects not found.")));
+            res.body(gson.toJson(new Messages("Not Found")));
         });
 
         get("/throwexception", (request, response) -> {
@@ -266,7 +264,7 @@ public class HypertyController {
         exception(CouldNotRemoveHypertyException.class, (e, req, res) -> {
             Gson gson = new Gson();
             res.status(404);
-            res.body(gson.toJson(new Messages("Could not remove hyperty")));
+            res.body(gson.toJson(new Messages("Not Found")));
         });
 
         get("/throwexception", (request, response) -> {
@@ -276,7 +274,7 @@ public class HypertyController {
         exception(UserNotFoundException.class, (e, req, res) -> {
             Gson gson = new Gson();
             res.status(404);
-            res.body(gson.toJson(new Messages("User not found")));
+            res.body(gson.toJson(new Messages("Not Found")));
         });
 
         get("/throwexception", (request, response) -> {
@@ -286,7 +284,7 @@ public class HypertyController {
         exception(CouldNotCreateOrUpdateHypertyException.class, (e, req, res) -> {
             Gson gson = new Gson();
             res.status(404);
-            res.body(gson.toJson(new Messages("Could not create or update hyperty")));
+            res.body(gson.toJson(new Messages("Not Found")));
         });
     }
 

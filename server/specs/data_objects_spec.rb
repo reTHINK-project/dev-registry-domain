@@ -92,7 +92,7 @@ describe 'domain registry api tests' do
     it 'should return a data not found error' do
       get '/url/url23'
       expect_status(404)
-      expect_json(:message => "Data not found")
+      expect_json(:message => "Not Found")
     end
   end
 
@@ -112,19 +112,19 @@ describe 'domain registry api tests' do
     it 'should return an URL malformed error.' do
       get '/reporter/reporter2/do?rr=aa'
       expect_status(404)
-      expect_json(:message => "URL malformed. Query string is either empty or malformed.")
+      expect_json(:message => "Not Found")
     end
 
     it 'should return an URL malformed error.' do
       get '/reporter/reporter2/test'
       expect_status(404)
-      expect_json(:message => "URL malformed. Query string is either empty or malformed.")
+      expect_json(:message => "Not Found")
     end
 
     it 'should return a data not found error' do
       get '/reporter/reporter12'
       expect_status(404)
-      expect_json(:message => "Data not found")
+      expect_json(:message => "Not Found")
     end
   end
 
@@ -150,7 +150,7 @@ describe 'domain registry api tests' do
     it 'should return a data not found error' do
       get '/name/name12'
       expect_status(404)
-      expect_json(:message => "Data not found")
+      expect_json(:message => "Not Found")
     end
   end
 
@@ -176,13 +176,13 @@ describe 'domain registry api tests' do
     it 'should return an URL malformed error.' do
       get '/name/name3/test'
       expect_status(404)
-      expect_json(:message => "URL malformed. Query string is either empty or malformed.")
+      expect_json(:message => "Not Found")
     end
 
     it 'should return an URL malformed error.' do
       get '/name/name3/do?dd=dd'
       expect_status(404)
-      expect_json(:message => "URL malformed. Query string is either empty or malformed.")
+      expect_json(:message => "Not Found")
     end
 
     it 'should return 1 data objects' do
@@ -220,7 +220,7 @@ describe 'domain registry api tests' do
     it 'should return a data not found error' do
       get '/reporter/reporter1/do?resources=resource12'
       expect_status(404)
-      expect_json(:message => "Data Objects not found.")
+      expect_json(:message => "Not Found")
     end
 
     it 'should return 1 data objects' do
@@ -258,7 +258,7 @@ describe 'domain registry api tests' do
     it 'sould return a data not found error' do
       delete '/url/url234'
       expect_status(404)
-      expect_json(:message => "Data not found")
+      expect_json(:message => "Not Found")
     end
   end
 end

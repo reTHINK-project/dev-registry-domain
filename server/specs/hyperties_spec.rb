@@ -74,7 +74,7 @@ describe 'domain registry api tests' do
     it 'should add a new hyperty' do #hyperty already exists and belongs to user: ruijose
       put '/ruimangas@inesc-id.pt/hyperty1', @hyperty_details
       expect_status(404)
-      expect_json(:message => "Could not create or update hyperty")
+      expect_json(:message => "Not Found")
     end
 
     it 'should add a new hyperty' do #existent user creates non-existent hyperty
@@ -92,7 +92,7 @@ describe 'domain registry api tests' do
     it 'should add a new hyperty' do #existent user tries to create or update another user's hyperty
       put '/ruijose@inesc-id.pt/hyperty3', @hyperty_four_details
       expect_status(404)
-      expect_json(:message => "Could not create or update hyperty")
+      expect_json(:message => "Not Found")
     end
 
     it 'should add a new hyperty' do ##existent user creates non-existent hyperty
@@ -132,7 +132,7 @@ describe 'domain registry api tests' do
     it 'should return an error, user not found' do
       get '/nuno@inesc-id.pt'
       expect_status(404)
-      expect_json(:message => "User not found")
+      expect_json(:message => "Not Found")
     end
   end
 
@@ -183,19 +183,19 @@ describe 'domain registry api tests' do
     it 'should return a hyperties not found error' do
       get '/ruijose@inesc-id.pt/hyperty?resources=messaging'
       expect_status(404);
-      expect_json(:message => "Hyperties not found.")
+      expect_json(:message => "Not Found")
     end
 
     it 'should return a hyperties not found error' do
       get '/ruigil@inesc-id.pt/hyperty?dataSchemes=comm&resources=video'
       expect_status(404);
-      expect_json(:message => "Hyperties not found.")
+      expect_json(:message => "Not Found")
     end
 
     it 'should return a missing query string error' do
       get '/ruijose@inesc-id.pt/messaging'
       expect_status(404);
-      expect_json(:message => "URL malformed. Query string is either empty or malformed.")
+      expect_json(:message => "Not Found")
     end
   end
 
@@ -234,7 +234,7 @@ describe 'domain registry api tests' do
     it 'should return an error, user not found' do
       get '/nuno@inesc-id.pt'
       expect_status(404)
-      expect_json(:message => "User not found")
+      expect_json(:message => "Not Found")
     end
   end
 
@@ -242,13 +242,13 @@ describe 'domain registry api tests' do
     it 'should return an error, user not found' do
       delete '/ruijose12@inesc-id.pt/hyperty1'
       expect_status(404)
-      expect_json(:message => "User not found")
+      expect_json(:message => "Not Found")
     end
 
     it 'should return an error, user was found, but the hyperty did not exist' do
       delete '/ruijose@inesc-id.pt/hyperty111'
       expect_status(404)
-      expect_json(:message => "Data not found")
+      expect_json(:message => "Not Found")
     end
 
     it 'should delete an user hyperty' do
@@ -266,7 +266,7 @@ describe 'domain registry api tests' do
     it 'should return an error, user was found, but hyperty belongs to another one' do
       delete '/ruijose@inesc-id.pt/hyperty3'
       expect_status(404)
-      expect_json(:message => "Could not remove hyperty")
+      expect_json(:message => "Not Found")
     end
 
     it 'should delete the hyperty' do
@@ -278,7 +278,7 @@ describe 'domain registry api tests' do
     it 'should return an error, all this users hyperties were removed.' do
       delete '/ruijose@inesc-id.pt/hyperty35'
       expect_status(404)
-      expect_json(:message => "User not found") #all this user's hyperties were removed
+      expect_json(:message => "Not Found") #all this user's hyperties were removed
     end
   end
 end
