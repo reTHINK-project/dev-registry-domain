@@ -1,10 +1,16 @@
 var search = function(body, request, url, callback) {
-  request.get(url + '/hyperty/dataobject/url/' + encodeURIComponent(body.resource), function(err, response, statusCode) {
+  request.get(url + '/hyperty/dataobject/name/' + encodeURIComponent(body.resource), function(err, response, statusCode) {
 
-    var body = {
-      'code': statusCode,
-      'value': JSON.parse(response)
-    };
+    if(statusCode == 200) {
+      var body = {
+        'code': statusCode,
+        'value': JSON.parse(response)
+      };
+    }else {
+      var body = {
+        'description': response.message
+      }
+    }
 
     callback(body);
   });

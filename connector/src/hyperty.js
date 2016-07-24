@@ -1,10 +1,16 @@
 var search = function(body, request, url, callback) {
   request.get(url + '/hyperty/user/' + encodeURIComponent(body.value.user), function(err, response, statusCode) {
 
-    var body = {
-      'code': statusCode,
-      'value': JSON.parse(response)
-    };
+    if(statusCode == 200) {
+      var body = {
+        'code': statusCode,
+        'value': JSON.parse(response)
+      };
+    }else {
+      var body = {
+        'description': response.message
+      }
+    }
 
     callback(body);
   });
@@ -38,10 +44,16 @@ var advancedSearch = function(body, request, url, callback) {
 
   request.get(url + endpoint + querystring, function(err, response, statusCode) {
 
-    var body = {
-      'code': statusCode,
-      'value': JSON.parse(response)
-    };
+    if(statusCode == 200) {
+      var body = {
+        'code': statusCode,
+        'value': JSON.parse(response)
+      };
+    }else {
+      var body = {
+        'description': response.message
+      }
+    }
 
     callback(body);
   });
