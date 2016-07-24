@@ -8,6 +8,7 @@ var search = function(body, request, url, callback) {
       };
     }else {
       var body = {
+        'code': statusCode,
         'description': response.message
       }
     }
@@ -51,6 +52,7 @@ var advancedSearch = function(body, request, url, callback) {
       };
     }else {
       var body = {
+        'code': statusCode,
         'description': response.message
       }
     }

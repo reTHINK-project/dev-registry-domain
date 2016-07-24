@@ -76,10 +76,10 @@ RegistryConnector.prototype.readOperation = function(msg, callback) {
     // TODO: Data Object advanced search.
     hyperty.read(msg.body, this_request, this._registryURL, true, callback);
   }else {
-    if(this.checkUrlType(msg.body.resource) === 'dataObject') {
-      dataObject.read(msg.body, this._request, this._registryURL, false, callback);
-    }else {
+    if(this.checkUrlType(msg.body.resource) === 'hyperty') {
       hyperty.read(msg.body, this._request, this._registryURL, false, callback);
+    }else {
+      dataObject.read(msg.body, this._request, this._registryURL, false, callback);
     }
   }
 };
