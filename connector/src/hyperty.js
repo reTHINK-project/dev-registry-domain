@@ -1,5 +1,5 @@
 var search = function(body, request, url, callback) {
-  request.get(url + '/hyperty/user/' + encodeURIComponent(body.value.user), function(err, response, statusCode) {
+  request.get(url + '/hyperty/user/' + encodeURIComponent(body.resource), function(err, response, statusCode) {
 
     if(statusCode == 200) {
       var body = {
@@ -18,10 +18,10 @@ var search = function(body, request, url, callback) {
 };
 
 var advancedSearch = function(body, request, url, callback) {
-  var endpoint = '/hyperty/user/' + encodeURIComponent(body.value.user) + '/hyperty';
+  var endpoint = '/hyperty/user/' + encodeURIComponent(body.resource) + '/hyperty';
 
-  var resources = body.value.resources;
-  var dataschemes = body.value.dataSchemes;
+  var resources = body.criteria.resources;
+  var dataschemes = body.criteria.dataSchemes;
 
   var qsResources = '';
   var qsDataschemes = '';

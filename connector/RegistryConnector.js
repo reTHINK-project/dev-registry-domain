@@ -60,23 +60,26 @@ RegistryConnector.prototype.processMessage = function(msg, callback) {
   }
 };
 
-RegistryConnector.prototype.checkUrlType = function(url) {
+RegistryConnector.prototype.checkResourceType = function(url) {
 
   var prefix = url.split('://')[0];
 
-  if(prefix === 'comm') {
-    return 'dataObject';
-  }else {
+  if(prefix === 'hyperty' || prefix === 'user'){
     return 'hyperty';
+  }else {
+    return 'dataObject';
   }
 };
 
 RegistryConnector.prototype.readOperation = function(msg, callback) {
   if(msg.body.criteria != 'undefined') {
-    // TODO: Data Object advanced search.
-    hyperty.read(msg.body, this_request, this._registryURL, true, callback);
+    if(this.checkResourceType(msg.body.resource) === 'hyperty') {
+      hyperty.read(msg.body, this_request, this._registryURL, true, callback);
+    }else {
+      dataObject.read(msg.body, this._request, this._registryURL, false, callback);
+    }
   }else {
-    if(this.checkUrlType(msg.body.resource) === 'hyperty') {
+    if(this.checkResourceType(msg.body.resource) === 'hyperty') {
       hyperty.read(msg.body, this._request, this._registryURL, false, callback);
     }else {
       dataObject.read(msg.body, this._request, this._registryURL, false, callback);

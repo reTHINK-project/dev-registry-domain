@@ -1,5 +1,14 @@
 var search = function(body, request, url, callback) {
-  request.get(url + '/hyperty/dataobject/name/' + encodeURIComponent(body.resource), function(err, response, statusCode) {
+
+  var resourceType;
+
+  if(body.resource.split('://')[0] === 'comm') {
+    resourceType = 'url/';
+  }else {
+    resourceType = 'name/';
+  }
+
+  request.get(url + '/hyperty/dataobject/' + resourceType + encodeURIComponent(body.resource), function(err, response, statusCode) {
 
     if(statusCode == 200) {
       var body = {
@@ -18,6 +27,32 @@ var search = function(body, request, url, callback) {
 };
 
 var advancedSearch = function(body, request, url, callback) {
+  var endpoint = '/hyperty/dataobject/name/' + encodeURIComponent(body.resource) + '/do';
+
+  var resources = body.criteria.resources;
+
+  var qsResources = '';
+
+  if(typeof resources != "undefined" && resources != null && resources.length > 0) {
+    var qsResources = '?resources=' + resources.join(',');
+  }
+
+  request.get(url + endpoint + qsResources, function(err, response, statusCode) {
+
+    if(statusCode == 200) {
+      var body = {
+        'code': statusCode,
+        'value': JSON.parse(response)
+      };
+    }else {
+      var body = {
+        'code': statusCode,
+        'description': response.message
+      }
+    }
+
+    callback(body);
+  });
 };
 
 var dataObject = {
