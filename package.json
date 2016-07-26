@@ -2,7 +2,7 @@
   "name": "domain-registry-connector",
   "version": "0.1.0",
   "description": "Domain Registry connector",
-  "main": "RegistryConnector.js",
+  "main": "./connector/index.js",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com:reTHINK-project/dev-registry-domain.git"
