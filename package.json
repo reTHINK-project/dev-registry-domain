@@ -1,7 +1,7 @@
 {
-  "name": "domain-registry-connector",
+  "name": "dev-registry-domain",
   "version": "0.1.0",
-  "description": "Domain Registry connector",
+  "description": "Domain Registry Connector",
   "main": "./connector/index.js",
   "repository": {
     "type": "git",
