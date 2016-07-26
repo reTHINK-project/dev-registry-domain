@@ -97,9 +97,9 @@ RegistryConnector.prototype.createOperation = function(msg, callback) {
 
 RegistryConnector.prototype.updateOperation = function(msg, callback) {
   if(this.checkUrlType(msg.body.value.url) === 'hyperty') {
-    hyperty.create(msg.body, this._request, this._registryURL, callback);
+    hyperty.update(msg.body, this._request, this._registryURL, callback);
   }else {
-    dataObject.create(msg.body, this._request, this._registryURL, callback);
+    dataObject.update(msg.body, this._request, this._registryURL, callback);
   }
 };
 

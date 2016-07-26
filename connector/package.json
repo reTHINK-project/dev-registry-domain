@@ -4,14 +4,14 @@
   "description": "Domain Registry connector",
   "main": "RegistryConnector.js",
   "repository": {
-      "type": "git",
-      "url": "git+ssh://git@github.com:reTHINK-project/dev-registry-domain.git"
+    "type": "git",
+    "url": "git+ssh://git@github.com:reTHINK-project/dev-registry-domain.git"
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "keywords": [
-      "reThink"
+    "reThink"
   ],
   "author": "reThink Project",
   "license": "APSL-2.0",

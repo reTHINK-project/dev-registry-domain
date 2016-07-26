@@ -6,7 +6,7 @@ const sinon = require('sinon');
 const hyperty = require('../src/dataObject');
 const RequestShim = require('../src/js-request');
 
-describe('Data Object operations', function() {
+describe('Hyperty operations', function() {
 
   it('performs READ (per user) operation correctly', (done) => {
 
