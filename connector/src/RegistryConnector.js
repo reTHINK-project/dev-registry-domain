@@ -20,8 +20,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-var dataObject = require('./src/dataObject');
-var hyperty = require('./src/hyperty');
+var dataObject = require('./dataObject');
+var hyperty = require('./hyperty');
 
 var RegistryConnector = function(registryURL) {
 
@@ -31,9 +31,9 @@ var RegistryConnector = function(registryURL) {
      typeof(engine.factory.engineName.contains) == 'function' &&
            engine.factory.engineName.contains("Nashorn")) {
 
-    var RequestWrapper = require('./src/java-request');
+    var RequestWrapper = require('./java-request');
   }else {
-    var RequestWrapper = require('./src/js-request');
+    var RequestWrapper = require('./js-request');
   }
 
   this._request = new RequestWrapper();
