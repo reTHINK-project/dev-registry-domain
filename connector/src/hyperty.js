@@ -63,7 +63,7 @@ var advancedSearch = function(body, request, url, callback) {
 };
 
 var hyperty = {
-  read: function(body, request, url, callback) {
+  read: function(body, request, url, isAdvanced, callback) {
     if(isAdvanced) {
       advancedSearch(body, request, url, callback);
     }else {

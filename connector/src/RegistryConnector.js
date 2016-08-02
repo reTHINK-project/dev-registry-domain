@@ -76,7 +76,7 @@ RegistryConnector.prototype.readOperation = function(msg, callback) {
     if(this.checkResourceType(msg.body.resource) === 'hyperty') {
       hyperty.read(msg.body, this._request, this._registryURL, true, callback);
     }else {
-      dataObject.read(msg.body, this._request, this._registryURL, false, callback);
+      dataObject.read(msg.body, this._request, this._registryURL, true, callback);
     }
   }else {
     if(this.checkResourceType(msg.body.resource) === 'hyperty') {
