@@ -23,7 +23,7 @@
 var dataObject = require('./dataObject');
 var hyperty = require('./hyperty');
 
-var RegistryConnector = function(config) {
+var RegistryConnector = function(url) {
 
   if( typeof(engine) != 'undefined' &&
      typeof(engine.factory) != 'undefined' &&
@@ -36,8 +36,8 @@ var RegistryConnector = function(config) {
     var RequestWrapper = require('./js-request');
   }
 
-  this._request = new RequestWrapper(config.ssl);
-  this._registryURL = config.url;
+  this._request = new RequestWrapper();
+  this._registryURL = url;
 };
 
 RegistryConnector.prototype.processMessage = function(msg, callback) {
