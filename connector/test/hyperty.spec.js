@@ -168,8 +168,8 @@ describe('Hyperty operations', function() {
         "assertedIdentity": null,
         "value": {
           "user": "user://gmail.com/openidtest10",
-          "hypertyDescriptorURL": "hyperty-catalogue://hybroker.rethink.ptinovacao.pt/.well-known/hyperty/GroupChatManager",
-          "hypertyURL": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
+          "descriptor": "hyperty-catalogue://hybroker.rethink.ptinovacao.pt/.well-known/hyperty/GroupChatManager",
+          "url": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
           "expires": 3600,
           "resources": [
             "chat"

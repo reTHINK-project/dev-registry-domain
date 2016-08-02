@@ -72,10 +72,10 @@ var hyperty = {
   },
 
   create: function(body, request, url, callback) {
-    var endpoint = '/hyperty/user/' + encodeURIComponent(userid) + '/' + encodeURIComponent(body.value.hypertyURL);
+    var endpoint = '/hyperty/user/' + encodeURIComponent(body.value.user) + '/' + encodeURIComponent(body.value.url);
 
     var data = {
-      'descriptor': body.value.hypertyDescriptor,
+      'descriptor': body.value.descriptor,
       'expires': body.value.expires,
       'resources': body.value.resources,
       'dataSchemes': body.value.dataSchemes
@@ -93,10 +93,10 @@ var hyperty = {
   },
 
   update: function(body, request, url, callback) {
-    var endpoint = '/hyperty/user/' + encodeURIComponent(userid) + '/' + encodeURIComponent(body.value.hypertyURL);
+    var endpoint = '/hyperty/user/' + encodeURIComponent(body.value.user) + '/' + encodeURIComponent(body.value.url);
 
     var data = {
-      'descriptor': body.value.hypertyDescriptor,
+      'descriptor': body.value.descriptor,
       'expires': body.value.expires,
       'resources': body.value.resources,
       'dataSchemes': body.value.dataSchemes
@@ -114,7 +114,7 @@ var hyperty = {
   },
 
   del: function(body, request, url, callback) {
-    var endpoint = '/hyperty/user/' + encodeURIComponent(body.value.user) + '/' + encodeURIComponent(body.value.hypertyURL);
+    var endpoint = '/hyperty/user/' + encodeURIComponent(body.value.user) + '/' + encodeURIComponent(body.value.url);
 
     request.del(url + endpoint, function(err, response, statusCode) {
 
