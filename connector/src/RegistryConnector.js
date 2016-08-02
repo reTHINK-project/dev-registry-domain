@@ -74,7 +74,7 @@ RegistryConnector.prototype.checkResourceType = function(url) {
 RegistryConnector.prototype.readOperation = function(msg, callback) {
   if(msg.body.criteria != 'undefined') {
     if(this.checkResourceType(msg.body.resource) === 'hyperty') {
-      hyperty.read(msg.body, this_request, this._registryURL, true, callback);
+      hyperty.read(msg.body, this._request, this._registryURL, true, callback);
     }else {
       dataObject.read(msg.body, this._request, this._registryURL, false, callback);
     }
