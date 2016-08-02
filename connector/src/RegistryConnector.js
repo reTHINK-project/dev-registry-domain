@@ -23,7 +23,7 @@
 var dataObject = require('./dataObject');
 var hyperty = require('./hyperty');
 
-var RegistryConnector = function(registryURL) {
+var RegistryConnector = function(config) {
 
   if( typeof(engine) != 'undefined' &&
      typeof(engine.factory) != 'undefined' &&
@@ -36,8 +36,8 @@ var RegistryConnector = function(registryURL) {
     var RequestWrapper = require('./js-request');
   }
 
-  this._request = new RequestWrapper();
-  this._registryURL = registryURL;
+  this._request = new RequestWrapper(config.ssl);
+  this._registryURL = config.url;
 };
 
 RegistryConnector.prototype.processMessage = function(msg, callback) {
@@ -88,7 +88,7 @@ RegistryConnector.prototype.readOperation = function(msg, callback) {
 };
 
 RegistryConnector.prototype.createOperation = function(msg, callback) {
-  if(this.checkUrlType(msg.body.value.url) === 'hyperty') {
+  if(this.checkResourceType(msg.body.value.url) === 'hyperty') {
     hyperty.create(msg.body, this._request, this._registryURL, callback);
   }else {
     dataObject.create(msg.body, this._request, this._registryURL, callback);
@@ -96,7 +96,7 @@ RegistryConnector.prototype.createOperation = function(msg, callback) {
 };
 
 RegistryConnector.prototype.updateOperation = function(msg, callback) {
-  if(this.checkUrlType(msg.body.value.url) === 'hyperty') {
+  if(this.checkResourceType(msg.body.value.url) === 'hyperty') {
     hyperty.update(msg.body, this._request, this._registryURL, callback);
   }else {
     dataObject.update(msg.body, this._request, this._registryURL, callback);
@@ -104,7 +104,7 @@ RegistryConnector.prototype.updateOperation = function(msg, callback) {
 };
 
 RegistryConnector.prototype.deleteOperation = function(msg, callback) {
-  if(this.checkUrlType(msg.body.value.url) === 'hyperty') {
+  if(this.checkResourceType(msg.body.value.url) === 'hyperty') {
     hyperty.del(msg.body, this._request, this._registryURL, callback);
   }else {
     dataObject.del(msg.body, this._request, this._registryURL, callback);
