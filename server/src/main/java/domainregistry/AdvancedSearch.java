@@ -32,8 +32,11 @@ public class AdvancedSearch{
             DataObjectInstance dataObject = entry.getValue();
 
             List<String> resourcesTypes = map(dataObject.getResources(), RESOURCES_PREFIX);
+            List<String> dataSchemesTypes = map(dataObject.getDataSchemes(), SCHEMES_PREFIX);
 
-            Set dataObjectsParamsSet = new HashSet(resourcesTypes);
+            List<String> dataObjectParams = new ArrayList<String>(dataSchemesTypes);
+            dataObjectParams.addAll(resourcesTypes);
+            Set dataObjectsParamsSet = new HashSet(dataObjectParams);
 
             if(dataObjectsParamsSet.containsAll(new HashSet<String>(getQueryParams(params)))){
                 foundDataObjects.put(entry.getKey(), dataObject);

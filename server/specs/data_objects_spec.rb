@@ -25,28 +25,32 @@ describe 'domain registry api tests' do
       schema: "schema",
       name: "name1",
       reporter: "reporter1",
-      resources: ["resource1"]
+      resources: ["resource1"],
+      dataSchemes: ["datascheme1"]
     }
 
     @data_object_two_details = {
       schema: "schema2",
       name: "name2",
       reporter: "reporter2",
-      resources: ["resource2"]
+      resources: ["resource2"],
+      dataSchemes: ["datascheme2"]
     }
 
     @data_object_three_details = {
       schema: "schema3",
       name: "name3",
       reporter: "reporter1",
-      resources: ["resource3"]
+      resources: ["resource3"],
+      dataSchemes: ["datascheme3"]
     }
 
     @data_object_four_details = {
       schema: "schema3",
       name: "name3",
       reporter: "reporter1",
-      resources: ["resource3", "resource5"]
+      resources: ["resource3", "resource5"],
+      dataSchemes: ["datascheme4", "datascheme3"]
     }
   }
 
@@ -80,13 +84,13 @@ describe 'domain registry api tests' do
     it 'should return a data object' do
       get '/url/url1'
       expect_status(200)
-      expect_json_sizes(7)
+      expect_json_sizes(8)
     end
 
     it 'should return a data object' do
       get '/url/url2'
       expect_status(200)
-      expect_json_sizes(7)
+      expect_json_sizes(8)
     end
 
     it 'should return a data not found error' do
@@ -161,6 +165,42 @@ describe 'domain registry api tests' do
       expect_json_sizes(2)
     end
 
+    it 'should return 2 data objects' do
+      get '/name/name3/do?dataSchemes=datascheme3'
+      expect_status(200)
+      expect_json_sizes(2)
+    end
+
+    it 'should return 1 data objects' do
+      get '/name/name2/do?resources=resource2&dataSchemes=datascheme2'
+      expect_status(200)
+      expect_json_sizes(1)
+    end
+
+    it 'should return 1 data objects' do
+      get '/name/name3/do?resources=resource5&dataSchemes=datascheme4'
+      expect_status(200)
+      expect_json_sizes(1)
+    end
+
+    it 'should return not found error' do
+      get '/name/name3/do?resources=resource5&dataSchemes=datascheme44'
+      expect_status(404)
+      expect_json(:message => "Not Found")
+    end
+
+    it 'should return 1 data objects' do
+      get '/name/name3/do?resources=resource3&dataSchemes=datascheme4'
+      expect_status(200)
+      expect_json_sizes(1)
+    end
+
+    it 'should return 2 data objects' do
+      get '/name/name3/do?resources=resource3&dataSchemes=datascheme3'
+      expect_status(200)
+      expect_json_sizes(2)
+    end
+
     it 'should return 1 data objects' do
       get '/name/name1/do?resources=resource1'
       expect_status(200)
@@ -192,9 +232,45 @@ describe 'domain registry api tests' do
     end
   end
 
-  describe 'advances search by reporter' do
+  describe 'advanced search by reporter' do
     it 'should return 1 data objects' do
       get '/reporter/reporter1/do?resources=resource1'
+      expect_status(200)
+      expect_json_sizes(1)
+    end
+
+    it 'should return 1 data objects' do
+      get '/reporter/reporter1/do?dataSchemes=datascheme1'
+      expect_status(200)
+      expect_json_sizes(1)
+    end
+
+    it 'should return 1 data objects' do
+      get '/reporter/reporter1/do?dataSchemes=datascheme1&resources=resource1'
+      expect_status(200)
+      expect_json_sizes(1)
+    end
+
+    it 'should return 2 data objects' do
+      get '/reporter/reporter1/do?dataSchemes=datascheme3&resources=resource3'
+      expect_status(200)
+      expect_json_sizes(2)
+    end
+
+    it 'should return 1 data objects' do
+      get '/reporter/reporter1/do?dataSchemes=datascheme3&resources=resource5'
+      expect_status(200)
+      expect_json_sizes(1)
+    end
+
+    it 'should return 1 data objects' do
+      get '/reporter/reporter2/do?dataSchemes=datascheme2&resources=resource2'
+      expect_status(200)
+      expect_json_sizes(1)
+    end
+
+    it 'should return 1 data objects' do
+      get '/reporter/reporter1/do?dataSchemes=datascheme4&resources=resource5'
       expect_status(200)
       expect_json_sizes(1)
     end
