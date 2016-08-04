@@ -34,14 +34,29 @@ var advancedSearch = function(body, request, url, callback) {
   var endpoint = '/hyperty/dataobject/name/' + encodeURIComponent(body.resource) + '/do';
 
   var resources = body.criteria.resources;
+  var dataschemes = body.criteria.dataSchemes;
 
   var qsResources = '';
+  var qsDataschemes = '';
+  var querystring = '';
 
   if(typeof resources != "undefined" && resources != null && resources.length > 0) {
-    var qsResources = '?resources=' + resources.join(',');
+    var qsResources = 'resources=' + resources.join(',');
   }
 
-  request.get(url + endpoint + qsResources, function(err, response, statusCode) {
+  if(typeof dataschemes != "undefined" && dataschemes != null && dataschemes.length > 0) {
+    var qsDataschemes = 'dataSchemes=' + dataschemes.join(',');
+  }
+
+  if(qsResources != "" && qsDataschemes != "") {
+    var querystring = '?' + qsResources + '&' + qsDataschemes;
+  }else if(qsResources != "") {
+    var querystring = '?' + qsResources;
+  }else if(qsDataschemes != "") {
+    var querystring = '?' + qsDataschemes;
+  }
+
+  request.get(url + endpoint + querystring, function(err, response, statusCode) {
 
     if(statusCode == 200) {
       var body = {
