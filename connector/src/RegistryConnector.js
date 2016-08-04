@@ -64,6 +64,17 @@ RegistryConnector.prototype.checkResourceType = function(url) {
 
   var prefix = url.split('://')[0];
 
+  if(prefix === 'user'){
+    return 'hyperty';
+  }else {
+    return 'dataObject';
+  }
+};
+
+RegistryConnector.prototype.checkUrlType = function(url) {
+
+  var prefix = url.split('://')[0];
+
   if(prefix === 'hyperty' || prefix === 'user'){
     return 'hyperty';
   }else {
@@ -88,7 +99,7 @@ RegistryConnector.prototype.readOperation = function(msg, callback) {
 };
 
 RegistryConnector.prototype.createOperation = function(msg, callback) {
-  if(this.checkResourceType(msg.body.value.url) === 'hyperty') {
+  if(this.checkUrlType(msg.body.value.url) === 'hyperty') {
     hyperty.create(msg.body, this._request, this._registryURL, callback);
   }else {
     dataObject.create(msg.body, this._request, this._registryURL, callback);
@@ -96,7 +107,7 @@ RegistryConnector.prototype.createOperation = function(msg, callback) {
 };
 
 RegistryConnector.prototype.updateOperation = function(msg, callback) {
-  if(this.checkResourceType(msg.body.value.url) === 'hyperty') {
+  if(this.checkUrlType(msg.body.value.url) === 'hyperty') {
     hyperty.update(msg.body, this._request, this._registryURL, callback);
   }else {
     dataObject.update(msg.body, this._request, this._registryURL, callback);
@@ -104,7 +115,7 @@ RegistryConnector.prototype.updateOperation = function(msg, callback) {
 };
 
 RegistryConnector.prototype.deleteOperation = function(msg, callback) {
-  if(this.checkResourceType(msg.body.value.url) === 'hyperty') {
+  if(this.checkUrlType(msg.body.value.url) === 'hyperty') {
     hyperty.del(msg.body, this._request, this._registryURL, callback);
   }else {
     dataObject.del(msg.body, this._request, this._registryURL, callback);

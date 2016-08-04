@@ -2,9 +2,13 @@ var search = function(body, request, url, callback) {
 
   var resourceType;
 
-  if(body.resource.split('://')[0] === 'comm') {
+  var type = body.resource.split('://')[0];
+
+  if(type === 'comm') {
     resourceType = 'url/';
-  }else {
+  } else if(type === 'hyperty') {
+    resourceType = 'reporter/';
+  } else {
     resourceType = 'name/';
   }
 
