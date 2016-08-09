@@ -91,7 +91,9 @@ var dataObject = {
       'schema': body.value.schema,
       'url': body.value.url,
       'reporter': body.value.reporter,
-      'expires': body.value.expires
+      'expires': body.value.expires,
+      'dataSchemes': body.value.dataSchemes,
+      'resources': body.value.resources
     };
 
     request.put(url + endpoint, JSON.stringify(data), function(err, response, statusCode) {
@@ -112,7 +114,9 @@ var dataObject = {
       'schema': body.value.schema,
       'url': body.value.url,
       'reporter': body.value.reporter,
-      'expires': body.value.expires
+      'expires': body.value.expires,
+      'dataSchemes': body.value.dataSchemes,
+      'resources': body.value.resources
     };
 
     request.put(url + endpoint, JSON.stringify(data), function(err, response, statusCode) {
