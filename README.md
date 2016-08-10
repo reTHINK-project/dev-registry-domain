@@ -25,6 +25,10 @@ Install the Registry Connector module by adding the following dependency to the 
 ```
  "dev-registry-domain": "rethink-project/dev-registry-domain#R0.3.0"
 ```
+or by executing the following command:
+```
+npm install rethink-project/dev-registry-domain#R0.3.0 --save
+```
 
 Then is possible to require it in the code. Example:
 ```
