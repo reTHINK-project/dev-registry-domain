@@ -20,4 +20,18 @@ $ docker build -t domain-specs .
 $ docker run -e SERVER=my.domain.server -e PORT=port domain-specs
 ```
 
+### Connector installation
+Install the Registry Connector module by adding the following dependency to the corresponding *package.json* file:
+```
+ "dev-registry-domain": "rethink-project/dev-registry-domain#R0.3.0"
+```
+
+Then is possible to require it in the code. Example:
+```
+const RegistryConnector = require('dev-registry-domain/connector');
+const registry = new RegistryConnector(config.registry.url);
+```
+
+
+
 
