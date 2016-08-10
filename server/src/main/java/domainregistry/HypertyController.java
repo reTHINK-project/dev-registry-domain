@@ -31,6 +31,9 @@ public class HypertyController {
     public static final int ALL_HYPERTIES_PATH_SIZE = 6;
     public static final int SPECIFIC_HYPERTIES_PATH_SIZE = 7;
 
+    public static final int ALL_DO_PATH_SIZE = 7;
+    public static final int SPECIFIC_DO_PATH_SIZE = 8;
+
     public HypertyController(StatusService status, final HypertyService hypertyService, final Connection connectionClient, final DataObjectService dataObjectService) {
 
 
@@ -60,14 +63,9 @@ public class HypertyController {
 
             Set<String> queryParams = req.queryParams();
 
-            if(queryParams.isEmpty()){
+            if(validatePathUrl(queryParams)){
                 res.status(404);
-                return gson.toJson(new Messages("URL malformed. A query string is needed."));
-            }
-
-            if(!validateQueryParams(queryParams)){
-                res.status(400);
-                return gson.toJson(new Messages("URL malformed."));
+                return gson.toJson(new Messages("Not Found"));
             }
 
             Map<String, String> allParameters = new HashMap();
@@ -128,10 +126,31 @@ public class HypertyController {
             this.numReads++;
             res.type("application/json");
             String[] encodedURL = req.url().split("/");
-            String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
-            DataObjectInstance dataObject = dataObjectService.getDataObject(connectionClient, dataObjectUrl);
+
+            if(encodedURL.length == ALL_DO_PATH_SIZE){
+                String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
+                DataObjectInstance dataObject = dataObjectService.getDataObject(connectionClient, dataObjectUrl);
+                res.status(200);
+                return gson.toJson(dataObject);
+            }
+
+            Set<String> queryParams = req.queryParams();
+
+            if(validatePathUrl(queryParams)){
+                res.status(404);
+                return gson.toJson(new Messages("Not Found"));
+            }
+
+            Map<String, String> allParameters = new HashMap();
+
+            for(String type : queryParams){
+                allParameters.put(type, req.queryParams(type));
+            }
+
+            String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 2]);
+            Map<String, DataObjectInstance> dataObjects = dataObjectService.getSpecificDataObjectsByUrl(connectionClient, dataObjectUrl, allParameters);
             res.status(200);
-            return gson.toJson(dataObject);
+            return gson.toJson(dataObjects);
         });
 
         get("hyperty/dataobject/reporter/*", (req, res) -> {
@@ -139,8 +158,61 @@ public class HypertyController {
             this.numReads++;
             res.type("application/json");
             String[] encodedURL = req.url().split("/");
-            String hypertyReporter = decodeUrl(encodedURL[encodedURL.length - 1]);
-            Map<String, DataObjectInstance> dataObjects = dataObjectService.getDataObjectsByHyperty(connectionClient, hypertyReporter);
+
+            if(encodedURL.length == ALL_DO_PATH_SIZE){
+                String hypertyReporter = decodeUrl(encodedURL[encodedURL.length - 1]);
+                Map<String, DataObjectInstance> dataObjects = dataObjectService.getDataObjectsByHyperty(connectionClient, hypertyReporter);
+                res.status(200);
+                return gson.toJson(dataObjects);
+            }
+
+            Set<String> queryParams = req.queryParams();
+
+            if(validatePathUrl(queryParams)){
+                res.status(404);
+                return gson.toJson(new Messages("Not Found"));
+            }
+
+            Map<String, String> allParameters = new HashMap();
+
+            for(String type : queryParams){
+                allParameters.put(type, req.queryParams(type));
+            }
+
+            String dataObjectReporter = decodeUrl(encodedURL[encodedURL.length - 2]);
+            Map<String, DataObjectInstance> dataObjects = dataObjectService.getSpecificDataObjectsByReporter(connectionClient, dataObjectReporter, allParameters);
+            res.status(200);
+            return gson.toJson(dataObjects);
+        });
+
+        get("hyperty/dataobject/name/*", (req, res) -> {
+            Gson gson = new Gson();
+            this.numReads++;
+            res.type("application/json");
+            String[] encodedURL = req.url().split("/");
+
+            if(encodedURL.length == ALL_DO_PATH_SIZE){
+                String dataObjectName = decodeUrl(encodedURL[encodedURL.length - 1]);
+                Map<String, DataObjectInstance> dataObjects = dataObjectService.getDataObjectsByName(connectionClient, dataObjectName);
+                res.status(200);
+                return gson.toJson(dataObjects);
+            }
+
+            Set<String> queryParams = req.queryParams();
+
+            if(validatePathUrl(queryParams)){
+                res.status(404);
+                return gson.toJson(new Messages("Not Found"));
+            }
+
+            Map<String, String> allParameters = new HashMap();
+
+            for(String type : queryParams){
+                allParameters.put(type, req.queryParams(type));
+            }
+
+            String dataObjectName = decodeUrl(encodedURL[encodedURL.length - 2]);
+            Map<String, DataObjectInstance> dataObjects = dataObjectService.getSpecificDataObjectsByName(connectionClient, dataObjectName, allParameters);
             res.status(200);
             return gson.toJson(dataObjects);
         });
@@ -162,7 +234,7 @@ public class HypertyController {
         exception(DataNotFoundException.class, (e, req, res) -> {
             Gson gson = new Gson();
             res.status(404);
-            res.body(gson.toJson(new Messages("Data not found")));
+            res.body(gson.toJson(new Messages("Not Found")));
         });
 
         get("/throwexception", (request, response) -> {
@@ -172,7 +244,17 @@ public class HypertyController {
         exception(HypertiesNotFoundException.class, (e, req, res) -> {
             Gson gson = new Gson();
             res.status(404);
-            res.body(gson.toJson(new Messages("Hyperties not found.")));
+            res.body(gson.toJson(new Messages("Not Found")));
+        });
+
+        get("/throwexception", (request, response) -> {
+            throw new DataObjectNotFoundException();
+        });
+
+        exception(DataObjectNotFoundException.class, (e, req, res) -> {
+            Gson gson = new Gson();
+            res.status(404);
+            res.body(gson.toJson(new Messages("Not Found")));
         });
 
         get("/throwexception", (request, response) -> {
@@ -182,7 +264,7 @@ public class HypertyController {
         exception(CouldNotRemoveHypertyException.class, (e, req, res) -> {
             Gson gson = new Gson();
             res.status(404);
-            res.body(gson.toJson(new Messages("Could not remove hyperty")));
+            res.body(gson.toJson(new Messages("Not Found")));
         });
 
         get("/throwexception", (request, response) -> {
@@ -192,7 +274,7 @@ public class HypertyController {
         exception(UserNotFoundException.class, (e, req, res) -> {
             Gson gson = new Gson();
             res.status(404);
-            res.body(gson.toJson(new Messages("User not found")));
+            res.body(gson.toJson(new Messages("Not Found")));
         });
 
         get("/throwexception", (request, response) -> {
@@ -202,8 +284,24 @@ public class HypertyController {
         exception(CouldNotCreateOrUpdateHypertyException.class, (e, req, res) -> {
             Gson gson = new Gson();
             res.status(404);
-            res.body(gson.toJson(new Messages("Could not create or update hyperty")));
+            res.body(gson.toJson(new Messages("Not Found")));
         });
+    }
+
+    private boolean validatePathUrl(Set<String> params){
+        return params.isEmpty() || !validateQueryParams(params);
+    }
+
+    private boolean validateQueryParams(Set<String> params){
+        if(params.size() == 1){
+            return params.contains("dataSchemes") || params.contains("resources");
+        }
+
+        else if(params.size() == 2){
+            return params.contains("dataSchemes") && params.contains("resources");
+        }
+
+        else return false;
     }
 
     private static String decodeUrl(String url) throws java.io.UnsupportedEncodingException {
@@ -218,15 +316,4 @@ public class HypertyController {
         return this.numWrites;
     }
 
-    private boolean validateQueryParams(Set<String> params){
-        if(params.size() == 1){
-            return params.contains("dataSchemes") || params.contains("resources");
-        }
-
-        else if(params.size() == 2){
-            return params.contains("dataSchemes") && params.contains("resources");
-        }
-
-        else return false;
-    }
 }

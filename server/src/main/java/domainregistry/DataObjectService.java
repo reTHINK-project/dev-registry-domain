@@ -51,6 +51,55 @@ public class DataObjectService{
         else return dObjects;
     }
 
+    public Map<String, DataObjectInstance> getDataObjectsByName(Connection client, String dataObjectName){
+        Map<String, DataObjectInstance> dObjects = client.getDataObjectsByName(dataObjectName);
+
+        if(dObjects.isEmpty())
+            throw new DataNotFoundException();
+
+        else return dObjects;
+    }
+
+    public Map<String, DataObjectInstance> getSpecificDataObjectsByUrl(Connection client, String dataObjectUrl, Map<String, String> parameters){
+        DataObjectInstance dataObject = client.getDataObjectByUrl(dataObjectUrl);
+
+        Map<String, DataObjectInstance> dataObjects = new HashMap<>();
+        dataObjects.put(dataObjectUrl, dataObject);
+
+        Map<String, DataObjectInstance> foundDataObjects = AdvancedSearch.getDataObjects(parameters, dataObjects);
+
+        if(!foundDataObjects.isEmpty())
+            return foundDataObjects;
+
+        else throw new DataObjectNotFoundException();
+    }
+
+    public Map<String, DataObjectInstance> getSpecificDataObjectsByReporter(Connection client, String dataObjectReporter, Map<String, String> parameters){
+        Map<String, DataObjectInstance> dObjects = client.getDataObjectsByHyperty(dataObjectReporter);
+
+        if(dObjects.isEmpty()) throw new DataNotFoundException();
+
+        Map<String, DataObjectInstance> foundDataObjects = AdvancedSearch.getDataObjects(parameters, dObjects);
+
+        if(!foundDataObjects.isEmpty())
+            return foundDataObjects;
+
+        else throw new DataObjectNotFoundException();
+    }
+
+    public Map<String, DataObjectInstance> getSpecificDataObjectsByName(Connection client, String dataObjectName, Map<String, String> parameters){
+        Map<String, DataObjectInstance> dObjects = client.getDataObjectsByName(dataObjectName);
+
+        if(dObjects.isEmpty()) throw new DataNotFoundException();
+
+        Map<String, DataObjectInstance> foundDataObjects = AdvancedSearch.getDataObjects(parameters, dObjects);
+
+        if(!foundDataObjects.isEmpty())
+            return foundDataObjects;
+
+        else throw new DataObjectNotFoundException();
+    }
+
     public void deleteDataObject(Connection client, String dataObjectUrl){
         if(client.dataObjectExists(dataObjectUrl))
             client.deleteDataObject(dataObjectUrl);
