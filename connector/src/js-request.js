@@ -32,7 +32,7 @@ JSRequest.prototype.get = function(url, callback) {
   console.log("url: ", url);
   this.requestify.get(url)
   .then(function(response) {
-    callback(null, response.getBody());
+    callback(null, response.getBody(), response.getCode());
   })
   .catch(function(error) {
     console.error(error);
@@ -47,7 +47,7 @@ JSRequest.prototype.put = function(url, message, callback) {
       dataType: 'json'
   })
   .then(function(response) {
-      callback(null, response.getBody());
+      callback(null, response.getBody(), response.getCode());
   })
   .catch(function(e) {
       console.error(e);
@@ -59,7 +59,7 @@ JSRequest.prototype.del = function(url, callback) {
       method: 'DELETE'
   })
   .then(function(response) {
-      callback(null, response.getBody());
+      callback(null, response.getBody(), response.getCode());
   })
   .catch(function(e) {
       console.error(e);
