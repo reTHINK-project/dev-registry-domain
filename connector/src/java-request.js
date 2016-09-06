@@ -25,7 +25,11 @@ JavaRequest.prototype.get = function(url, callback) {
       var body = totalBuffer.toString("UTF-8");
       callback(null, body, response.statusCode());
     });
-  }).end();
+  })
+  .exceptionHandler(function(e) {
+    callback(e, null, null);
+  })
+  .end();
 };
 
 JavaRequest.prototype.put = function(url, data, callback) {
@@ -38,6 +42,9 @@ JavaRequest.prototype.put = function(url, data, callback) {
       callback(null, body, response.statusCode());
     });
   })
+  .exceptionHandler(function(e) {
+    callback(e, null, null);
+  })
   .write(data)
   .end();
 };
@@ -48,7 +55,11 @@ JavaRequest.prototype.del = function(url, callback) {
       var body = totalBuffer.toString("UTF-8");
       callback(null, body, response.statusCode());
     });
-  }).end();
+  })
+  .exceptionHandler(function(e) {
+    callback(e, null, null);
+  })
+  .end();
 };
 
 module.exports = JavaRequest;

@@ -35,7 +35,7 @@ JSRequest.prototype.get = function(url, callback) {
     callback(null, response.getBody(), response.getCode());
   })
   .catch(function(error) {
-    console.error(error);
+    callback(error);
   });
 }
 
@@ -49,8 +49,8 @@ JSRequest.prototype.put = function(url, message, callback) {
   .then(function(response) {
       callback(null, response.getBody(), response.getCode());
   })
-  .catch(function(e) {
-      console.error(e);
+  .catch(function(error) {
+      callback(error);
   });
 };
 
@@ -62,7 +62,7 @@ JSRequest.prototype.del = function(url, callback) {
       callback(null, response.getBody(), response.getCode());
   })
   .catch(function(e) {
-      console.error(e);
+      callback(error);
   });
 };
 

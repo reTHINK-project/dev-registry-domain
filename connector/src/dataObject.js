@@ -14,7 +14,12 @@ var search = function(body, request, url, callback) {
 
   request.get(url + '/hyperty/dataobject/' + resourceType + encodeURIComponent(body.resource), function(err, response, statusCode) {
 
-    if(statusCode == 200) {
+    if(err) {
+      var body = {
+        'code': statusCode,
+        'description': 'Error contacting the domain registry.'
+      };
+    }else if(statusCode == 200) {
       var body = {
         'code': statusCode,
         'value': JSON.parse(response)
@@ -58,7 +63,12 @@ var advancedSearch = function(body, request, url, callback) {
 
   request.get(url + endpoint + querystring, function(err, response, statusCode) {
 
-    if(statusCode == 200) {
+    if(err) {
+      var body = {
+        'code': statusCode,
+        'description': 'Error contacting the domain registry.'
+      };
+    }else if(statusCode == 200) {
       var body = {
         'code': statusCode,
         'value': JSON.parse(response)
@@ -98,9 +108,16 @@ var dataObject = {
 
     request.put(url + endpoint, JSON.stringify(data), function(err, response, statusCode) {
 
-      var body = {
-        'code': statusCode
-      };
+      if(err) {
+        var body = {
+          'code': 500,
+          'description': 'Error contacting the domain registry.'
+        };
+      } else {
+        var body = {
+          'code': statusCode
+        };
+      }
 
       callback(body);
     });
@@ -121,9 +138,16 @@ var dataObject = {
 
     request.put(url + endpoint, JSON.stringify(data), function(err, response, statusCode) {
 
-      var body = {
-        'code': statusCode
-      };
+      if(err) {
+        var body = {
+          'code': 500,
+          'description': 'Error contacting the domain registry.'
+        };
+      } else {
+        var body = {
+          'code': statusCode
+        };
+      }
 
       callback(body);
     });
@@ -134,9 +158,16 @@ var dataObject = {
 
     request.del(url + endpoint, function(err, response, statusCode) {
 
-      var body = {
-        'code': statusCode
-      };
+      if(err) {
+        var body = {
+          'code': 500,
+          'description': 'Error contacting the domain registry.'
+        };
+      } else {
+        var body = {
+          'code': statusCode
+        };
+      }
 
       callback(body);
     });
