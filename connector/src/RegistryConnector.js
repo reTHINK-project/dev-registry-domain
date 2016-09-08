@@ -25,18 +25,7 @@ var hyperty = require('./hyperty');
 
 var RegistryConnector = function(url) {
 
-  if( typeof(engine) != 'undefined' &&
-     typeof(engine.factory) != 'undefined' &&
-     typeof(engine.factory.engineName) != 'undefined' &&
-     typeof(engine.factory.engineName.contains) == 'function' &&
-           engine.factory.engineName.contains("Nashorn")) {
-
-    var RequestWrapper = require('./java-request');
-  }else {
-    var RequestWrapper = require('./js-request');
-  }
-
-  this._request = new RequestWrapper();
+  this._request = require('./request');
   this._registryURL = url;
 };
 
