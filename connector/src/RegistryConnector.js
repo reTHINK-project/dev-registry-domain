@@ -22,10 +22,11 @@
  **/
 var dataObject = require('./dataObject');
 var hyperty = require('./hyperty');
+var Request = require('./request');
 
 var RegistryConnector = function(url) {
 
-  this._request = require('./request');
+  this._request = new Request();
   this._registryURL = url;
 };
 
