@@ -24,10 +24,10 @@ var dataObject = require('./dataObject');
 var hyperty = require('./hyperty');
 var Request = require('./request');
 
-var RegistryConnector = function(url) {
+var RegistryConnector = function(config) {
 
-  this._request = new Request();
-  this._registryURL = url;
+  this._request = new Request(config.retries);
+  this._registryURL = config.url;
 };
 
 RegistryConnector.prototype.processMessage = function(msg, callback) {

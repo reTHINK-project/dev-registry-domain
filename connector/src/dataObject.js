@@ -16,7 +16,7 @@ var search = function(body, request, url, callback) {
 
     if(err) {
       var body = {
-        'code': statusCode,
+        'code': 404,
         'description': 'Error contacting the domain registry.'
       };
     }else if(statusCode == 200) {
@@ -65,7 +65,7 @@ var advancedSearch = function(body, request, url, callback) {
 
     if(err) {
       var body = {
-        'code': statusCode,
+        'code': 404,
         'description': 'Error contacting the domain registry.'
       };
     }else if(statusCode == 200) {
@@ -110,7 +110,7 @@ var dataObject = {
 
       if(err) {
         var body = {
-          'code': 500,
+          'code': 404,
           'description': 'Error contacting the domain registry.'
         };
       } else {
@@ -140,7 +140,7 @@ var dataObject = {
 
       if(err) {
         var body = {
-          'code': 500,
+          'code': 404,
           'description': 'Error contacting the domain registry.'
         };
       } else {
@@ -160,7 +160,7 @@ var dataObject = {
 
       if(err) {
         var body = {
-          'code': 500,
+          'code': 404,
           'description': 'Error contacting the domain registry.'
         };
       } else {

@@ -1,6 +1,6 @@
 var retry = require('async/retry');
 
-var Request = function() {
+var Request = function(retries) {
 
   if( typeof(engine) != 'undefined' &&
      typeof(engine.factory) != 'undefined' &&
@@ -13,23 +13,25 @@ var Request = function() {
     this._request = require('./js-request');
   }
 
+  this._retries = retries;
+
 };
 
 Request.prototype.get = function(url, callback) {
 
-  retry(3, function(cb) {
+  retry(this._retries, function(cb) {
     this._request.get(url, cb)
   }.bind(this), callback);
 };
 
 Request.prototype.put = function(url, message, callback) {
-  retry(3, function(cb) {
+  retry(this._retries, function(cb) {
     this._request.put(url, message, cb)
   }.bind(this), callback);
 };
 
 Request.prototype.del = function(url, callback) {
-  retry(3, function(cb) {
+  retry(this._retries, function(cb) {
     this._request.del(url, cb)
   }.bind(this), callback);
 };
