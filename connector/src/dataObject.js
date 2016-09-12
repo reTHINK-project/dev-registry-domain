@@ -106,7 +106,7 @@ var dataObject = {
       'resources': body.value.resources
     };
 
-    request.put(url + endpoint, JSON.stringify(data), function(err, response, statusCode) {
+    request.put(url + endpoint, data, function(err, response, statusCode) {
 
       if(err) {
         var body = {
@@ -136,7 +136,7 @@ var dataObject = {
       'resources': body.value.resources
     };
 
-    request.put(url + endpoint, JSON.stringify(data), function(err, response, statusCode) {
+    request.put(url + endpoint, data, function(err, response, statusCode) {
 
       if(err) {
         var body = {

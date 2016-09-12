@@ -90,7 +90,7 @@ var hyperty = {
       'dataSchemes': body.value.dataSchemes
     };
 
-    request.put(url + endpoint, JSON.stringify(data), function(err, response, statusCode) {
+    request.put(url + endpoint, data, function(err, response, statusCode) {
 
       if(err) {
         var body = {
@@ -118,7 +118,7 @@ var hyperty = {
       'dataSchemes': body.value.dataSchemes
     };
 
-    request.put(url + endpoint, JSON.stringify(data), function(err, response, statusCode) {
+    request.put(url + endpoint, data, function(err, response, statusCode) {
 
       if(err) {
         var body = {
