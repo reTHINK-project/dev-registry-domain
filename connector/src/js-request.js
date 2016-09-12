@@ -28,12 +28,18 @@ var requestify = require('requestify');
 var JSRequest = {
 
   get: function(url, callback) {
-    requestify.get(url)
+    requestify.request(url, {
+      method: 'GET'
+    })
     .then(function(response) {
       callback(null, response.getBody(), response.getCode());
     })
-    .catch(function(error) {
-      callback(error);
+    .fail(function(error) {
+      if(error.getCode() != 404) {
+        callback(error);
+      }else {
+        callback(null, error.getBody(), error.getCode());
+      }
     });
   },
 
@@ -47,8 +53,12 @@ var JSRequest = {
     .then(function(response) {
       callback(null, response.getBody(), response.getCode());
     })
-    .catch(function(error) {
-      callback(error);
+    .fail(function(error) {
+      if(error.getCode() != 404) {
+        callback(error);
+      }else {
+        callback(null, error.getBody(), error.getCode());
+      }
     });
   },
 
@@ -59,8 +69,12 @@ var JSRequest = {
     .then(function(response) {
       callback(null, response.getBody(), response.getCode());
     })
-    .catch(function(e) {
-      callback(error);
+    .fail(function(e) {
+      if(error.getcode() != 404) {
+        callback(error);
+      }else {
+        callback(null, error.getbody(), error.getcode());
+      }
     });
   }
 

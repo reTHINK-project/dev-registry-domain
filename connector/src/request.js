@@ -18,7 +18,6 @@ var Request = function(retries) {
 };
 
 Request.prototype.get = function(url, callback) {
-
   retry(this._retries, function(cb) {
     this._request.get(url, cb)
   }.bind(this), callback);

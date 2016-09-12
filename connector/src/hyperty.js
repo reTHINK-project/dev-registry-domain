@@ -1,4 +1,5 @@
 var search = function(body, request, url, callback) {
+
   request.get(url + '/hyperty/user/' + encodeURIComponent(body.resource), function(err, response, statusCode) {
 
     if(err) {
@@ -9,7 +10,7 @@ var search = function(body, request, url, callback) {
     }else if(statusCode == 200) {
       var body = {
         'code': statusCode,
-        'value': JSON.parse(response)
+        'value': response
       };
     }else {
       var body = {
@@ -57,7 +58,7 @@ var advancedSearch = function(body, request, url, callback) {
     }else if(statusCode == 200) {
       var body = {
         'code': statusCode,
-        'value': JSON.parse(response)
+        'value': response
       };
     }else {
       var body = {
