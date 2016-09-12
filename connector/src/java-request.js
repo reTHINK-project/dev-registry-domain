@@ -17,7 +17,7 @@
 
 var client = vertx.createHttpClient({});
 
-var JavaRequest = function() {
+var JavaRequest = {
 
   get: function(url, callback) {
     client.getAbs(url, function (response) {
