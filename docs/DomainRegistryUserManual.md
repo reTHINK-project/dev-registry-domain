@@ -214,7 +214,7 @@ $ docker run -e STORAGE_TYPE=CASSANDRA -e CONTACT_POINTS_IPS=ip -e EXPIRES=3600 
 ```
 ## Rest API definition and available endpoints
 
-The Domain Registry is a REST server that allows to create, update and remove data (users and Hyperty Instances in this case). Next, are described, the available Data Objects and Hyperties API endpoints.
+The Domain Registry is a REST server that allows to create, update and remove data (Hyperty Instances and Data Objects). Next, are described, the available Data Objects and Hyperties API endpoints.
 
 Hyperties:
 
@@ -243,7 +243,7 @@ Data Objects:
 * PUT /hyperty/dataobject/:data_object_url
 
 
-Possible HTTP status codes returned: 200 OK indicating that the request has succeeded and 404 Not Found indicating that the server has not found anything matching the request URI (users or hyperties). In both cases, a message is returned on the response: “hyperty created”, “user not found” or “data not found”.
+Possible HTTP status codes returned: 200 OK indicating that the request has succeeded and 404 Not Found indicating that the server has not found anything matching the request URI (data objects or hyperties). In both cases, a message is returned on the response: “hyperty created”, “data object created” or “not found”.
 
 Since the users and hyperties URLs contain characters outside the ASCII set, URLs need to be converted to a valid ASCII format. The character “%” followed by two
 hexadecimal digits replace the unsafe characters. As an example, the enconded
@@ -396,6 +396,56 @@ DELETE /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose/hyperty%3A%2F%2Fua.pt%2F
   “message” : “hyperty deleted”
 }
 ```
+
+#### Example request
+
+GET /hyperty/dataobject/name/mychat
+
+#### Example result
+
+```
+{
+  "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d": {
+    "schema": "hyperty-catalogue://catalogue.hybroker.rethink.ptinovacao.pt/.well-known/dataschema/Communication",
+    "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
+    "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
+    "name": "mychat",
+    "startingTime": "2016-07-26T12:54:37Z",
+    "resources": [
+      "chat"
+    ],
+    "dataSchemes": [
+      "comm"
+    ],
+    "lastModified": "2016-07-26T13:03:58Z"
+  }
+}
+```
+#### Example request
+
+GET /hyperty/dataobject/url/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5bec-e3f7-471f-8ace-44c64edb8a6d
+
+#### Example result
+
+```
+{
+  "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d": {
+    "schema": "hyperty-catalogue://catalogue.hybroker.rethink.ptinovacao.pt/.well-known/dataschema/Communication",
+    "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
+    "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
+    "name": "mychat",
+    "startingTime": "2016-07-26T12:54:37Z",
+    "resources": [
+      "chat"
+    ],
+    "dataSchemes": [
+      "comm"
+    ],
+    "lastModified": "2016-07-26T13:03:58Z"
+  }
+}
+```
+
 
 Note that the requested URL’s are encoded.
 
