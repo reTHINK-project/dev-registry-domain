@@ -214,7 +214,7 @@ $ docker run -e STORAGE_TYPE=CASSANDRA -e CONTACT_POINTS_IPS=ip -e EXPIRES=3600 
 ```
 ## Rest API definition and available endpoints
 
-The Domain Registry is a REST server that allows to create, update and remove data (users and Hyperty Instances in this case). Next, are described the three available API endpoints.
+The Domain Registry is a REST server that allows to create, update and remove data (users and Hyperty Instances in this case). Next, are described, the available Data Objects and Hyperties API endpoints.
 
 * GET /hyperty/user/:user_id
 * GET /hyperty/user/:user_id/hyperty?resources=R1,...,Rn&dataSchemes=DS1,...,DSn
@@ -222,6 +222,22 @@ The Domain Registry is a REST server that allows to create, update and remove da
 * GET /hyperty/user/:user_id/hyperty?resources=R1,...,Rn
 * PUT /hyperty/user/:user_id/:hyperty_instance_id
 * DELETE /hyperty/user/:user_id/:hyperty_instance_id
+
+* GET /hyperty/dataobject/name/:data_object_name
+* GET /hyperty/dataobject/url/:data_object_url
+* GET /hyperty/dataobject/reporter/:reporter
+* GET /hyperty/dataobject/reporter/:reporter/do?resources=R1,...,Rn&dataSchemes=DS1,...,DSn
+* GET /hyperty/dataobject/reporter/:reporter/do?dataSchemes=DS1,...,DSn
+* GET /hyperty/dataobject/reporter/:reporter/do?resources=R1,...,Rn
+* GET /hyperty/dataobject/name/:data_object_name/do?resources=R1,...,Rn&dataSchemes=DS1,...,DSn
+* GET /hyperty/dataobject/name/:data_object_name/do?dataSchemes=DS1,...,DSn
+* GET /hyperty/dataobject/name/:data_object_name/do?resources=R1,...,Rn
+* GET /hyperty/dataobject/url/:data_object_url/do?resources=R1,...,Rn&dataSchemes=DS1,...,DSn
+* GET /hyperty/dataobject/url/:data_object_url/do?dataSchemes=DS1,...,DSn
+* GET /hyperty/dataobject/url/:data_object_url/do?resources=R1,...,Rn
+* DELETE /hyperty/dataobject/url/:data_object_url
+* PUT /hyperty/dataobject/:data_object_url
+
 
 Possible HTTP status codes returned: 200 OK indicating that the request has succeeded and 404 Not Found indicating that the server has not found anything matching the request URI (users or hyperties). In both cases, a message is returned on the response: “hyperty created”, “user not found” or “data not found”.
 
@@ -330,7 +346,7 @@ Creates or updates a Hyperty Instance. It also creates a user if it doesn’t ex
 
 #### Example request
 
-PUT /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose/hyperty%3A%2F%2Fua.pt %2F428bee1b-887a8ee8cb32
+PUT /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose/hyperty%3A%2F%2Fua.pt%2F428bee1b-887a8ee8cb32
 
 ```
 {
