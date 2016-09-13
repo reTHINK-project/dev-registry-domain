@@ -397,6 +397,8 @@ DELETE /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose/hyperty%3A%2F%2Fua.pt%2F
 }
 ```
 
+### GET /hyperty/dataobject/name/:data_object_name
+
 #### Example request
 
 GET /hyperty/dataobject/name/mychat
@@ -421,6 +423,8 @@ GET /hyperty/dataobject/name/mychat
   }
 }
 ```
+### GET /hyperty/dataobject/url/:data_object_url
+
 #### Example request
 
 GET /hyperty/dataobject/url/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5bec-e3f7-471f-8ace-44c64edb8a6d
@@ -446,6 +450,8 @@ GET /hyperty/dataobject/url/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5b
 }
 ```
 
+### GET /hyperty/dataobject/reporter/:reporter
+
 #### Example request
 
 GET /hyperty/dataobject/reporter/hyperty%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2F24a0724a-68ff-4f0d-ba2b-1e71911a7213
@@ -470,6 +476,8 @@ GET /hyperty/dataobject/reporter/hyperty%3A%2F%2Fhybroker.rethink.ptinovacao.pt%
   }
 }
 ```
+
+### GET /hyperty/dataobject/reporter/:reporter/do?resources=R1,...,Rn&dataSchemes=DS1,...,DSn
 
 #### Example request
 
@@ -497,6 +505,8 @@ GET /hyperty/dataobject/reporter/hyperty%3A%2F%2Fhybroker.rethink.ptinovacao.pt%
 
 ```
 
+### GET /hyperty/dataobject/reporter/:reporter/do?resources=R1,...,Rn
+
 #### Example request
 
 GET /hyperty/dataobject/reporter/hyperty%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2F24a0724a-68ff-4f0d-ba2b-1e71911a7213/do?resources=chat
@@ -522,6 +532,8 @@ GET /hyperty/dataobject/reporter/hyperty%3A%2F%2Fhybroker.rethink.ptinovacao.pt%
 }
 
 ```
+
+### GET /hyperty/dataobject/reporter/:reporter/do?dataSchemes=DS1,...,DSn
 
 #### Example request
 
@@ -549,6 +561,8 @@ GET /hyperty/dataobject/reporter/hyperty%3A%2F%2Fhybroker.rethink.ptinovacao.pt%
 
 ```
 
+### GET /hyperty/dataobject/name/:data_object_name/do?resources=R1,...,Rn&dataSchemes=DS1,...,DSn
+
 #### Example request
 
 GET /hyperty/dataobject/name/mychat/do?resources=chat&dataSchemes=comm
@@ -574,6 +588,7 @@ GET /hyperty/dataobject/name/mychat/do?resources=chat&dataSchemes=comm
 }
 
 ```
+### GET /hyperty/dataobject/name/:data_object_name/do?resources=R1,...,Rn
 
 #### Example request
 
@@ -601,6 +616,8 @@ GET /hyperty/dataobject/name/mychat/do?resources=chat
 
 ```
 
+### GET /hyperty/dataobject/name/:data_object_name/do?dataSchemes=DS1,...,DSn
+
 #### Example request
 
 GET /hyperty/dataobject/name/mychat/do?dataSchemes=comm
@@ -626,6 +643,8 @@ GET /hyperty/dataobject/name/mychat/do?dataSchemes=comm
 }
 
 ```
+
+### GET /hyperty/dataobject/url/:data_object_url/do?resources=R1,...,Rn&dataSchemes=DS1,...,DSn
 
 #### Example request
 
@@ -653,6 +672,8 @@ GET /hyperty/dataobject/url/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5b
 
 ```
 
+### GET /hyperty/dataobject/url/:data_object_url/do?resources=R1,...,Rn
+
 #### Example request
 
 GET /hyperty/dataobject/url/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5bec-e3f7-471f-8ace-44c64edb8a6d/do?resources=chat
@@ -678,6 +699,8 @@ GET /hyperty/dataobject/url/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5b
 }
 
 ```
+
+### GET /hyperty/dataobject/url/:data_object_url/do?dataSchemes=DS1,...,DSn
 
 #### Example request
 
