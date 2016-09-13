@@ -446,6 +446,264 @@ GET /hyperty/dataobject/url/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5b
 }
 ```
 
+#### Example request
+
+GET /hyperty/dataobject/reporter/hyperty%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2F24a0724a-68ff-4f0d-ba2b-1e71911a7213
+
+#### Example result
+
+```
+{
+  "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d": {
+    "schema": "hyperty-catalogue://catalogue.hybroker.rethink.ptinovacao.pt/.well-known/dataschema/Communication",
+    "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
+    "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
+    "name": "mychat",
+    "startingTime": "2016-07-26T12:54:37Z",
+    "resources": [
+      "chat"
+    ],
+    "dataSchemes": [
+      "comm"
+    ],
+    "lastModified": "2016-07-26T13:03:58Z"
+  }
+}
+```
+
+#### Example request
+
+GET /hyperty/dataobject/reporter/hyperty%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2F24a0724a-68ff-4f0d-ba2b-1e71911a7213/do?resources=chat&dataSchemes=comm
+
+#### Example result
+
+```
+{
+  "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d": {
+    "schema": "hyperty-catalogue://catalogue.hybroker.rethink.ptinovacao.pt/.well-known/dataschema/Communication",
+    "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
+    "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
+    "name": "mychat",
+    "startingTime": "2016-07-26T12:54:37Z",
+    "resources": [
+      "chat"
+    ],
+    "dataSchemes": [
+      "comm"
+    ],
+    "lastModified": "2016-07-26T13:03:58Z"
+  }
+}
+
+```
+
+#### Example request
+
+GET /hyperty/dataobject/reporter/hyperty%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2F24a0724a-68ff-4f0d-ba2b-1e71911a7213/do?resources=chat
+
+#### Example result
+
+```
+{
+  "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d": {
+    "schema": "hyperty-catalogue://catalogue.hybroker.rethink.ptinovacao.pt/.well-known/dataschema/Communication",
+    "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
+    "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
+    "name": "mychat",
+    "startingTime": "2016-07-26T12:54:37Z",
+    "resources": [
+      "chat"
+    ],
+    "dataSchemes": [
+      "comm"
+    ],
+    "lastModified": "2016-07-26T13:03:58Z"
+  }
+}
+
+```
+
+#### Example request
+
+GET /hyperty/dataobject/reporter/hyperty%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2F24a0724a-68ff-4f0d-ba2b-1e71911a7213/do?dataSchemes=comm
+
+#### Example result
+
+```
+{
+  "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d": {
+    "schema": "hyperty-catalogue://catalogue.hybroker.rethink.ptinovacao.pt/.well-known/dataschema/Communication",
+    "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
+    "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
+    "name": "mychat",
+    "startingTime": "2016-07-26T12:54:37Z",
+    "resources": [
+      "chat"
+    ],
+    "dataSchemes": [
+      "comm"
+    ],
+    "lastModified": "2016-07-26T13:03:58Z"
+  }
+}
+
+```
+
+#### Example request
+
+GET /hyperty/dataobject/name/mychat/do?resources=chat&dataSchemes=comm
+
+#### Example result
+
+```
+{
+  "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d": {
+    "schema": "hyperty-catalogue://catalogue.hybroker.rethink.ptinovacao.pt/.well-known/dataschema/Communication",
+    "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
+    "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
+    "name": "mychat",
+    "startingTime": "2016-07-26T12:54:37Z",
+    "resources": [
+      "chat"
+    ],
+    "dataSchemes": [
+      "comm"
+    ],
+    "lastModified": "2016-07-26T13:03:58Z"
+  }
+}
+
+```
+
+#### Example request
+
+GET /hyperty/dataobject/name/mychat/do?resources=chat
+
+#### Example result
+
+```
+{
+  "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d": {
+    "schema": "hyperty-catalogue://catalogue.hybroker.rethink.ptinovacao.pt/.well-known/dataschema/Communication",
+    "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
+    "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
+    "name": "mychat",
+    "startingTime": "2016-07-26T12:54:37Z",
+    "resources": [
+      "chat"
+    ],
+    "dataSchemes": [
+      "comm"
+    ],
+    "lastModified": "2016-07-26T13:03:58Z"
+  }
+}
+
+```
+
+#### Example request
+
+GET /hyperty/dataobject/name/mychat/do?dataSchemes=comm
+
+#### Example result
+
+```
+{
+  "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d": {
+    "schema": "hyperty-catalogue://catalogue.hybroker.rethink.ptinovacao.pt/.well-known/dataschema/Communication",
+    "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
+    "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
+    "name": "mychat",
+    "startingTime": "2016-07-26T12:54:37Z",
+    "resources": [
+      "chat"
+    ],
+    "dataSchemes": [
+      "comm"
+    ],
+    "lastModified": "2016-07-26T13:03:58Z"
+  }
+}
+
+```
+
+#### Example request
+
+GET /hyperty/dataobject/url/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5bec-e3f7-471f-8ace-44c64edb8a6d/do?resources=chat&dataSchemes=comm
+
+#### Example result
+
+```
+{
+  "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d": {
+    "schema": "hyperty-catalogue://catalogue.hybroker.rethink.ptinovacao.pt/.well-known/dataschema/Communication",
+    "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
+    "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
+    "name": "mychat",
+    "startingTime": "2016-07-26T12:54:37Z",
+    "resources": [
+      "chat"
+    ],
+    "dataSchemes": [
+      "comm"
+    ],
+    "lastModified": "2016-07-26T13:03:58Z"
+  }
+}
+
+```
+
+#### Example request
+
+GET /hyperty/dataobject/url/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5bec-e3f7-471f-8ace-44c64edb8a6d/do?resources=chat
+
+#### Example result
+
+```
+{
+  "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d": {
+    "schema": "hyperty-catalogue://catalogue.hybroker.rethink.ptinovacao.pt/.well-known/dataschema/Communication",
+    "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
+    "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
+    "name": "mychat",
+    "startingTime": "2016-07-26T12:54:37Z",
+    "resources": [
+      "chat"
+    ],
+    "dataSchemes": [
+      "comm"
+    ],
+    "lastModified": "2016-07-26T13:03:58Z"
+  }
+}
+
+```
+
+#### Example request
+
+GET /hyperty/dataobject/url/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5bec-e3f7-471f-8ace-44c64edb8a6d/do?dataSchemes=comm
+
+#### Example result
+
+```
+{
+  "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d": {
+    "schema": "hyperty-catalogue://catalogue.hybroker.rethink.ptinovacao.pt/.well-known/dataschema/Communication",
+    "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
+    "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
+    "name": "mychat",
+    "startingTime": "2016-07-26T12:54:37Z",
+    "resources": [
+      "chat"
+    ],
+    "dataSchemes": [
+      "comm"
+    ],
+    "lastModified": "2016-07-26T13:03:58Z"
+  }
+}
+
+```
 
 Note that the requested URL’s are encoded.
 
