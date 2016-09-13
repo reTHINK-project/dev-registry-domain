@@ -26,9 +26,10 @@ var Request = require('./request');
 
 var RegistryConnector = function(config) {
 
-  print("Config: " + config);
-  print("Retries: " + config.retries);
-  this._request = new Request(config.retries);
+  var cfg = JSON.parse(config);
+  print("Config: " + cfg);
+  print("Retries: " + cfg.retries);
+  this._request = new Request(cfg.retries);
   this._registryURL = config.url;
 };
 
