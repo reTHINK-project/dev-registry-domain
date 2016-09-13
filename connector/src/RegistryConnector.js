@@ -26,6 +26,8 @@ var Request = require('./request');
 
 var RegistryConnector = function(config) {
 
+  print("Config: " + config);
+  print("Retries: " + config.retries);
   this._request = new Request(config.retries);
   this._registryURL = config.url;
 };
