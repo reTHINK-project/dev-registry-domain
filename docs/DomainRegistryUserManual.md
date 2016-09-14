@@ -299,21 +299,16 @@ The descriptor is a link to the Catalogue from where the descriptor of the insta
 
 In this example, two hyperty instances are returned for the requested user id. Note that the requested URLs are encoded.
 
-If the server could not find what was requested, along with the HTTP status codes, a “user not found” or a “data not found” message is returned to the user.
+If the server could not find what was requested, along with the HTTP status codes, a “not found” message is returned to the client.
 
 #### Error messages Examples
 
 ```
 {
-  “message” : “user not found”
+  “message” : “not found”
 }
 ```
 
-```
-{
-  “message” : “data not found”
-}
-```
 ### GET /hyperty/user/:user_id/hyperty?resources=R1,...,Rn&dataSchemes=DS1,...,DSn
 
 Returns Hyperties which possess the specified resources, data schemes and user identifier.
