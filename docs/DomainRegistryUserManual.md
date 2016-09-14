@@ -723,6 +723,47 @@ GET /hyperty/dataobject/url/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5b
 
 ```
 
+### PUT /hyperty/dataobject/:data_object_url
+
+#### Example request
+
+PUT /hyperty/dataobject/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5bec-e3f7-471f-8ace-44c64edb8a6d
+
+```
+{
+  "schema" : "hyperty-catalogue://catalogue.hybroker.rethink.ptinovacao.pt/.well-known/dataschema/Communication",
+  "resources" : ["chat"],
+  "dataSchemes" : ["comm"],
+  "name" : "myChat",
+  "reporter" : "hyperty://localhost/893c256e-c65c-4aaf-966c-8c89d061d6cf"
+}
+
+```
+
+#### Example result
+
+```
+{
+  "message" : "Data object created"
+}
+
+```
+
+### PUT /hyperty/dataobject/url/:data_object_url
+
+#### Example request
+
+DELETE /hyperty/dataobject/url/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5bec-e3f7-471f-8ace-44c64edb8a6d
+
+#### Example result
+
+```
+{
+  "message" : "Data object deleted"
+}
+
+```
+
 Note that the requested URL’s are encoded.
 
 ## Future functionalities
