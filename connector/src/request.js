@@ -13,24 +13,27 @@ var Request = function(retries) {
     this._request = require('./js-request');
   }
 
-  this._retries = retries;
+  this._opts = {
+    times: retries,
+    interval: 1
+  };
 
 };
 
 Request.prototype.get = function(url, callback) {
-  retry(this._retries, function(cb) {
+  retry(this._opts, function(cb) {
     this._request.get(url, cb)
   }.bind(this), callback);
 };
 
 Request.prototype.put = function(url, message, callback) {
-  retry(this._retries, function(cb) {
+  retry(this._opts, function(cb) {
     this._request.put(url, message, cb)
   }.bind(this), callback);
 };
 
 Request.prototype.del = function(url, callback) {
-  retry(this._retries, function(cb) {
+  retry(this._opts, function(cb) {
     this._request.del(url, cb)
   }.bind(this), callback);
 };

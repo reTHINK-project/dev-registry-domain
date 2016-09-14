@@ -33,9 +33,11 @@ var JavaRequest = {
   },
 
   put: function(url, data, callback) {
+    var finalData = JSON.stringify(data);
+
     client.putAbs(url)
     .putHeader("content-type", "application/json")
-    .putHeader("content-length", "" + data.length())
+    .putHeader("content-length", "" + finalData.length())
     .handler(function(response) {
       response.bodyHandler(function(totalBuffer) {
         var body = totalBuffer.toString("UTF-8");
@@ -45,7 +47,7 @@ var JavaRequest = {
     .exceptionHandler(function(e) {
       callback(e, null, null);
     })
-    .write(data)
+    .write(finalData)
     .end();
   },
 

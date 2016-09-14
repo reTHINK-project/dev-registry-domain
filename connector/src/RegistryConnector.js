@@ -24,9 +24,9 @@ var dataObject = require('./dataObject');
 var hyperty = require('./hyperty');
 var Request = require('./request');
 
-var RegistryConnector = function(url, retries) {
+var RegistryConnector = function(url) {
 
-  this._request = new Request(retries);
+  this._request = new Request(2);
   this._registryURL = url;
 };
 
