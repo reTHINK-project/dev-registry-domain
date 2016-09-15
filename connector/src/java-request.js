@@ -23,7 +23,7 @@ var JavaRequest = {
     client.getAbs(url, function (response) {
       response.bodyHandler(function(totalBuffer) {
         var body = totalBuffer.toString("UTF-8");
-        callback(null, body, response.statusCode());
+        callback(null, JSON.parse(body), response.statusCode());
       });
     })
     .exceptionHandler(function(e) {
@@ -42,7 +42,7 @@ var JavaRequest = {
     .handler(function(response) {
       response.bodyHandler(function(totalBuffer) {
         var body = totalBuffer.toString("UTF-8");
-        callback(null, body, response.statusCode());
+        callback(null, JSON.parse(body), response.statusCode());
       });
     })
     .exceptionHandler(function(e) {
@@ -57,7 +57,7 @@ var JavaRequest = {
     client.deleteAbs(url, function(response) {
       response.bodyHandler(function(totalBuffer) {
         var body = totalBuffer.toString("UTF-8");
-        callback(null, body, response.statusCode());
+        callback(null, JSON.parse(body), response.statusCode());
       });
     })
     .exceptionHandler(function(e) {
