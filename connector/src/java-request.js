@@ -27,6 +27,7 @@ var JavaRequest = {
       });
     })
     .exceptionHandler(function(e) {
+      print("[REGISTRY-CONNECTOR] Error: " + e);
       callback(e, null, null);
     })
     .end();
@@ -45,6 +46,7 @@ var JavaRequest = {
       });
     })
     .exceptionHandler(function(e) {
+      print("[REGISTRY-CONNECTOR] Error: " + e);
       callback(e, null, null);
     })
     .write(finalData)
@@ -59,6 +61,7 @@ var JavaRequest = {
       });
     })
     .exceptionHandler(function(e) {
+      print("[REGISTRY-CONNECTOR] Error: " + e);
       callback(e, null, null);
     })
     .end();

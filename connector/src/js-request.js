@@ -38,6 +38,7 @@ var JSRequest = {
       if(error.getCode() != 404) {
         callback(error);
       }else {
+        console.log("[REGISTRY-CONNECTOR] Error code: " + error.getCode() + " Error: " + error.getBody());
         callback(null, error.getBody(), error.getCode());
       }
     });
@@ -57,6 +58,7 @@ var JSRequest = {
       if(error.getCode() != 404) {
         callback(error);
       }else {
+        console.log("[REGISTRY-CONNECTOR] Error code: " + error.getCode() + " Error: " + error.getBody());
         callback(null, error.getBody(), error.getCode());
       }
     });
@@ -73,6 +75,7 @@ var JSRequest = {
       if(error.getcode() != 404) {
         callback(error);
       }else {
+        console.log("[REGISTRY-CONNECTOR] Error code: " + error.getCode() + " Error: " + error.getBody());
         callback(null, error.getbody(), error.getcode());
       }
     });
