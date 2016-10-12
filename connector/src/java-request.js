@@ -15,40 +15,58 @@
 *
 */
 
-var JavaRequest = function() {
-  this._client = vertx.createHttpClient({});
-};
+var client = vertx.createHttpClient({});
 
-JavaRequest.prototype.get = function(url, callback) {
-  this._client.getAbs(url, function (response) {
-    response.bodyHandler(function(totalBuffer) {
-      var body = totalBuffer.toString("UTF-8");
-      callback(null, body, response.statusCode());
-    });
-  }).end();
-};
+var JavaRequest = {
 
-JavaRequest.prototype.put = function(url, data, callback) {
-  this._client.putAbs(url)
-  .putHeader("content-type", "application/json")
-  .putHeader("content-length", "" + data.length())
-  .handler(function(response) {
-    response.bodyHandler(function(totalBuffer) {
-      var body = totalBuffer.toString("UTF-8");
-      callback(null, body, response.statusCode());
-    });
-  })
-  .write(data)
-  .end();
-};
+  get: function(url, callback) {
+    client.getAbs(url, function (response) {
+      response.bodyHandler(function(totalBuffer) {
+        var body = totalBuffer.toString("UTF-8");
+        callback(null, JSON.parse(body), response.statusCode());
+      });
+    })
+    .exceptionHandler(function(e) {
+      print("[REGISTRY-CONNECTOR] Error: " + e);
+      callback(e, null, null);
+    })
+    .end();
+  },
 
-JavaRequest.prototype.del = function(url, callback) {
-  this._client.deleteAbs(url, function(response) {
-    response.bodyHandler(function(totalBuffer) {
-      var body = totalBuffer.toString("UTF-8");
-      callback(null, body, response.statusCode());
-    });
-  }).end();
+  put: function(url, data, callback) {
+    var finalData = JSON.stringify(data);
+
+    client.putAbs(url)
+    .putHeader("content-type", "application/json")
+    .putHeader("content-length", "" + finalData.length())
+    .handler(function(response) {
+      response.bodyHandler(function(totalBuffer) {
+        var body = totalBuffer.toString("UTF-8");
+        callback(null, JSON.parse(body), response.statusCode());
+      });
+    })
+    .exceptionHandler(function(e) {
+      print("[REGISTRY-CONNECTOR] Error: " + e);
+      callback(e, null, null);
+    })
+    .write(finalData)
+    .end();
+  },
+
+  del: function(url, callback) {
+    client.deleteAbs(url, function(response) {
+      response.bodyHandler(function(totalBuffer) {
+        var body = totalBuffer.toString("UTF-8");
+        callback(null, JSON.parse(body), response.statusCode());
+      });
+    })
+    .exceptionHandler(function(e) {
+      print("[REGISTRY-CONNECTOR] Error: " + e);
+      callback(e, null, null);
+    })
+    .end();
+  }
+
 };
 
 module.exports = JavaRequest;

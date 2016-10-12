@@ -22,21 +22,11 @@
  **/
 var dataObject = require('./dataObject');
 var hyperty = require('./hyperty');
+var Request = require('./request');
 
-var RegistryConnector = function(url) {
+var RegistryConnector = function(url, retries) {
 
-  if( typeof(engine) != 'undefined' &&
-     typeof(engine.factory) != 'undefined' &&
-     typeof(engine.factory.engineName) != 'undefined' &&
-     typeof(engine.factory.engineName.contains) == 'function' &&
-           engine.factory.engineName.contains("Nashorn")) {
-
-    var RequestWrapper = require('./java-request');
-  }else {
-    var RequestWrapper = require('./js-request');
-  }
-
-  this._request = new RequestWrapper();
+  this._request = new Request(retries);
   this._registryURL = url;
 };
 
