@@ -60,6 +60,15 @@ public class HypertyService{
         else newHyperty(connectionClient, newHyperty);
     }
 
+    public void keepAlive(Connection connectionClient, String hypertyID){
+        if(!connectionClient.hypertyExists(hypertyID))
+            throw new DataNotFoundException();
+
+        HypertyInstance hyperty = connectionClient.getHyperty(hypertyID);
+        hyperty.setLastModified(Dates.getActualDate());
+        connectionClient.updateHyperty(hyperty);
+    }
+
     public void deleteUserHyperty(Connection connectionClient, String userID, String hypertyID){
         if(!connectionClient.userExists(userID))
             throw new UserNotFoundException();

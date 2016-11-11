@@ -88,12 +88,21 @@ public class HypertyController {
             String[] encodedURL = req.url().split("/");
             String userID = decodeUrl(encodedURL[encodedURL.length - 2]);
             String hypertyID = decodeUrl(encodedURL[encodedURL.length - 1]);
-            HypertyInstance hyperty = gson.fromJson(body, HypertyInstance.class);
-            hyperty.setUserID(userID);
-            hyperty.setHypertyID(hypertyID);
-            hypertyService.createUserHyperty(connectionClient, hyperty);
-            res.status(200);
-            return gson.toJson(new Messages("Hyperty created"));
+
+            if(body.isEmpty()){
+                hypertyService.keepAlive(connectionClient, hypertyID);
+                res.status(200);
+                return gson.toJson(new Messages("Hyperty updated"));
+            }
+
+            else{
+                HypertyInstance hyperty = gson.fromJson(body, HypertyInstance.class);
+                hyperty.setUserID(userID);
+                hyperty.setHypertyID(hypertyID);
+                hypertyService.createUserHyperty(connectionClient, hyperty);
+                res.status(200);
+                return gson.toJson(new Messages("Hyperty created"));
+            }
         });
 
         delete("/hyperty/user/*", (req,res) -> {
