@@ -123,11 +123,20 @@ public class HypertyController {
             String body = req.body();
             String[] encodedURL = req.url().split("/");
             String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
-            DataObjectInstance dataObject = gson.fromJson(body, DataObjectInstance.class);
-            dataObject.setUrl(dataObjectUrl);
-            dataObjectService.createDataObject(connectionClient, dataObject);
-            res.status(200);
-            return gson.toJson(new Messages("Data object created"));
+
+            if(body.isEmpty()){
+                dataObjectService.keepAlive(connectionClient, dataObjectUrl);
+                res.status(200);
+                return gson.toJson(new Messages("Data object updated"));
+            }
+
+            else {
+                DataObjectInstance dataObject = gson.fromJson(body, DataObjectInstance.class);
+                dataObject.setUrl(dataObjectUrl);
+                dataObjectService.createDataObject(connectionClient, dataObject);
+                res.status(200);
+                return gson.toJson(new Messages("Data object created"));
+            }
         });
 
         get("hyperty/dataobject/url/*", (req, res) -> {

@@ -35,6 +35,16 @@ public class DataObjectService{
         else newDataObject(client, dataObject);
     }
 
+    public void keepAlive(Connection client, String dataObjectUrl){
+        if(client.dataObjectExists(dataObjectUrl)){
+            DataObjectInstance dataObject = client.getDataObjectByUrl(dataObjectUrl);
+            dataObject.setLastModified(Dates.getActualDate());
+            client.insertDataObject(dataObject);
+        }
+
+        else throw new DataNotFoundException();
+    }
+
     public DataObjectInstance getDataObject(Connection client, String dataObjectUrl){
         if(client.dataObjectExists(dataObjectUrl))
             return client.getDataObjectByUrl(dataObjectUrl);
