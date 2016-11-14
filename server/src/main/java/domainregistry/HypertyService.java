@@ -55,18 +55,20 @@ public class HypertyService{
         String oldHypertyJson = gson.toJson(oldHyperty);
         String updatedHypertyJson = gson.toJson(updatedHyperty);
 
-        log.info("FIELDS TO PERFORM THE UPDATE " + updatedHypertyJson);
+        // log.info("FIELDS TO PERFORM THE UPDATE " + updatedHypertyJson);
+        //
+        // JSONObject updatedHypertyJsonObject = new JSONObject(updatedHypertyJson);
+        // JSONObject oldHypertyJsonObject  = new JSONObject(oldHypertyJson);
+        //
+        // for(int i = 0; i < updatedHypertyJsonObject.names().length(); i++){
+        //     oldHypertyJsonObject.put(updatedHypertyJsonObject.names().getString(i),
+        //                              updatedHypertyJsonObject.get(updatedHypertyJsonObject.names().getString(i)));
+        // }
+        //
+        // log.info("UPDATED HYPERTY " + oldHypertyJsonObject);
 
-        JSONObject updatedHypertyJsonObject = new JSONObject(updatedHypertyJson);
-        JSONObject oldHypertyJsonObject  = new JSONObject(oldHypertyJson);
-
-        for(int i = 0; i < updatedHypertyJsonObject.names().length(); i++){
-            oldHypertyJsonObject.put(updatedHypertyJsonObject.names().getString(i),
-                                     updatedHypertyJsonObject.get(updatedHypertyJsonObject.names().getString(i)));
-        }
-
-        log.info("UPDATED HYPERTY " + oldHypertyJsonObject);
-        updateHyperty(connectionClient, gson.fromJson(oldHypertyJsonObject.toString(), HypertyInstance.class));
+        String resultJson = JsonHelper.mergeJsons(updatedHypertyJson, oldHypertyJson);
+        updateHyperty(connectionClient, gson.fromJson(resultJson, HypertyInstance.class));
     }
 
     public void createUserHyperty(Connection connectionClient, HypertyInstance newHyperty){

@@ -37,6 +37,7 @@ public class HypertyController {
     public HypertyController(StatusService status, final HypertyService hypertyService, final Connection connectionClient, final DataObjectService dataObjectService) {
 
 
+        // GET live page
         get("/live", (req, res) -> {
             Gson gson = new Gson();
             this.numReads++;
@@ -48,6 +49,7 @@ public class HypertyController {
         });
 
 
+        // GET user hyperties
         get("/hyperty/user/*", (req,res) -> {
             Gson gson = new Gson();
             this.numReads++;
@@ -80,6 +82,7 @@ public class HypertyController {
             return gson.toJson(userHyperties);
         });
 
+        // PUT Hyperty keep alive and field update
         put("/hyperty/url/*", (req,res) -> {
             Gson gson = new Gson();
             res.type("application/json");
@@ -104,6 +107,7 @@ public class HypertyController {
             }
         });
 
+        // User Hyperty creation
         put("/hyperty/user/*", (req,res) -> {
             Gson gson = new Gson();
             this.numWrites++;
@@ -120,6 +124,8 @@ public class HypertyController {
             return gson.toJson(new Messages("Hyperty created"));
         });
 
+
+        // DELETE user Hyperty
         delete("/hyperty/user/*", (req,res) -> {
             Gson gson = new Gson();
             res.type("application/json");
@@ -131,6 +137,7 @@ public class HypertyController {
             return gson.toJson(new Messages("Hyperty deleted"));
         });
 
+        // Create data object
         put("hyperty/dataobject/*", (req, res) -> {
             Gson gson = new Gson();
             this.numWrites++;
@@ -154,6 +161,7 @@ public class HypertyController {
             }
         });
 
+        // GET data object by its URL
         get("hyperty/dataobject/url/*", (req, res) -> {
             Gson gson = new Gson();
             this.numReads++;
@@ -186,6 +194,7 @@ public class HypertyController {
             return gson.toJson(dataObjects);
         });
 
+        // GET data object by its reporter
         get("hyperty/dataobject/reporter/*", (req, res) -> {
             Gson gson = new Gson();
             this.numReads++;
@@ -218,6 +227,7 @@ public class HypertyController {
             return gson.toJson(dataObjects);
         });
 
+        // GET data object by its name
         get("hyperty/dataobject/name/*", (req, res) -> {
             Gson gson = new Gson();
             this.numReads++;
@@ -250,6 +260,7 @@ public class HypertyController {
             return gson.toJson(dataObjects);
         });
 
+        // DELETE data object by its URL
         delete("/hyperty/dataobject/url/*", (req, res) -> {
             Gson gson = new Gson();
             res.type("application/json");
