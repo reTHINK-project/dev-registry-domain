@@ -80,6 +80,30 @@ public class HypertyController {
             return gson.toJson(userHyperties);
         });
 
+        put("/hyperty/url/*", (req,res) -> {
+            Gson gson = new Gson();
+            res.type("application/json");
+            String body = req.body();
+            String[] encodedURL = req.url().split("/");
+            String hypertyID = decodeUrl(encodedURL[encodedURL.length - 1]);
+
+
+            if(body.equals("{}")){
+                hypertyService.keepAlive(connectionClient, hypertyID);
+                res.status(200);
+                return gson.toJson(new Messages("Keep alive"));
+            }
+
+            else{
+                log.info("RECEIVED BODY WITH UPDATE VALUES " + body);
+                HypertyInstance hyperty = gson.fromJson(body, HypertyInstance.class);
+                hyperty.setHypertyID(hypertyID);
+                hypertyService.updateHypertyFields(connectionClient, hyperty);
+                res.status(200);
+                return gson.toJson(new Messages("Hyperty updated"));
+            }
+        });
+
         put("/hyperty/user/*", (req,res) -> {
             Gson gson = new Gson();
             this.numWrites++;
@@ -88,21 +112,12 @@ public class HypertyController {
             String[] encodedURL = req.url().split("/");
             String userID = decodeUrl(encodedURL[encodedURL.length - 2]);
             String hypertyID = decodeUrl(encodedURL[encodedURL.length - 1]);
-
-            if(body.isEmpty()){
-                hypertyService.keepAlive(connectionClient, hypertyID);
-                res.status(200);
-                return gson.toJson(new Messages("Hyperty updated"));
-            }
-
-            else{
-                HypertyInstance hyperty = gson.fromJson(body, HypertyInstance.class);
-                hyperty.setUserID(userID);
-                hyperty.setHypertyID(hypertyID);
-                hypertyService.createUserHyperty(connectionClient, hyperty);
-                res.status(200);
-                return gson.toJson(new Messages("Hyperty created"));
-            }
+            HypertyInstance hyperty = gson.fromJson(body, HypertyInstance.class);
+            hyperty.setUserID(userID);
+            hyperty.setHypertyID(hypertyID);
+            hypertyService.createUserHyperty(connectionClient, hyperty);
+            res.status(200);
+            return gson.toJson(new Messages("Hyperty created"));
         });
 
         delete("/hyperty/user/*", (req,res) -> {

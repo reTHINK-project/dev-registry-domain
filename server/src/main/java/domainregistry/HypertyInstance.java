@@ -26,7 +26,7 @@ public class HypertyInstance {
     private String hypertyID;
     private String userID;
     private String lastModified;
-    private int expires;
+    private Integer expires;
 
     public HypertyInstance(){
     }
@@ -123,7 +123,7 @@ public class HypertyInstance {
         this.dataSchemes = dataSchemes;
     }
 
-    public int getExpires(){
+    public Integer getExpires(){
         return this.expires;
     }
 
