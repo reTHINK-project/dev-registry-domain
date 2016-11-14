@@ -749,7 +749,7 @@ PUT /hyperty/dataobject/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5bec-e
 
 ```
 
-### PUT /hyperty/dataobject/url/:data_object_url
+### DELETE /hyperty/dataobject/url/:data_object_url
 
 #### Example request
 
