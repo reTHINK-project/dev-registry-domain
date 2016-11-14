@@ -36,6 +36,11 @@ public class HypertyController {
 
     public HypertyController(StatusService status, final HypertyService hypertyService, final Connection connectionClient, final DataObjectService dataObjectService) {
 
+        get("/", (req, res) -> {
+            res.redirect("/live");
+            return null;
+        });
+
 
         get("/live", (req, res) -> {
             Gson gson = new Gson();
