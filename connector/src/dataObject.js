@@ -124,7 +124,7 @@ var dataObject = {
   },
 
   update: function(body, request, url, callback) {
-    var endpoint = '/hyperty/dataobject/url/' + encodeURIComponent(body.resource);
+    var endpoint = '/dataobject/url/' + encodeURIComponent(body.resource);
 
     if(typeof body.value != "undefined" && body.value != null) {
       data = {
