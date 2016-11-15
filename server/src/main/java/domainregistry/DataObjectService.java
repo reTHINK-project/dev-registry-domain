@@ -20,6 +20,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class DataObjectService{
     static Logger log = Logger.getLogger(DataObjectService.class.getName());
@@ -33,6 +37,27 @@ public class DataObjectService{
             updateDataObject(client, dataObject);
 
         else newDataObject(client, dataObject);
+    }
+
+    public void updateDataObjectFields(Connection connectionClient, DataObjectInstance updatedDataObject){
+        Gson gson = new Gson();
+        String dataObjectUrl = updatedDataObject.getUrl();
+
+        if(!connectionClient.dataObjectExists(dataObjectUrl))
+            throw new DataObjectNotFoundException();
+
+        DataObjectInstance oldDataObject = connectionClient.getDataObjectByUrl(dataObjectUrl);
+
+        String oldDataObjectJson = gson.toJson(oldDataObject);
+        String updatedDataObjectJson = gson.toJson(updatedDataObject);
+
+        log.info("FIELDS DATA OBJECT TO PERFORM THE UPDATE " + updatedDataObjectJson);
+
+        String resultJson = JsonHelper.mergeJsons(updatedDataObjectJson, oldDataObjectJson);
+
+        log.info("RESULT DATA OBJECT JSON: " + resultJson);
+
+        updateDataObject(connectionClient, gson.fromJson(resultJson, DataObjectInstance.class));
     }
 
     public void keepAlive(Connection client, String dataObjectUrl){

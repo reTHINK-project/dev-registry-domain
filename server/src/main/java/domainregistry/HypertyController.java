@@ -138,26 +138,42 @@ public class HypertyController {
         });
 
         // Create data object
-        put("hyperty/dataobject/*", (req, res) -> {
+        put("/hyperty/dataobject/*", (req, res) -> {
             Gson gson = new Gson();
             this.numWrites++;
             res.type("application/json");
             String body = req.body();
             String[] encodedURL = req.url().split("/");
             String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
+            DataObjectInstance dataObject = gson.fromJson(body, DataObjectInstance.class);
+            dataObject.setUrl(dataObjectUrl);
+            dataObjectService.createDataObject(connectionClient, dataObject);
+            res.status(200);
+            return gson.toJson(new Messages("Data object created"));
+        });
 
-            if(body.isEmpty()){
+        // PUT Data object keep alive and field update
+        put("/dataobject/url/*", (req,res) -> {
+            Gson gson = new Gson();
+            res.type("application/json");
+            String body = req.body();
+            String[] encodedURL = req.url().split("/");
+            String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
+
+
+            if(body.equals("{}")){
                 dataObjectService.keepAlive(connectionClient, dataObjectUrl);
                 res.status(200);
-                return gson.toJson(new Messages("Data object updated"));
+                return gson.toJson(new Messages("Keep alive"));
             }
 
-            else {
+            else{
+                log.info("RECEIVED DATA OBJECT BODY WITH UPDATE VALUES " + body);
                 DataObjectInstance dataObject = gson.fromJson(body, DataObjectInstance.class);
                 dataObject.setUrl(dataObjectUrl);
-                dataObjectService.createDataObject(connectionClient, dataObject);
+                dataObjectService.updateDataObjectFields(connectionClient, dataObject);
                 res.status(200);
-                return gson.toJson(new Messages("Data object created"));
+                return gson.toJson(new Messages("data object updated"));
             }
         });
 
