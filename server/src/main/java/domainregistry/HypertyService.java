@@ -55,19 +55,12 @@ public class HypertyService{
         String oldHypertyJson = gson.toJson(oldHyperty);
         String updatedHypertyJson = gson.toJson(updatedHyperty);
 
-        // log.info("FIELDS TO PERFORM THE UPDATE " + updatedHypertyJson);
-        //
-        // JSONObject updatedHypertyJsonObject = new JSONObject(updatedHypertyJson);
-        // JSONObject oldHypertyJsonObject  = new JSONObject(oldHypertyJson);
-        //
-        // for(int i = 0; i < updatedHypertyJsonObject.names().length(); i++){
-        //     oldHypertyJsonObject.put(updatedHypertyJsonObject.names().getString(i),
-        //                              updatedHypertyJsonObject.get(updatedHypertyJsonObject.names().getString(i)));
-        // }
-        //
-        // log.info("UPDATED HYPERTY " + oldHypertyJsonObject);
+        log.info("FIELDS TO PERFORM THE UPDATE " + updatedHypertyJson);
 
         String resultJson = JsonHelper.mergeJsons(updatedHypertyJson, oldHypertyJson);
+
+        log.info("RESULT JSON: " + resultJson);
+
         updateHyperty(connectionClient, gson.fromJson(resultJson, HypertyInstance.class));
     }
 
@@ -95,6 +88,8 @@ public class HypertyService{
     public void keepAlive(Connection connectionClient, String hypertyID){
         if(!connectionClient.hypertyExists(hypertyID))
             throw new DataNotFoundException();
+
+        log.info("Keep alive hyperty: " + hypertyID);
 
         HypertyInstance hyperty = connectionClient.getHyperty(hypertyID);
         hyperty.setLastModified(Dates.getActualDate());
