@@ -134,7 +134,8 @@ var dataObject = {
         'reporter': body.value.reporter,
         'expires': body.value.expires,
         'dataSchemes': body.value.dataSchemes,
-        'resources': body.value.resources
+        'resources': body.value.resources,
+        'status': body.value.status
       };
     } else {
       data = {};
