@@ -93,6 +93,7 @@ public class HypertyService{
 
         HypertyInstance hyperty = connectionClient.getHyperty(hypertyID);
         hyperty.setLastModified(Dates.getActualDate());
+        hyperty.setHypertyID(hypertyID);
         connectionClient.updateHyperty(hyperty);
     }
 

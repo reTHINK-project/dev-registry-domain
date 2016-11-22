@@ -26,6 +26,7 @@ public class HypertyInstance {
     private String hypertyID;
     private String userID;
     private String lastModified;
+    private String status;
     private Integer expires;
 
     public HypertyInstance(){
@@ -36,7 +37,8 @@ public class HypertyInstance {
                            List<String> dataSchemes,
                            String startingTime,
                            String lastModified,
-                           int expires){
+                           int expires,
+                           String status){
 
         this.descriptor = descriptor;
         this.dataSchemes = dataSchemes;
@@ -44,6 +46,7 @@ public class HypertyInstance {
         this.startingTime = startingTime;
         this.lastModified = lastModified;
         this.expires = expires;
+        this.status = status;
     }
 
     public HypertyInstance(String descriptor,
@@ -52,7 +55,8 @@ public class HypertyInstance {
                            List<String> resources,
                            List<String> dataSchemes,
                            String lastModified,
-                           int expires){
+                           int expires,
+                           String status){
 
         this.descriptor = descriptor;
         this.resources = resources;
@@ -61,6 +65,7 @@ public class HypertyInstance {
         this.lastModified = lastModified;
         this.expires = expires;
         this.userID = userID;
+        this.status = status;
     }
 
     public HypertyInstance(String descriptor){
@@ -129,5 +134,13 @@ public class HypertyInstance {
 
     public void setExpires(int expires){
         this.expires = expires;
+    }
+
+    public String getStatus(){
+        return this.status;
+    }
+
+    public void setStatus(String status){
+        this.status = status;
     }
 }

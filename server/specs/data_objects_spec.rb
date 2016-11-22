@@ -26,7 +26,8 @@ describe 'domain registry api tests' do
       name: "name1",
       reporter: "reporter1",
       resources: ["resource1"],
-      dataSchemes: ["datascheme1"]
+      dataSchemes: ["datascheme1"],
+      status: "created"
     }
 
     @data_object_two_details = {
@@ -34,7 +35,8 @@ describe 'domain registry api tests' do
       name: "name2",
       reporter: "reporter2",
       resources: ["resource2"],
-      dataSchemes: ["datascheme2"]
+      dataSchemes: ["datascheme2"],
+      status: "created"
     }
 
     @data_object_three_details = {
@@ -42,7 +44,8 @@ describe 'domain registry api tests' do
       name: "name3",
       reporter: "reporter1",
       resources: ["resource3"],
-      dataSchemes: ["datascheme3"]
+      dataSchemes: ["datascheme3"],
+      status: "created"
     }
 
     @data_object_four_details = {
@@ -50,7 +53,8 @@ describe 'domain registry api tests' do
       name: "name3",
       reporter: "reporter1",
       resources: ["resource3", "resource5"],
-      dataSchemes: ["datascheme4", "datascheme3"]
+      dataSchemes: ["datascheme4", "datascheme3"],
+      status: "created"
     }
   }
 
@@ -84,13 +88,13 @@ describe 'domain registry api tests' do
     it 'should return a data object' do
       get '/url/url1'
       expect_status(200)
-      expect_json_sizes(8)
+      expect_json_sizes(9)
     end
 
     it 'should return a data object' do
       get '/url/url2'
       expect_status(200)
-      expect_json_sizes(8)
+      expect_json_sizes(9)
     end
 
     it 'should return a data not found error' do

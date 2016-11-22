@@ -23,6 +23,7 @@ public class DataObjectInstance {
     private String url;
     private String reporter;
     private String name;
+    private String status;
     private String startingTime;
     private List<String> resources;
     private List<String> dataSchemes;
@@ -38,7 +39,7 @@ public class DataObjectInstance {
         this.name = name;
     }
 
-    public DataObjectInstance(String name, String schema, List<String> dataSchemes, List<String> resources, String reporter, String url, String startingTime, String lastModified){
+    public DataObjectInstance(String name, String schema, List<String> dataSchemes, List<String> resources, String reporter, String url, String startingTime, String lastModified, String status){
         this.schema = schema;
         this.url = url;
         this.resources = resources;
@@ -47,6 +48,7 @@ public class DataObjectInstance {
         this.startingTime = startingTime;
         this.dataSchemes = dataSchemes;
         this.lastModified = lastModified;
+        this.status = status;
     }
 
     public List<String> getResources(){
@@ -103,5 +105,13 @@ public class DataObjectInstance {
 
     public void setDataSchemes(List<String> dataSchemes){
         this.dataSchemes = dataSchemes;
+    }
+
+    public String getStatus(){
+        return this.status;
+    }
+
+    public void setStatus(String status){
+        this.status = status;
     }
 }

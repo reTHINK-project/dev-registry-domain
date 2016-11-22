@@ -26,7 +26,8 @@ describe 'domain registry api tests' do
       dataSchemes: ["comm"],
       name: "name",
       schema: "schema",
-      reporter: "reporter"
+      reporter: "reporter",
+      status: "created"
     }
   }
 
@@ -44,13 +45,14 @@ describe 'domain registry api tests' do
     it 'should get data objects fields' do
       get '/hyperty/dataobject/url/url_test'
       expect_status(200)
-      expect_json_keys([:name, :startingTime, :lastModified, :reporter, :resources, :dataSchemes, :url, :schema])
+      expect_json_keys([:name, :startingTime, :lastModified, :reporter, :resources, :dataSchemes, :url, :schema, :status])
       expect(json_body[:resources]).to eql(["chat", "voice"])
       expect(json_body[:dataSchemes]).to eql(["comm"])
       expect(json_body[:name]).to eql("name")
       expect(json_body[:reporter]).to eql("reporter")
       expect(json_body[:url]).to eql("url_test")
       expect(json_body[:schema]).to eql("schema")
+      expect(json_body[:status]).to eql("created")
     end
 
     it 'should update url field' do

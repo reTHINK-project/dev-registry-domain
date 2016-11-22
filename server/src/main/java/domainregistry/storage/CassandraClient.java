@@ -79,7 +79,8 @@ public class CassandraClient implements Connection{
             .value("dataSchemes", hyperty.getDataSchemes())
             .value("startingTime", hyperty.getStartingTime())
             .value("lastModified", hyperty.getLastModified())
-            .value("expires", hyperty.getExpires());
+            .value("expires", hyperty.getExpires())
+            .value("status", hyperty.getStatus());
 
         if(getSession() != null){
             getSession().execute(statement);
@@ -100,10 +101,12 @@ public class CassandraClient implements Connection{
             .value("name", dataObjectName)
             .value("schem", dataObject.getSchema())
             .value("resources", dataObject.getResources())
+            .value("dataSchemes", dataObject.getDataSchemes())
             .value("startingTime", dataObject.getStartingTime())
             .value("lastModified", dataObject.getLastModified())
             .value("reporter", dataObject.getReporter())
-            .value("url", dataObject.getUrl());
+            .value("url", dataObject.getUrl())
+            .value("status", dataObject.getStatus());
 
         if(getSession() != null){
             getSession().execute(statement);
@@ -153,7 +156,7 @@ public class CassandraClient implements Connection{
         Row row = results.one();
         return new HypertyInstance(row.getString("descriptor"), row.getString("startingTime"),
                 row.getString("user"), row.getList("resources", String.class), row.getList("dataSchemes", String.class),
-                row.getString("lastModified"), row.getInt("expires"));
+                row.getString("lastModified"), row.getInt("expires"), row.getString("status"));
 
     }
 
@@ -164,7 +167,7 @@ public class CassandraClient implements Connection{
         Row row = results.one();
         return new DataObjectInstance(row.getString("name"), row.getString("schem"), row.getList("dataSchemes", String.class),
                 row.getList("resources", String.class), row.getString("reporter"), row.getString("url"), row.getString("startingTime"),
-                row.getString("lastModified"));
+                row.getString("lastModified"), row.getString("status"));
     }
 
     public boolean hypertyExists(String hypertyID){
@@ -205,6 +208,7 @@ public class CassandraClient implements Connection{
                                        .and(QueryBuilder.set("resources", hyperty.getResources()))
                                        .and(QueryBuilder.set("dataSchemes", hyperty.getDataSchemes()))
                                        .and(QueryBuilder.set("expires", hyperty.getExpires()))
+                                       .and(QueryBuilder.set("status", hyperty.getStatus()))
                                        .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()));
         if(getSession() != null){
             getSession().execute(update);
@@ -220,6 +224,7 @@ public class CassandraClient implements Connection{
                                        .and(QueryBuilder.set("resources", hyperty.getResources()))
                                        .and(QueryBuilder.set("dataSchemes", hyperty.getDataSchemes()))
                                        .and(QueryBuilder.set("expires", hyperty.getExpires()))
+                                       .and(QueryBuilder.set("status", hyperty.getStatus()))
                                        .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()))
                                        .and(QueryBuilder.eq("user", hyperty.getUserID()));
         if(getSession() != null){
@@ -245,7 +250,8 @@ public class CassandraClient implements Connection{
                                                                                  row.getList("dataSchemes", String.class),
                                                                                  row.getString("startingTime"),
                                                                                  row.getString("lastModified"),
-                                                                                 row.getInt("expires")));
+                                                                                 row.getInt("expires"),
+                                                                                 row.getString("status")));
         }
         return allUserHyperties;
     }
@@ -263,7 +269,7 @@ public class CassandraClient implements Connection{
         for(Row row : results){
             allHypertyDataObjects.put(row.getString("url"), new DataObjectInstance(row.getString("name"), row.getString("schem"), row.getList("dataSchemes", String.class),
                                                                               row.getList("resources", String.class), row.getString("reporter"), row.getString("url"),
-                                                                              row.getString("startingTime"), row.getString("lastModified")));
+                                                                              row.getString("startingTime"), row.getString("lastModified"), row.getString("status")));
         }
         return allHypertyDataObjects;
     }
@@ -281,7 +287,7 @@ public class CassandraClient implements Connection{
         for(Row row : results){
             foundDataObjects.put(row.getString("url"), new DataObjectInstance(row.getString("name"), row.getString("schem"), row.getList("dataSchemes", String.class),
                                                                               row.getList("resources", String.class), row.getString("reporter"), row.getString("url"),
-                                                                              row.getString("startingTime"), row.getString("lastModified")));
+                                                                              row.getString("startingTime"), row.getString("lastModified"), row.getString("status")));
         }
         return foundDataObjects;
     }

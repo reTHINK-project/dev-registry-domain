@@ -25,7 +25,8 @@ describe 'domain registry api tests' do
       resources: ["chat", "voice"],
       dataSchemes: ["comm"],
       descriptor: "descriptor1",
-      expires: 1200
+      expires: 1200,
+      status: "created"
     }
   }
 
@@ -43,11 +44,12 @@ describe 'domain registry api tests' do
     it 'should get hyperty fields' do
       get '/hyperty/user/ruijose@inesc-id'
       expect_status(200)
-      expect_json_keys("hyperty_keep_alive", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes])
+      expect_json_keys("hyperty_keep_alive", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status])
       expect(json_body[:hyperty_keep_alive][:descriptor]).to eql("descriptor1")
       expect(json_body[:hyperty_keep_alive][:resources]).to eql(["chat", "voice"])
       expect(json_body[:hyperty_keep_alive][:dataSchemes]).to eql(["comm"])
       expect(json_body[:hyperty_keep_alive][:expires]).to eql(1200)
+      expect(json_body[:hyperty_keep_alive][:status]).to eql("created")
     end
 
     it 'should update expires and descriptor field' do
