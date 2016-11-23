@@ -33,6 +33,7 @@ import static java.lang.System.out;
 
 public class CassandraClient implements Connection{
     private static final Logger log = LogManager.getLogger(CassandraClient.class.getName());
+    private static final String DEAD = "Dead";
 
     public static final String KEYSPACE  = "rethinkeyspace";
     public static final String IDHYPERTIES = "hyperties_by_id";
@@ -295,16 +296,26 @@ public class CassandraClient implements Connection{
     public void deleteUserHyperty(String hypertyID){
         HypertyInstance hyperty = getHyperty(hypertyID);
 
-        Statement deleteFromID = QueryBuilder.delete().from(KEYSPACE, IDHYPERTIES)
-                                                      .where(QueryBuilder.eq("hypertyID", hypertyID));
+        String oldStatus = hyperty.getStatus();
+        hyperty.setStatus(DEAD);
+        hyperty.setHypertyID(hypertyID);
+        String newStatus = hyperty.getStatus();
 
-        Statement deleteFromUsers = QueryBuilder.delete().from(KEYSPACE, USERHYPERTIES)
-                                                      .where(QueryBuilder.eq("user", hyperty.getUserID()))
-                                                      .and(QueryBuilder.eq("hypertyid", hypertyID));
+        updateHyperty(hyperty);
 
-        getSession().execute(deleteFromID);
-        getSession().execute(deleteFromUsers);
-        log.info("Deleted from database hyperty with ID: " + hypertyID);
+        log.info("Changed hyperty " + hypertyID + " status from " + oldStatus + " to " + newStatus);
+
+        // log.info("Deleted from database hyperty with ID: " + hypertyID);
+
+        // Statement deleteFromID = QueryBuilder.delete().from(KEYSPACE, IDHYPERTIES)
+        //                                               .where(QueryBuilder.eq("hypertyID", hypertyID));
+        //
+        // Statement deleteFromUsers = QueryBuilder.delete().from(KEYSPACE, USERHYPERTIES)
+        //                                               .where(QueryBuilder.eq("user", hyperty.getUserID()))
+        //                                               .and(QueryBuilder.eq("hypertyid", hypertyID));
+        //
+        // getSession().execute(deleteFromID);
+        // getSession().execute(deleteFromUsers);
     }
 
     public void deleteDataObject(String dataObjectUrl){

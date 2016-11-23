@@ -38,15 +38,15 @@ class HeartBeatThread extends Thread {
         try{
             while(true){
                 TimeUnit.SECONDS.sleep(this.time);
-                removeOldHyperties(this.storageClient);
+                changeHypertyStatus(this.storageClient);
             }
         }catch(InterruptedException e){
             e.printStackTrace();
         }
     }
 
-    private void removeOldHyperties(Connection storageClient){
-        log.info("Expired hyperties verification has started...");
+    private void changeHypertyStatus(Connection storageClient){
+        log.info("Hyperty status verification has started...");
         ArrayList<String> users = storageClient.getAllUsers();
 
         if(!users.isEmpty()){
