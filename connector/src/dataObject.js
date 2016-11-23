@@ -104,7 +104,9 @@ var dataObject = {
       'expires': body.value.expires,
       'dataSchemes': body.value.dataSchemes,
       'resources': body.value.resources,
-      'status': body.value.status
+      'status': body.value.status,
+      'runtime': body.value.runtime,
+      'p2pRequester': body.value.p2pRequester
     };
 
     request.put(url + endpoint, data, function(err, response, statusCode) {
@@ -136,7 +138,9 @@ var dataObject = {
         'expires': body.value.expires,
         'dataSchemes': body.value.dataSchemes,
         'resources': body.value.resources,
-        'status': body.value.status
+        'status': body.value.status,
+        'runtime': body.value.runtime,
+        'p2pRequester': body.value.p2pRequester
       };
     } else {
       data = {};
