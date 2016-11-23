@@ -30,6 +30,11 @@ public class DataObjectInstance {
     private String lastModified;
     private Integer expires;
 
+    // P2P specs
+
+    private String runtime;
+    private String p2pRequester;
+
     public DataObjectInstance(){
     }
 
@@ -40,7 +45,7 @@ public class DataObjectInstance {
         this.name = name;
     }
 
-    public DataObjectInstance(String name, String schema, List<String> dataSchemes, List<String> resources, String reporter, String url, String startingTime, String lastModified, String status, Integer expires){
+    public DataObjectInstance(String name, String schema, List<String> dataSchemes, List<String> resources, String reporter, String url, String startingTime, String lastModified, String status, Integer expires, String runtime, String p2pRequester){
         this.schema = schema;
         this.url = url;
         this.resources = resources;
@@ -49,6 +54,8 @@ public class DataObjectInstance {
         this.startingTime = startingTime;
         this.dataSchemes = dataSchemes;
         this.lastModified = lastModified;
+        this.runtime = runtime;
+        this.p2pRequester = p2pRequester;
         this.status = status;
         this.expires = expires;
     }
@@ -123,5 +130,23 @@ public class DataObjectInstance {
 
     public void setStatus(String status){
         this.status = status;
+    }
+
+    // P2P
+
+    public void setRuntime(String runtime){
+        this.runtime = runtime;
+    }
+
+    public String getRuntime(){
+        return this.runtime;
+    }
+
+    public void setRequester(String p2pRequester){
+        this.p2pRequester = p2pRequester;
+    }
+
+    public String getRequester(){
+        return this.p2pRequester;
     }
 }

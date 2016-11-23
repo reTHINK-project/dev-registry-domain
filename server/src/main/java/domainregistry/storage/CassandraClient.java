@@ -80,6 +80,9 @@ public class CassandraClient implements Connection{
             .value("dataSchemes", hyperty.getDataSchemes())
             .value("startingTime", hyperty.getStartingTime())
             .value("lastModified", hyperty.getLastModified())
+            .value("runtime", hyperty.getRuntime())
+            .value("p2pRequester", hyperty.getRequester())
+            .value("p2pHandler", hyperty.getHandler())
             .value("expires", hyperty.getExpires())
             .value("status", hyperty.getStatus());
 
@@ -105,6 +108,8 @@ public class CassandraClient implements Connection{
             .value("dataSchemes", dataObject.getDataSchemes())
             .value("startingTime", dataObject.getStartingTime())
             .value("lastModified", dataObject.getLastModified())
+            .value("runtime", dataObject.getRuntime())
+            .value("p2pRequester", dataObject.getRequester())
             .value("reporter", dataObject.getReporter())
             .value("url", dataObject.getUrl())
             .value("status", dataObject.getStatus())
@@ -176,6 +181,7 @@ public class CassandraClient implements Connection{
         Row row = results.one();
         return new HypertyInstance(row.getString("descriptor"), row.getString("startingTime"),
                 row.getString("user"), row.getList("resources", String.class), row.getList("dataSchemes", String.class),
+                row.getString("runtime"), row.getString("p2pRequester"), row.getString("p2pHandler"),
                 row.getString("lastModified"), row.getInt("expires"), row.getString("status"));
 
     }
@@ -187,7 +193,7 @@ public class CassandraClient implements Connection{
         Row row = results.one();
         return new DataObjectInstance(row.getString("name"), row.getString("schem"), row.getList("dataSchemes", String.class),
                 row.getList("resources", String.class), row.getString("reporter"), row.getString("url"), row.getString("startingTime"),
-                row.getString("lastModified"), row.getString("status"), row.getInt("expires"));
+                row.getString("lastModified"), row.getString("status"), row.getInt("expires"), row.getString("runtime"), row.getString("p2pRequester"));
     }
 
     public boolean hypertyExists(String hypertyID){
@@ -228,6 +234,9 @@ public class CassandraClient implements Connection{
                                        .and(QueryBuilder.set("resources", hyperty.getResources()))
                                        .and(QueryBuilder.set("dataSchemes", hyperty.getDataSchemes()))
                                        .and(QueryBuilder.set("expires", hyperty.getExpires()))
+                                       .and(QueryBuilder.set("runtime", hyperty.getRuntime()))
+                                       .and(QueryBuilder.set("p2pRequester", hyperty.getRequester()))
+                                       .and(QueryBuilder.set("p2pHandler", hyperty.getHandler()))
                                        .and(QueryBuilder.set("status", hyperty.getStatus()))
                                        .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()));
         if(getSession() != null){
@@ -244,6 +253,9 @@ public class CassandraClient implements Connection{
                                        .and(QueryBuilder.set("resources", hyperty.getResources()))
                                        .and(QueryBuilder.set("dataSchemes", hyperty.getDataSchemes()))
                                        .and(QueryBuilder.set("expires", hyperty.getExpires()))
+                                       .and(QueryBuilder.set("runtime", hyperty.getRuntime()))
+                                       .and(QueryBuilder.set("p2pRequester", hyperty.getRequester()))
+                                       .and(QueryBuilder.set("p2pHandler", hyperty.getHandler()))
                                        .and(QueryBuilder.set("status", hyperty.getStatus()))
                                        .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()))
                                        .and(QueryBuilder.eq("user", hyperty.getUserID()));
@@ -265,8 +277,9 @@ public class CassandraClient implements Connection{
 
         for(Row row : results){
             allDataObjects.put(row.getString("url"), new DataObjectInstance(row.getString("name"), row.getString("schem"), row.getList("dataSchemes", String.class),
-                                                                            row.getList("resources", String.class), row.getString("reporter"), row.getString("url"),
-                                                                            row.getString("startingTime"), row.getString("lastModified"), row.getString("status"), row.getInt("expires")));
+                        row.getList("resources", String.class), row.getString("reporter"), row.getString("url"),
+                        row.getString("startingTime"), row.getString("lastModified"), row.getString("status"), row.getInt("expires"),
+                        row.getString("runtime"), row.getString("p2pRequester")));
         }
         return allDataObjects;
     }
@@ -288,7 +301,10 @@ public class CassandraClient implements Connection{
                                                                                  row.getString("startingTime"),
                                                                                  row.getString("lastModified"),
                                                                                  row.getInt("expires"),
-                                                                                 row.getString("status")));
+                                                                                 row.getString("status"),
+                                                                                 row.getString("p2pRequester"),
+                                                                                 row.getString("p2pHandler"),
+                                                                                 row.getString("runtime")));
         }
         return allUserHyperties;
     }
@@ -306,7 +322,8 @@ public class CassandraClient implements Connection{
         for(Row row : results){
             allHypertyDataObjects.put(row.getString("url"), new DataObjectInstance(row.getString("name"), row.getString("schem"), row.getList("dataSchemes", String.class),
                                                                               row.getList("resources", String.class), row.getString("reporter"), row.getString("url"),
-                                                                              row.getString("startingTime"), row.getString("lastModified"), row.getString("status"), row.getInt("expires")));
+                                                                              row.getString("startingTime"), row.getString("lastModified"), row.getString("status"), row.getInt("expires"),
+                                                                              row.getString("runtime"), row.getString("p2pRequester")));
         }
         return allHypertyDataObjects;
     }
@@ -324,7 +341,8 @@ public class CassandraClient implements Connection{
         for(Row row : results){
             foundDataObjects.put(row.getString("url"), new DataObjectInstance(row.getString("name"), row.getString("schem"), row.getList("dataSchemes", String.class),
                                                                               row.getList("resources", String.class), row.getString("reporter"), row.getString("url"),
-                                                                              row.getString("startingTime"), row.getString("lastModified"), row.getString("status"), row.getInt("expires")));
+                                                                              row.getString("startingTime"), row.getString("lastModified"), row.getString("status"), row.getInt("expires"),
+                                                                              row.getString("runtime"), row.getString("p2pRequester")));
         }
         return foundDataObjects;
     }

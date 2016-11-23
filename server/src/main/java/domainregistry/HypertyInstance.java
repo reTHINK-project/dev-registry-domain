@@ -29,6 +29,11 @@ public class HypertyInstance {
     private String status;
     private Integer expires;
 
+    // P2P
+    private String runtime;
+    private String p2pRequester;
+    private String p2pHandler;
+
     public HypertyInstance(){
     }
 
@@ -38,7 +43,11 @@ public class HypertyInstance {
                            String startingTime,
                            String lastModified,
                            int expires,
-                           String status){
+                           String status,
+                           String p2pRequester,
+                           String p2pHandler,
+                           String runtime){
+
 
         this.descriptor = descriptor;
         this.dataSchemes = dataSchemes;
@@ -47,6 +56,9 @@ public class HypertyInstance {
         this.lastModified = lastModified;
         this.expires = expires;
         this.status = status;
+        this.runtime = runtime;
+        this.p2pRequester = p2pRequester;
+        this.p2pHandler = p2pHandler;
     }
 
     public HypertyInstance(String descriptor,
@@ -54,6 +66,9 @@ public class HypertyInstance {
                            String userID,
                            List<String> resources,
                            List<String> dataSchemes,
+                           String runtime,
+                           String p2pRequester,
+                           String p2pHandler,
                            String lastModified,
                            int expires,
                            String status){
@@ -66,6 +81,9 @@ public class HypertyInstance {
         this.expires = expires;
         this.userID = userID;
         this.status = status;
+        this.runtime = runtime;
+        this.p2pRequester = p2pRequester;
+        this.p2pHandler = p2pHandler;
     }
 
     public HypertyInstance(String descriptor){
@@ -142,5 +160,31 @@ public class HypertyInstance {
 
     public void setStatus(String status){
         this.status = status;
+    }
+
+    // P2P specs
+
+    public void setRuntime(String runtime){
+        this.runtime = runtime;
+    }
+
+    public String getRuntime(){
+        return this.runtime;
+    }
+
+    public void setHandler(String p2pHandler){
+        this.p2pHandler = p2pHandler;
+    }
+
+    public String getHandler(){
+        return this.p2pHandler;
+    }
+
+    public void setRequester(String p2pRequester){
+        this.p2pRequester = p2pRequester;
+    }
+
+    public String getRequester(){
+        return this.p2pRequester;
     }
 }

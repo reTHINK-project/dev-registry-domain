@@ -36,8 +36,6 @@ public class DataObjectService{
         String dataObjectUrl = dataObject.getUrl();
         long expiresLimit = Long.valueOf(System.getenv(EXPIRES)).longValue();
 
-        log.info("TESTE " + dataObject.getExpires());
-
         if(validateExpiresField(dataObject.getExpires(), expiresLimit)){
             dataObject.setExpires((int) expiresLimit);
             log.info("Expires was set to the max value allowed by the Domain Registry: " + expiresLimit);
