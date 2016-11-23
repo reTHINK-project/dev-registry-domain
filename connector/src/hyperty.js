@@ -88,7 +88,8 @@ var hyperty = {
       'descriptor': body.value.descriptor,
       'expires': body.value.expires,
       'resources': body.value.resources,
-      'dataSchemes': body.value.dataSchemes
+      'dataSchemes': body.value.dataSchemes,
+      'status': body.value.status
     };
 
     request.put(url + endpoint, data, function(err, response, statusCode) {
@@ -110,14 +111,21 @@ var hyperty = {
   },
 
   update: function(body, request, url, callback) {
-    var endpoint = '/hyperty/user/' + encodeURIComponent(body.value.user) + '/' + encodeURIComponent(body.value.url);
 
-    var data = {
-      'descriptor': body.value.descriptor,
-      'expires': body.value.expires,
-      'resources': body.value.resources,
-      'dataSchemes': body.value.dataSchemes
-    };
+    var endpoint = '/hyperty/url/' + encodeURIComponent(body.resource);
+    var data;
+
+    if(typeof body.value != "undefined" && body.value != null) {
+      data = {
+        'descriptor': body.value.descriptor,
+        'expires': body.value.expires,
+        'resources': body.value.resources,
+        'dataSchemes': body.value.dataSchemes,
+        'status': body.value.status
+      };
+    } else {
+      data = {};
+    }
 
     request.put(url + endpoint, data, function(err, response, statusCode) {
 

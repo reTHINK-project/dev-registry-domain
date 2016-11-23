@@ -103,7 +103,8 @@ var dataObject = {
       'reporter': body.value.reporter,
       'expires': body.value.expires,
       'dataSchemes': body.value.dataSchemes,
-      'resources': body.value.resources
+      'resources': body.value.resources,
+      'status': body.value.status
     };
 
     request.put(url + endpoint, data, function(err, response, statusCode) {
@@ -124,17 +125,22 @@ var dataObject = {
   },
 
   update: function(body, request, url, callback) {
-    var endpoint = '/hyperty/dataobject/' + encodeURIComponent(body.value.url);
+    var endpoint = '/dataobject/url/' + encodeURIComponent(body.resource);
 
-    var data = {
-      'name': body.value.name,
-      'schema': body.value.schema,
-      'url': body.value.url,
-      'reporter': body.value.reporter,
-      'expires': body.value.expires,
-      'dataSchemes': body.value.dataSchemes,
-      'resources': body.value.resources
-    };
+    if(typeof body.value != "undefined" && body.value != null) {
+      data = {
+        'name': body.value.name,
+        'schema': body.value.schema,
+        'url': body.value.url,
+        'reporter': body.value.reporter,
+        'expires': body.value.expires,
+        'dataSchemes': body.value.dataSchemes,
+        'resources': body.value.resources,
+        'status': body.value.status
+      };
+    } else {
+      data = {};
+    }
 
     request.put(url + endpoint, data, function(err, response, statusCode) {
 
