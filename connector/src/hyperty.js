@@ -88,7 +88,8 @@ var hyperty = {
       'descriptor': body.value.descriptor,
       'expires': body.value.expires,
       'resources': body.value.resources,
-      'dataSchemes': body.value.dataSchemes
+      'dataSchemes': body.value.dataSchemes,
+      'status': body.value.status
     };
 
     request.put(url + endpoint, data, function(err, response, statusCode) {
