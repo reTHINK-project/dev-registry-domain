@@ -36,4 +36,6 @@ interface Connection{
     public DataObjectInstance getDataObjectByUrl(String dataObjectUrl);
     public Map<String, DataObjectInstance> getDataObjectsByHyperty(String hypertyReporter);
     public Map<String, DataObjectInstance> getDataObjectsByName(String dataObjectName);
+    public Map<String, DataObjectInstance> getDataObjects();
+    public ArrayList<String> getAllDataObjects();
 }

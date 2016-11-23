@@ -50,7 +50,7 @@ public class Main {
             DataObjectService dataObjectService = new DataObjectService();
             StatusService status = new StatusService(CASSANDRA, cassandraClient);
             HypertyController controller = new HypertyController(status, hypertyService, cassandraClient, dataObjectService);
-            new HeartBeatThread(hypertyService, cassandraClient, time).start();
+            new HeartBeatThread(hypertyService, dataObjectService, cassandraClient, time).start();
 
             if(System.getenv(RIEMANN) != null){
                 log.info("Riemann env variable was set. Events will begin to be sent to " + System.getenv(RIEMANN));
@@ -66,7 +66,7 @@ public class Main {
             HypertyService hypertyService = new HypertyService();
             DataObjectService dataObjectService = new DataObjectService();
             HypertyController controller = new HypertyController(status, hypertyService, ramClient, dataObjectService);
-            new HeartBeatThread(hypertyService, ramClient, time).start();
+            new HeartBeatThread(hypertyService, dataObjectService, ramClient, time).start();
         }
     }
 }

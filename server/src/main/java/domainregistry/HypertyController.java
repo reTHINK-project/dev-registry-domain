@@ -276,16 +276,16 @@ public class HypertyController {
             return gson.toJson(dataObjects);
         });
 
-        // DELETE data object by its URL
-        delete("/hyperty/dataobject/url/*", (req, res) -> {
-            Gson gson = new Gson();
-            res.type("application/json");
-            String[] encodedURL = req.url().split("/");
-            String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
-            dataObjectService.deleteDataObject(connectionClient, dataObjectUrl);
-            res.status(200);
-            return gson.toJson(new Messages("Data object deleted"));
-        });
+        // // DELETE data object by its URL
+        // delete("/hyperty/dataobject/url#<{(|", (req, res) -> {
+        //     Gson gson = new Gson();
+        //     res.type("application/json");
+        //     String[] encodedURL = req.url().split("/");
+        //     String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
+        //     dataObjectService.deleteDataObject(connectionClient, dataObjectUrl);
+        //     res.status(200);
+        //     return gson.toJson(new Messages("Data object deleted"));
+        // });
 
         get("/throwexception", (request, response) -> {
             throw new DataNotFoundException();

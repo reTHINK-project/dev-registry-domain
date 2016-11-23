@@ -23,12 +23,16 @@ import org.apache.log4j.Logger;
 
 class HeartBeatThread extends Thread {
     static Logger log = Logger.getLogger(HeartBeatThread.class.getName());
-    HypertyService service;
+
+    HypertyService hypertyService;
+    DataObjectService dataObjectService;
+
     Connection storageClient;
     long time;
 
-    public HeartBeatThread(HypertyService service, Connection storageClient, long time){
-        this.service = service;
+    public HeartBeatThread(HypertyService hypertyService, DataObjectService dataObjectService, Connection storageClient, long time){
+        this.hypertyService = hypertyService;
+        this.dataObjectService = dataObjectService;
         this.time = time;
         this.storageClient = storageClient;
     }
@@ -39,6 +43,7 @@ class HeartBeatThread extends Thread {
             while(true){
                 TimeUnit.SECONDS.sleep(this.time);
                 changeHypertyStatus(this.storageClient);
+                changeDataObjectStatus(this.storageClient);
             }
         }catch(InterruptedException e){
             e.printStackTrace();
@@ -51,8 +56,17 @@ class HeartBeatThread extends Thread {
 
         if(!users.isEmpty()){
             for(String user : users){
-                service.deleteExpiredHyperties(storageClient, user);
+                hypertyService.deleteExpiredHyperties(storageClient, user);
             }
+        }
+    }
+
+    private void changeDataObjectStatus(Connection storageClient){
+        log.info("DataObject status verification has started...");
+        ArrayList<String> allDataObjects = storageClient.getAllDataObjects();
+
+        if(!allDataObjects.isEmpty()){
+            dataObjectService.deleteExpiredDataObjects(storageClient);
         }
     }
 }

@@ -107,7 +107,8 @@ public class CassandraClient implements Connection{
             .value("lastModified", dataObject.getLastModified())
             .value("reporter", dataObject.getReporter())
             .value("url", dataObject.getUrl())
-            .value("status", dataObject.getStatus());
+            .value("status", dataObject.getStatus())
+            .value("expires", dataObject.getExpires());
 
         if(getSession() != null){
             getSession().execute(statement);
@@ -150,6 +151,24 @@ public class CassandraClient implements Connection{
         return data;
     }
 
+
+    public ArrayList<String> getAllDataObjects(){
+        ArrayList<String> data = new ArrayList<String>();
+
+        Statement select = QueryBuilder.select().column("url").from(KEYSPACE, URLDATAOBJECTS);
+        ResultSet results = session.execute(select);
+
+        if(results == null) return new ArrayList();
+
+        for (Row row : results){
+            String dataObjectUrl = row.getString("url");
+            if(!data.contains(dataObjectUrl)){
+                data.add(dataObjectUrl);
+            }
+        }
+        return data;
+    }
+
     public HypertyInstance getHyperty(String hypertyID){
         Statement select = QueryBuilder.select().all().from(KEYSPACE, IDHYPERTIES)
                                                       .where(QueryBuilder.eq("hypertyID", hypertyID));
@@ -168,7 +187,7 @@ public class CassandraClient implements Connection{
         Row row = results.one();
         return new DataObjectInstance(row.getString("name"), row.getString("schem"), row.getList("dataSchemes", String.class),
                 row.getList("resources", String.class), row.getString("reporter"), row.getString("url"), row.getString("startingTime"),
-                row.getString("lastModified"), row.getString("status"));
+                row.getString("lastModified"), row.getString("status"), row.getInt("expires"));
     }
 
     public boolean hypertyExists(String hypertyID){
@@ -235,6 +254,23 @@ public class CassandraClient implements Connection{
         else log.error("Invalid cassandra session.");
     }
 
+    public Map<String, DataObjectInstance> getDataObjects(){
+        Map<String, DataObjectInstance> allDataObjects = new HashMap();
+
+        Statement select = QueryBuilder.select().all().from(KEYSPACE, URLDATAOBJECTS);
+
+        ResultSet results = session.execute(select);
+
+        if(results == null) return Collections.emptyMap();
+
+        for(Row row : results){
+            allDataObjects.put(row.getString("url"), new DataObjectInstance(row.getString("name"), row.getString("schem"), row.getList("dataSchemes", String.class),
+                                                                            row.getList("resources", String.class), row.getString("reporter"), row.getString("url"),
+                                                                            row.getString("startingTime"), row.getString("lastModified"), row.getString("status"), row.getInt("expires")));
+        }
+        return allDataObjects;
+    }
+
     public Map<String, HypertyInstance> getUserHyperties(String userID){
         log.info("Requested hyperties from user: " + userID);
         Map<String, HypertyInstance> allUserHyperties = new HashMap();
@@ -270,7 +306,7 @@ public class CassandraClient implements Connection{
         for(Row row : results){
             allHypertyDataObjects.put(row.getString("url"), new DataObjectInstance(row.getString("name"), row.getString("schem"), row.getList("dataSchemes", String.class),
                                                                               row.getList("resources", String.class), row.getString("reporter"), row.getString("url"),
-                                                                              row.getString("startingTime"), row.getString("lastModified"), row.getString("status")));
+                                                                              row.getString("startingTime"), row.getString("lastModified"), row.getString("status"), row.getInt("expires")));
         }
         return allHypertyDataObjects;
     }
@@ -288,7 +324,7 @@ public class CassandraClient implements Connection{
         for(Row row : results){
             foundDataObjects.put(row.getString("url"), new DataObjectInstance(row.getString("name"), row.getString("schem"), row.getList("dataSchemes", String.class),
                                                                               row.getList("resources", String.class), row.getString("reporter"), row.getString("url"),
-                                                                              row.getString("startingTime"), row.getString("lastModified"), row.getString("status")));
+                                                                              row.getString("startingTime"), row.getString("lastModified"), row.getString("status"), row.getInt("expires")));
         }
         return foundDataObjects;
     }
@@ -320,22 +356,32 @@ public class CassandraClient implements Connection{
 
     public void deleteDataObject(String dataObjectUrl){
         DataObjectInstance dataObject = getDataObjectByUrl(dataObjectUrl);
+        String oldStatus = dataObject.getStatus();
 
-        Statement deleteFromUrls = QueryBuilder.delete().from(KEYSPACE, URLDATAOBJECTS)
-                                                .where(QueryBuilder.eq("url", dataObjectUrl));
+        dataObject.setStatus(DEAD);
+        dataObject.setUrl(dataObjectUrl);
 
-        Statement deleteFromNames = QueryBuilder.delete().from(KEYSPACE, NAMEDATAOBJECTS)
-                                                .where(QueryBuilder.eq("name", dataObject.getName()))
-                                                .and(QueryBuilder.eq("url", dataObjectUrl));
+        String newStatus = dataObject.getStatus();
 
-        Statement deleteFromReporters = QueryBuilder.delete().from(KEYSPACE, REPORTERDATAOBJECTS)
-                                                .where(QueryBuilder.eq("reporter", dataObject.getReporter()))
-                                                .and(QueryBuilder.eq("url", dataObjectUrl));
+        insertDataObject(dataObject);
+        log.info("Changed dataObject " + dataObjectUrl + " status from " + oldStatus + " to " + newStatus);
 
-        getSession().execute(deleteFromReporters);
-        getSession().execute(deleteFromUrls);
-        getSession().execute(deleteFromNames);
-        log.info("Deleted from database dataobject with name: " + dataObjectUrl);
+        // Statement deleteFromUrls = QueryBuilder.delete().from(KEYSPACE, URLDATAOBJECTS)
+        //                                         .where(QueryBuilder.eq("url", dataObjectUrl));
+        //
+        //
+        // Statement deleteFromNames = QueryBuilder.delete().from(KEYSPACE, NAMEDATAOBJECTS)
+        //                                         .where(QueryBuilder.eq("name", dataObject.getName()))
+        //                                         .and(QueryBuilder.eq("url", dataObjectUrl));
+        //
+        // Statement deleteFromReporters = QueryBuilder.delete().from(KEYSPACE, REPORTERDATAOBJECTS)
+        //                                         .where(QueryBuilder.eq("reporter", dataObject.getReporter()))
+        //                                         .and(QueryBuilder.eq("url", dataObjectUrl));
+        //
+        // getSession().execute(deleteFromReporters);
+        // getSession().execute(deleteFromUrls);
+        // getSession().execute(deleteFromNames);
+        // log.info("Deleted from database dataobject with name: " + dataObjectUrl);
     }
 
     public Session getSession(){

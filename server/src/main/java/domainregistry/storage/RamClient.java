@@ -157,6 +157,18 @@ public class RamClient implements Connection{
     }
 
     public void deleteDataObject(String dataObjectUrl){
+        DataObjectInstance dataObject = dataObjects.get(dataObjectUrl);
+
         dataObjects.remove(dataObjectUrl);
+        dataObject.setStatus(DEAD);
+        dataObjects.put(dataObjectUrl, dataObject);
+    }
+
+    public ArrayList<String> getAllDataObjects(){
+        return new ArrayList<String>(dataObjects.keySet());
+    }
+
+    public Map<String, DataObjectInstance> getDataObjects(){
+        return dataObjects;
     }
 }

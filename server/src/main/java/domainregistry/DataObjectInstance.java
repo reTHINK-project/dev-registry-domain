@@ -28,6 +28,7 @@ public class DataObjectInstance {
     private List<String> resources;
     private List<String> dataSchemes;
     private String lastModified;
+    private Integer expires;
 
     public DataObjectInstance(){
     }
@@ -39,7 +40,7 @@ public class DataObjectInstance {
         this.name = name;
     }
 
-    public DataObjectInstance(String name, String schema, List<String> dataSchemes, List<String> resources, String reporter, String url, String startingTime, String lastModified, String status){
+    public DataObjectInstance(String name, String schema, List<String> dataSchemes, List<String> resources, String reporter, String url, String startingTime, String lastModified, String status, Integer expires){
         this.schema = schema;
         this.url = url;
         this.resources = resources;
@@ -49,6 +50,7 @@ public class DataObjectInstance {
         this.dataSchemes = dataSchemes;
         this.lastModified = lastModified;
         this.status = status;
+        this.expires = expires;
     }
 
     public List<String> getResources(){
@@ -57,6 +59,14 @@ public class DataObjectInstance {
 
     public void setResources(List<String> resources){
         this.resources = resources;
+    }
+
+    public Integer getExpires(){
+        return this.expires;
+    }
+
+    public void setExpires(int expires){
+        this.expires = expires;
     }
 
     public void setName(String name){
