@@ -28,7 +28,9 @@ describe 'domain registry api tests' do
       schema: "schema",
       reporter: "reporter",
       status: "created",
-      expires: 1000
+      expires: 1000,
+      runtime: "runtime",
+      p2pRequester: "requester"
     }
   }
 
@@ -46,7 +48,7 @@ describe 'domain registry api tests' do
     it 'should get data objects fields' do
       get '/hyperty/dataobject/url/url_test'
       expect_status(200)
-      expect_json_keys([:name, :startingTime, :lastModified, :reporter, :resources, :dataSchemes, :url, :schema, :status, :expires])
+      expect_json_keys([:name, :startingTime, :lastModified, :reporter, :resources, :dataSchemes, :url, :schema, :status, :expires, :runtime, :p2pRequester])
       expect(json_body[:resources]).to eql(["chat", "voice"])
       expect(json_body[:dataSchemes]).to eql(["comm"])
       expect(json_body[:name]).to eql("name")
@@ -55,6 +57,8 @@ describe 'domain registry api tests' do
       expect(json_body[:schema]).to eql("schema")
       expect(json_body[:status]).to eql("created")
       expect(json_body[:expires]).to eql(1000)
+      expect(json_body[:runtime]).to eql("runtime")
+      expect(json_body[:p2pRequester]).to eql("requester")
     end
 
     it 'should update url field' do
@@ -71,13 +75,17 @@ describe 'domain registry api tests' do
     it 'should get data objects fields' do
       get '/hyperty/dataobject/url/url_test'
       expect_status(200)
-      expect_json_keys([:name, :startingTime, :lastModified, :reporter, :resources, :dataSchemes, :url, :schema])
+      expect_json_keys([:name, :startingTime, :lastModified, :reporter, :resources, :dataSchemes, :url, :schema, :status, :expires, :runtime, :p2pRequester])
       expect(json_body[:resources]).to eql(["chat", "voice"])
       expect(json_body[:dataSchemes]).to eql(["comm"])
       expect(json_body[:name]).to eql("name")
       expect(json_body[:reporter]).to eql("reporter")
       expect(json_body[:url]).to eql("url_test")
       expect(json_body[:schema]).to eql("new_schema")
+      expect(json_body[:status]).to eql("created")
+      expect(json_body[:expires]).to eql(1000)
+      expect(json_body[:runtime]).to eql("runtime")
+      expect(json_body[:p2pRequester]).to eql("requester")
     end
 
     it 'should perform a keep alive' do
@@ -92,13 +100,17 @@ describe 'domain registry api tests' do
     it 'should get data objects fields' do
       get '/hyperty/dataobject/url/url_test'
       expect_status(200)
-      expect_json_keys([:name, :startingTime, :lastModified, :reporter, :resources, :dataSchemes, :url, :schema])
+      expect_json_keys([:name, :startingTime, :lastModified, :reporter, :resources, :dataSchemes, :url, :schema, :status, :expires, :runtime, :p2pRequester])
       expect(json_body[:resources]).to eql(["chat", "voice"])
       expect(json_body[:dataSchemes]).to eql(["comm"])
       expect(json_body[:name]).to eql("name")
       expect(json_body[:reporter]).to eql("reporter")
       expect(json_body[:url]).to eql("url_test")
       expect(json_body[:schema]).to eql("new_schema")
+      expect(json_body[:status]).to eql("created")
+      expect(json_body[:expires]).to eql(1000)
+      expect(json_body[:runtime]).to eql("runtime")
+      expect(json_body[:p2pRequester]).to eql("requester")
     end
 
     it 'should try to update an non existant data objects' do

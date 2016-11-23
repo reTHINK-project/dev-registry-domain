@@ -28,7 +28,9 @@ describe 'domain registry api tests' do
       resources: ["resource1"],
       dataSchemes: ["datascheme1"],
       status: "created",
-      expires: 1000
+      expires: 1000,
+      runtime: "runtime",
+      p2pRequester: "requester"
     }
 
     @data_object_two_details = {
@@ -38,7 +40,9 @@ describe 'domain registry api tests' do
       resources: ["resource2"],
       dataSchemes: ["datascheme2"],
       status: "created",
-      expires: 1000
+      expires: 1000,
+      runtime: "runtime",
+      p2pRequester: "requester"
     }
 
     @data_object_three_details = {
@@ -48,7 +52,9 @@ describe 'domain registry api tests' do
       resources: ["resource3"],
       dataSchemes: ["datascheme3"],
       status: "created",
-      expires: 1000
+      expires: 1000,
+      runtime: "runtime",
+      p2pRequester: "requester"
     }
 
     @data_object_four_details = {
@@ -92,13 +98,13 @@ describe 'domain registry api tests' do
     it 'should return a data object' do
       get '/url/url1'
       expect_status(200)
-      expect_json_sizes(10)
+      expect_json_sizes(12)
     end
 
     it 'should return a data object' do
       get '/url/url2'
       expect_status(200)
-      expect_json_sizes(10)
+      expect_json_sizes(12)
     end
 
     it 'should return a data not found error' do
