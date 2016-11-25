@@ -89,7 +89,10 @@ var hyperty = {
       'expires': body.value.expires,
       'resources': body.value.resources,
       'dataSchemes': body.value.dataSchemes,
-      'status': body.value.status
+      'status': body.value.status,
+      'runtime': body.value.runtime,
+      'p2pRequester': body.value.p2pRequester,
+      'p2pHandler': body.value.p2pHandler
     };
 
     request.put(url + endpoint, data, function(err, response, statusCode) {
@@ -121,7 +124,10 @@ var hyperty = {
         'expires': body.value.expires,
         'resources': body.value.resources,
         'dataSchemes': body.value.dataSchemes,
-        'status': body.value.status
+        'status': body.value.status,
+        'runtime': body.value.runtime,
+        'p2pRequester': body.value.p2pRequester,
+        'p2pHandler': body.value.p2pHandler
       };
     } else {
       data = {};
