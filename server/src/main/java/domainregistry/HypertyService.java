@@ -40,7 +40,7 @@ public class HypertyService{
         Map<String, HypertyInstance> hypertiesWithStatusUpdated = connectionClient.getUserHyperties(userID);
 
         if(connectionClient.userExists(userID) && allHypertiesAreUnavailable(hypertiesWithStatusUpdated)){
-            throw new TemporaryUnavailableException();
+            return hypertiesWithStatusUpdated;
         }
 
         if(connectionClient.userExists(userID) && !allUserHyperties.isEmpty()){
@@ -200,10 +200,9 @@ public class HypertyService{
         return expires > limit;
     }
 
-    private boolean allHypertiesAreUnavailable(Map<String, HypertyInstance> hyperties){
+    public boolean allHypertiesAreUnavailable(Map<String, HypertyInstance> hyperties){
         for (Map.Entry<String, HypertyInstance> entry : hyperties.entrySet()){
             String status = entry.getValue().getStatus();
-            log.debug("teste " + status);
             if(!status.equals(DEAD))
                 return false;
         }

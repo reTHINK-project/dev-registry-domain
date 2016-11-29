@@ -59,6 +59,12 @@ public class HypertyController {
             if(encodedURL.length == ALL_HYPERTIES_PATH_SIZE){
                 String userID = decodeUrl(encodedURL[encodedURL.length - 1]);
                 Map<String, HypertyInstance> userHyperties = hypertyService.getAllHyperties(connectionClient, userID);
+
+                if(hypertyService.allHypertiesAreUnavailable(userHyperties)){
+                    res.status(408);
+                    return gson.toJson(userHyperties);
+                }
+
                 res.status(200);
                 return gson.toJson(userHyperties);
             }
