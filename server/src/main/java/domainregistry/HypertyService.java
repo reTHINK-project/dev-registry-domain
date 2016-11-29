@@ -28,6 +28,7 @@ import org.apache.commons.lang3.ArrayUtils;
 public class HypertyService{
     static Logger log = Logger.getLogger(HypertyService.class.getName());
     private static final String EXPIRES = "EXPIRES";
+    private static final String DEAD = "disconnected";
 
     public Map<String, HypertyInstance> getAllHyperties(Connection connectionClient, String userID) {
         Map<String, HypertyInstance> allUserHyperties = connectionClient.getUserHyperties(userID);
@@ -36,11 +37,30 @@ public class HypertyService{
             deleteExpiredHyperties(connectionClient, userID);
         }
 
+        Map<String, HypertyInstance> hypertiesWithStatusUpdated = connectionClient.getUserHyperties(userID);
+
+        if(connectionClient.userExists(userID) && allHypertiesAreUnavailable(hypertiesWithStatusUpdated)){
+            throw new TemporaryUnavailableException();
+        }
+
         if(connectionClient.userExists(userID) && !allUserHyperties.isEmpty()){
-            return allUserHyperties;
+            return liveHyperties(hypertiesWithStatusUpdated);
         }
 
         else throw new UserNotFoundException();
+    }
+
+    private Map<String, HypertyInstance> liveHyperties(Map<String, HypertyInstance> hyperties){
+        Map<String, HypertyInstance> hypertiesToBeReturned = new HashMap();
+
+        for (Map.Entry<String, HypertyInstance> entry : hyperties.entrySet()){
+            String status = entry.getValue().getStatus();
+            if(!status.equals(DEAD)){
+                hypertiesToBeReturned.put(entry.getValue().getHypertyID(), entry.getValue());
+            }
+        }
+
+        return hypertiesToBeReturned;
     }
 
     public void updateHypertyFields(Connection connectionClient, HypertyInstance updatedHyperty){
@@ -178,5 +198,15 @@ public class HypertyService{
 
     private boolean validateExpiresField(long expires, long limit){
         return expires > limit;
+    }
+
+    private boolean allHypertiesAreUnavailable(Map<String, HypertyInstance> hyperties){
+        for (Map.Entry<String, HypertyInstance> entry : hyperties.entrySet()){
+            String status = entry.getValue().getStatus();
+            log.debug("teste " + status);
+            if(!status.equals(DEAD))
+                return false;
+        }
+        return true;
     }
 }

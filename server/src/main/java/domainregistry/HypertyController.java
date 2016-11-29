@@ -288,6 +288,16 @@ public class HypertyController {
         // });
 
         get("/throwexception", (request, response) -> {
+            throw new TemporaryUnavailableException();
+        });
+
+        exception(TemporaryUnavailableException.class, (e, req, res) -> {
+            Gson gson = new Gson();
+            res.status(408);
+            res.body(gson.toJson(new Messages("Temporary Unavailable")));
+        });
+
+        get("/throwexception", (request, response) -> {
             throw new DataNotFoundException();
         });
 

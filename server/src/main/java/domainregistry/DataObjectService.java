@@ -162,6 +162,7 @@ public class DataObjectService{
         }
     }
 
+
     private void newDataObject(Connection client, DataObjectInstance dataObject){
         dataObject.setStartingTime(Dates.getActualDate());
         dataObject.setLastModified(Dates.getActualDate());

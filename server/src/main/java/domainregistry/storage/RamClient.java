@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
 
 public class RamClient implements Connection{
     static Logger log = Logger.getLogger(RamClient.class.getName());
-    private static final String DEAD = "Dead";
+    private static final String DEAD = "disconnected";
 
     private Map<String, Map<String, HypertyInstance>> userServices = new HashMap<>();
     private Map<String, DataObjectInstance> dataObjects = new HashMap<>();

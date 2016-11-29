@@ -33,7 +33,7 @@ import static java.lang.System.out;
 
 public class CassandraClient implements Connection{
     private static final Logger log = LogManager.getLogger(CassandraClient.class.getName());
-    private static final String DEAD = "Dead";
+    private static final String DEAD = "disconnected";
 
     public static final String KEYSPACE  = "rethinkeyspace";
     public static final String IDHYPERTIES = "hyperties_by_id";
