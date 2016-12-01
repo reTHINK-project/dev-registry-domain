@@ -35,10 +35,10 @@ var JSRequest = {
       callback(null, response.getBody(), response.getCode());
     })
     .fail(function(error) {
-      if(error.getCode() != 404) {
+      if(error.getCode() != 404 && error.getCode() != 408) {
+        console.log("[REGISTRY-CONNECTOR] Error code: " + error.getCode() + " Error: " + error.getBody());
         callback(error);
       }else {
-        console.log("[REGISTRY-CONNECTOR] Error code: " + error.getCode() + " Error: " + error.getBody());
         callback(null, error.getBody(), error.getCode());
       }
     });
@@ -55,10 +55,10 @@ var JSRequest = {
       callback(null, response.getBody(), response.getCode());
     })
     .fail(function(error) {
-      if(error.getCode() != 404) {
+      if(error.getCode() != 404 && error.getCode() != 408) {
+        console.log("[REGISTRY-CONNECTOR] Error code: " + error.getCode() + " Error: " + error.getBody());
         callback(error);
       }else {
-        console.log("[REGISTRY-CONNECTOR] Error code: " + error.getCode() + " Error: " + error.getBody());
         callback(null, error.getBody(), error.getCode());
       }
     });
@@ -72,10 +72,10 @@ var JSRequest = {
       callback(null, response.getBody(), response.getCode());
     })
     .fail(function(e) {
-      if(error.getcode() != 404) {
+      if(error.getcode() != 404 && error.getCode() != 408) {
+        console.log("[REGISTRY-CONNECTOR] Error code: " + error.getCode() + " Error: " + error.getBody());
         callback(error);
       }else {
-        console.log("[REGISTRY-CONNECTOR] Error code: " + error.getCode() + " Error: " + error.getBody());
         callback(null, error.getbody(), error.getcode());
       }
     });
