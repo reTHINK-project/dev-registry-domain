@@ -29,6 +29,7 @@ public class HypertyService{
     static Logger log = Logger.getLogger(HypertyService.class.getName());
     private static final String EXPIRES = "EXPIRES";
     private static final String DEAD = "disconnected";
+    private static final String LIVE = "live";
 
     public Map<String, HypertyInstance> getAllHyperties(Connection connectionClient, String userID) {
         Map<String, HypertyInstance> allUserHyperties = connectionClient.getUserHyperties(userID);
@@ -114,6 +115,7 @@ public class HypertyService{
         HypertyInstance hyperty = connectionClient.getHyperty(hypertyID);
         hyperty.setLastModified(Dates.getActualDate());
         hyperty.setHypertyID(hypertyID);
+        hyperty.setStatus(LIVE);
         connectionClient.updateHyperty(hyperty);
     }
 
