@@ -101,7 +101,7 @@ describe 'domain registry api tests' do
       expect(json_body[:hyperty_keep_alive][:resources]).to eql(["chat", "voice"])
       expect(json_body[:hyperty_keep_alive][:dataSchemes]).to eql(["comm"])
       expect(json_body[:hyperty_keep_alive][:expires]).to eql(3000)
-      expect(json_body[:hyperty_keep_alive][:status]).to eql("created")
+      expect(json_body[:hyperty_keep_alive][:status]).to eql("live")
       expect(json_body[:hyperty_keep_alive][:runtime]).to eql("runtime")
       expect(json_body[:hyperty_keep_alive][:p2pRequester]).to eql("requester")
       expect(json_body[:hyperty_keep_alive][:p2pHandler]).to eql("handler")
