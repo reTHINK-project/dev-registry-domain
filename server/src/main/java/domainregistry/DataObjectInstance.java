@@ -23,10 +23,17 @@ public class DataObjectInstance {
     private String url;
     private String reporter;
     private String name;
+    private String status;
     private String startingTime;
     private List<String> resources;
     private List<String> dataSchemes;
     private String lastModified;
+    private Integer expires;
+
+    // P2P specs
+
+    private String runtime;
+    private String p2pRequester;
 
     public DataObjectInstance(){
     }
@@ -38,7 +45,7 @@ public class DataObjectInstance {
         this.name = name;
     }
 
-    public DataObjectInstance(String name, String schema, List<String> dataSchemes, List<String> resources, String reporter, String url, String startingTime, String lastModified){
+    public DataObjectInstance(String name, String schema, List<String> dataSchemes, List<String> resources, String reporter, String url, String startingTime, String lastModified, String status, Integer expires, String runtime, String p2pRequester){
         this.schema = schema;
         this.url = url;
         this.resources = resources;
@@ -47,6 +54,10 @@ public class DataObjectInstance {
         this.startingTime = startingTime;
         this.dataSchemes = dataSchemes;
         this.lastModified = lastModified;
+        this.runtime = runtime;
+        this.p2pRequester = p2pRequester;
+        this.status = status;
+        this.expires = expires;
     }
 
     public List<String> getResources(){
@@ -55,6 +66,14 @@ public class DataObjectInstance {
 
     public void setResources(List<String> resources){
         this.resources = resources;
+    }
+
+    public Integer getExpires(){
+        return this.expires;
+    }
+
+    public void setExpires(int expires){
+        this.expires = expires;
     }
 
     public void setName(String name){
@@ -103,5 +122,31 @@ public class DataObjectInstance {
 
     public void setDataSchemes(List<String> dataSchemes){
         this.dataSchemes = dataSchemes;
+    }
+
+    public String getStatus(){
+        return this.status;
+    }
+
+    public void setStatus(String status){
+        this.status = status;
+    }
+
+    // P2P
+
+    public void setRuntime(String runtime){
+        this.runtime = runtime;
+    }
+
+    public String getRuntime(){
+        return this.runtime;
+    }
+
+    public void setRequester(String p2pRequester){
+        this.p2pRequester = p2pRequester;
+    }
+
+    public String getRequester(){
+        return this.p2pRequester;
     }
 }

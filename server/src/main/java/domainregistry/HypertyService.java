@@ -19,11 +19,17 @@ package domainregistry;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import org.apache.log4j.Logger;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.apache.commons.lang3.ArrayUtils;
 
 public class HypertyService{
     static Logger log = Logger.getLogger(HypertyService.class.getName());
     private static final String EXPIRES = "EXPIRES";
+    private static final String DEAD = "disconnected";
+    private static final String LIVE = "live";
 
     public Map<String, HypertyInstance> getAllHyperties(Connection connectionClient, String userID) {
         Map<String, HypertyInstance> allUserHyperties = connectionClient.getUserHyperties(userID);
@@ -32,11 +38,51 @@ public class HypertyService{
             deleteExpiredHyperties(connectionClient, userID);
         }
 
+        Map<String, HypertyInstance> hypertiesWithStatusUpdated = connectionClient.getUserHyperties(userID);
+
+        if(connectionClient.userExists(userID) && allHypertiesAreUnavailable(hypertiesWithStatusUpdated)){
+            return hypertiesWithStatusUpdated;
+        }
+
         if(connectionClient.userExists(userID) && !allUserHyperties.isEmpty()){
-            return allUserHyperties;
+            return liveHyperties(hypertiesWithStatusUpdated);
         }
 
         else throw new UserNotFoundException();
+    }
+
+    private Map<String, HypertyInstance> liveHyperties(Map<String, HypertyInstance> hyperties){
+        Map<String, HypertyInstance> hypertiesToBeReturned = new HashMap();
+
+        for (Map.Entry<String, HypertyInstance> entry : hyperties.entrySet()){
+            String status = entry.getValue().getStatus();
+            if(!status.equals(DEAD)){
+                hypertiesToBeReturned.put(entry.getValue().getHypertyID(), entry.getValue());
+            }
+        }
+
+        return hypertiesToBeReturned;
+    }
+
+    public void updateHypertyFields(Connection connectionClient, HypertyInstance updatedHyperty){
+        Gson gson = new Gson();
+        String hypertyID = updatedHyperty.getHypertyID();
+
+        if(!connectionClient.hypertyExists(hypertyID))
+            throw new CouldNotCreateOrUpdateHypertyException();
+
+        HypertyInstance oldHyperty = connectionClient.getHyperty(hypertyID);
+
+        String oldHypertyJson = gson.toJson(oldHyperty);
+        String updatedHypertyJson = gson.toJson(updatedHyperty);
+
+        log.info("FIELDS TO PERFORM THE UPDATE " + updatedHypertyJson);
+
+        String resultJson = JsonHelper.mergeJsons(updatedHypertyJson, oldHypertyJson);
+
+        log.info("RESULT JSON: " + resultJson);
+
+        updateHyperty(connectionClient, gson.fromJson(resultJson, HypertyInstance.class));
     }
 
     public void createUserHyperty(Connection connectionClient, HypertyInstance newHyperty){
@@ -58,6 +104,19 @@ public class HypertyService{
             throw new CouldNotCreateOrUpdateHypertyException();
 
         else newHyperty(connectionClient, newHyperty);
+    }
+
+    public void keepAlive(Connection connectionClient, String hypertyID){
+        if(!connectionClient.hypertyExists(hypertyID))
+            throw new DataNotFoundException();
+
+        log.info("Keep alive hyperty: " + hypertyID);
+
+        HypertyInstance hyperty = connectionClient.getHyperty(hypertyID);
+        hyperty.setLastModified(Dates.getActualDate());
+        hyperty.setHypertyID(hypertyID);
+        hyperty.setStatus(LIVE);
+        connectionClient.updateHyperty(hyperty);
     }
 
     public void deleteUserHyperty(Connection connectionClient, String userID, String hypertyID){
@@ -141,5 +200,14 @@ public class HypertyService{
 
     private boolean validateExpiresField(long expires, long limit){
         return expires > limit;
+    }
+
+    public boolean allHypertiesAreUnavailable(Map<String, HypertyInstance> hyperties){
+        for (Map.Entry<String, HypertyInstance> entry : hyperties.entrySet()){
+            String status = entry.getValue().getStatus();
+            if(!status.equals(DEAD))
+                return false;
+        }
+        return true;
     }
 }

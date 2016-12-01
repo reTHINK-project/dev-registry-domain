@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 
 public class RamClient implements Connection{
     static Logger log = Logger.getLogger(RamClient.class.getName());
+    private static final String DEAD = "disconnected";
 
     private Map<String, Map<String, HypertyInstance>> userServices = new HashMap<>();
     private Map<String, DataObjectInstance> dataObjects = new HashMap<>();
@@ -46,8 +47,16 @@ public class RamClient implements Connection{
 
         for (String userID : users) {
             if(userServices.get(userID).keySet().contains(hypertyID)){
+                HypertyInstance hyperty = userServices.get(userID).get(hypertyID);
+
+                String oldStatus = hyperty.getStatus();
+                hyperty.setStatus(DEAD);
+                String newStatus = hyperty.getStatus();
+
                 userServices.get(userID).keySet().remove(hypertyID);
-                log.info("Removed hyperty " + hypertyID + " from " + userID);
+                userServices.get(userID).put(hypertyID, hyperty);
+
+                log.info("Changed hyperty " + hypertyID + " status from " + oldStatus + " to " + newStatus);
             }
             if(userServices.get(userID).keySet().isEmpty()){
                 userServices.remove(userID);
@@ -148,6 +157,18 @@ public class RamClient implements Connection{
     }
 
     public void deleteDataObject(String dataObjectUrl){
+        DataObjectInstance dataObject = dataObjects.get(dataObjectUrl);
+
         dataObjects.remove(dataObjectUrl);
+        dataObject.setStatus(DEAD);
+        dataObjects.put(dataObjectUrl, dataObject);
+    }
+
+    public ArrayList<String> getAllDataObjects(){
+        return new ArrayList<String>(dataObjects.keySet());
+    }
+
+    public Map<String, DataObjectInstance> getDataObjects(){
+        return dataObjects;
     }
 }

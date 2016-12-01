@@ -17,22 +17,69 @@
 package domainregistry;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class DataObjectService{
     static Logger log = Logger.getLogger(DataObjectService.class.getName());
+    private static final String EXPIRES = "EXPIRES";
 
     private Map<String, DataObjectInstance> dataObjects = new HashMap<>();
 
     public void createDataObject(Connection client, DataObjectInstance dataObject){
         String dataObjectUrl = dataObject.getUrl();
+        long expiresLimit = Long.valueOf(System.getenv(EXPIRES)).longValue();
+
+        if(validateExpiresField(dataObject.getExpires(), expiresLimit)){
+            dataObject.setExpires((int) expiresLimit);
+            log.info("Expires was set to the max value allowed by the Domain Registry: " + expiresLimit);
+        }
 
         if(client.dataObjectExists(dataObjectUrl))
             updateDataObject(client, dataObject);
 
         else newDataObject(client, dataObject);
+    }
+
+    private boolean validateExpiresField(long expires, long limit){
+        return expires > limit;
+    }
+
+    public void updateDataObjectFields(Connection connectionClient, DataObjectInstance updatedDataObject){
+        Gson gson = new Gson();
+        String dataObjectUrl = updatedDataObject.getUrl();
+
+        if(!connectionClient.dataObjectExists(dataObjectUrl))
+            throw new DataObjectNotFoundException();
+
+        DataObjectInstance oldDataObject = connectionClient.getDataObjectByUrl(dataObjectUrl);
+
+        String oldDataObjectJson = gson.toJson(oldDataObject);
+        String updatedDataObjectJson = gson.toJson(updatedDataObject);
+
+        log.info("FIELDS DATA OBJECT TO PERFORM THE UPDATE " + updatedDataObjectJson);
+
+        String resultJson = JsonHelper.mergeJsons(updatedDataObjectJson, oldDataObjectJson);
+
+        log.info("RESULT DATA OBJECT JSON: " + resultJson);
+
+        updateDataObject(connectionClient, gson.fromJson(resultJson, DataObjectInstance.class));
+    }
+
+    public void keepAlive(Connection client, String dataObjectUrl){
+        if(client.dataObjectExists(dataObjectUrl)){
+            DataObjectInstance dataObject = client.getDataObjectByUrl(dataObjectUrl);
+            dataObject.setLastModified(Dates.getActualDate());
+            client.insertDataObject(dataObject);
+        }
+
+        else throw new DataNotFoundException();
     }
 
     public DataObjectInstance getDataObject(Connection client, String dataObjectUrl){
@@ -100,12 +147,21 @@ public class DataObjectService{
         else throw new DataObjectNotFoundException();
     }
 
-    public void deleteDataObject(Connection client, String dataObjectUrl){
-        if(client.dataObjectExists(dataObjectUrl))
-            client.deleteDataObject(dataObjectUrl);
+    public void deleteExpiredDataObjects(Connection client){
+        String actualDate = Dates.getActualDate();
 
-        else throw new DataNotFoundException();
+        Map<String, DataObjectInstance> allDataObjects = client.getDataObjects();
+        Map<String, DataObjectInstance> dataObjects = new ConcurrentHashMap<String, DataObjectInstance>(allDataObjects);
+
+        for (Map.Entry<String, DataObjectInstance> entry : dataObjects.entrySet()){
+            String lastModified = entry.getValue().getLastModified();
+            int expires = entry.getValue().getExpires();
+            if(Dates.dateCompare(actualDate, lastModified) > expires){
+                client.deleteDataObject(entry.getKey());
+            }
+        }
     }
+
 
     private void newDataObject(Connection client, DataObjectInstance dataObject){
         dataObject.setStartingTime(Dates.getActualDate());

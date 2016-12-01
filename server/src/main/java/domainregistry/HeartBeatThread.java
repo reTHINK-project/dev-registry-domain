@@ -23,12 +23,16 @@ import org.apache.log4j.Logger;
 
 class HeartBeatThread extends Thread {
     static Logger log = Logger.getLogger(HeartBeatThread.class.getName());
-    HypertyService service;
+
+    HypertyService hypertyService;
+    DataObjectService dataObjectService;
+
     Connection storageClient;
     long time;
 
-    public HeartBeatThread(HypertyService service, Connection storageClient, long time){
-        this.service = service;
+    public HeartBeatThread(HypertyService hypertyService, DataObjectService dataObjectService, Connection storageClient, long time){
+        this.hypertyService = hypertyService;
+        this.dataObjectService = dataObjectService;
         this.time = time;
         this.storageClient = storageClient;
     }
@@ -38,21 +42,31 @@ class HeartBeatThread extends Thread {
         try{
             while(true){
                 TimeUnit.SECONDS.sleep(this.time);
-                removeOldHyperties(this.storageClient);
+                changeHypertyStatus(this.storageClient);
+                changeDataObjectStatus(this.storageClient);
             }
         }catch(InterruptedException e){
             e.printStackTrace();
         }
     }
 
-    private void removeOldHyperties(Connection storageClient){
-        log.info("Expired hyperties verification has started...");
+    private void changeHypertyStatus(Connection storageClient){
+        log.info("Hyperty status verification has started...");
         ArrayList<String> users = storageClient.getAllUsers();
 
         if(!users.isEmpty()){
             for(String user : users){
-                service.deleteExpiredHyperties(storageClient, user);
+                hypertyService.deleteExpiredHyperties(storageClient, user);
             }
+        }
+    }
+
+    private void changeDataObjectStatus(Connection storageClient){
+        log.info("DataObject status verification has started...");
+        ArrayList<String> allDataObjects = storageClient.getAllDataObjects();
+
+        if(!allDataObjects.isEmpty()){
+            dataObjectService.deleteExpiredDataObjects(storageClient);
         }
     }
 }

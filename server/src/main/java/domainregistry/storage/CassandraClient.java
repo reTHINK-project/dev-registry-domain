@@ -33,6 +33,7 @@ import static java.lang.System.out;
 
 public class CassandraClient implements Connection{
     private static final Logger log = LogManager.getLogger(CassandraClient.class.getName());
+    private static final String DEAD = "disconnected";
 
     public static final String KEYSPACE  = "rethinkeyspace";
     public static final String IDHYPERTIES = "hyperties_by_id";
@@ -79,7 +80,11 @@ public class CassandraClient implements Connection{
             .value("dataSchemes", hyperty.getDataSchemes())
             .value("startingTime", hyperty.getStartingTime())
             .value("lastModified", hyperty.getLastModified())
-            .value("expires", hyperty.getExpires());
+            .value("runtime", hyperty.getRuntime())
+            .value("p2pRequester", hyperty.getRequester())
+            .value("p2pHandler", hyperty.getHandler())
+            .value("expires", hyperty.getExpires())
+            .value("status", hyperty.getStatus());
 
         if(getSession() != null){
             getSession().execute(statement);
@@ -100,10 +105,15 @@ public class CassandraClient implements Connection{
             .value("name", dataObjectName)
             .value("schem", dataObject.getSchema())
             .value("resources", dataObject.getResources())
+            .value("dataSchemes", dataObject.getDataSchemes())
             .value("startingTime", dataObject.getStartingTime())
             .value("lastModified", dataObject.getLastModified())
+            .value("runtime", dataObject.getRuntime())
+            .value("p2pRequester", dataObject.getRequester())
             .value("reporter", dataObject.getReporter())
-            .value("url", dataObject.getUrl());
+            .value("url", dataObject.getUrl())
+            .value("status", dataObject.getStatus())
+            .value("expires", dataObject.getExpires());
 
         if(getSession() != null){
             getSession().execute(statement);
@@ -146,6 +156,24 @@ public class CassandraClient implements Connection{
         return data;
     }
 
+
+    public ArrayList<String> getAllDataObjects(){
+        ArrayList<String> data = new ArrayList<String>();
+
+        Statement select = QueryBuilder.select().column("url").from(KEYSPACE, URLDATAOBJECTS);
+        ResultSet results = session.execute(select);
+
+        if(results == null) return new ArrayList();
+
+        for (Row row : results){
+            String dataObjectUrl = row.getString("url");
+            if(!data.contains(dataObjectUrl)){
+                data.add(dataObjectUrl);
+            }
+        }
+        return data;
+    }
+
     public HypertyInstance getHyperty(String hypertyID){
         Statement select = QueryBuilder.select().all().from(KEYSPACE, IDHYPERTIES)
                                                       .where(QueryBuilder.eq("hypertyID", hypertyID));
@@ -153,7 +181,8 @@ public class CassandraClient implements Connection{
         Row row = results.one();
         return new HypertyInstance(row.getString("descriptor"), row.getString("startingTime"),
                 row.getString("user"), row.getList("resources", String.class), row.getList("dataSchemes", String.class),
-                row.getString("lastModified"), row.getInt("expires"));
+                row.getString("runtime"), row.getString("p2pRequester"), row.getString("p2pHandler"),
+                row.getString("lastModified"), row.getInt("expires"), row.getString("status"));
 
     }
 
@@ -164,7 +193,7 @@ public class CassandraClient implements Connection{
         Row row = results.one();
         return new DataObjectInstance(row.getString("name"), row.getString("schem"), row.getList("dataSchemes", String.class),
                 row.getList("resources", String.class), row.getString("reporter"), row.getString("url"), row.getString("startingTime"),
-                row.getString("lastModified"));
+                row.getString("lastModified"), row.getString("status"), row.getInt("expires"), row.getString("runtime"), row.getString("p2pRequester"));
     }
 
     public boolean hypertyExists(String hypertyID){
@@ -205,6 +234,10 @@ public class CassandraClient implements Connection{
                                        .and(QueryBuilder.set("resources", hyperty.getResources()))
                                        .and(QueryBuilder.set("dataSchemes", hyperty.getDataSchemes()))
                                        .and(QueryBuilder.set("expires", hyperty.getExpires()))
+                                       .and(QueryBuilder.set("runtime", hyperty.getRuntime()))
+                                       .and(QueryBuilder.set("p2pRequester", hyperty.getRequester()))
+                                       .and(QueryBuilder.set("p2pHandler", hyperty.getHandler()))
+                                       .and(QueryBuilder.set("status", hyperty.getStatus()))
                                        .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()));
         if(getSession() != null){
             getSession().execute(update);
@@ -220,6 +253,10 @@ public class CassandraClient implements Connection{
                                        .and(QueryBuilder.set("resources", hyperty.getResources()))
                                        .and(QueryBuilder.set("dataSchemes", hyperty.getDataSchemes()))
                                        .and(QueryBuilder.set("expires", hyperty.getExpires()))
+                                       .and(QueryBuilder.set("runtime", hyperty.getRuntime()))
+                                       .and(QueryBuilder.set("p2pRequester", hyperty.getRequester()))
+                                       .and(QueryBuilder.set("p2pHandler", hyperty.getHandler()))
+                                       .and(QueryBuilder.set("status", hyperty.getStatus()))
                                        .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()))
                                        .and(QueryBuilder.eq("user", hyperty.getUserID()));
         if(getSession() != null){
@@ -227,6 +264,24 @@ public class CassandraClient implements Connection{
             log.info("Updated in database hyperty with ID: " + hyperty.getHypertyID() + " from user " + hyperty.getUserID());
         }
         else log.error("Invalid cassandra session.");
+    }
+
+    public Map<String, DataObjectInstance> getDataObjects(){
+        Map<String, DataObjectInstance> allDataObjects = new HashMap();
+
+        Statement select = QueryBuilder.select().all().from(KEYSPACE, URLDATAOBJECTS);
+
+        ResultSet results = session.execute(select);
+
+        if(results == null) return Collections.emptyMap();
+
+        for(Row row : results){
+            allDataObjects.put(row.getString("url"), new DataObjectInstance(row.getString("name"), row.getString("schem"), row.getList("dataSchemes", String.class),
+                        row.getList("resources", String.class), row.getString("reporter"), row.getString("url"),
+                        row.getString("startingTime"), row.getString("lastModified"), row.getString("status"), row.getInt("expires"),
+                        row.getString("runtime"), row.getString("p2pRequester")));
+        }
+        return allDataObjects;
     }
 
     public Map<String, HypertyInstance> getUserHyperties(String userID){
@@ -245,7 +300,11 @@ public class CassandraClient implements Connection{
                                                                                  row.getList("dataSchemes", String.class),
                                                                                  row.getString("startingTime"),
                                                                                  row.getString("lastModified"),
-                                                                                 row.getInt("expires")));
+                                                                                 row.getInt("expires"),
+                                                                                 row.getString("status"),
+                                                                                 row.getString("p2pRequester"),
+                                                                                 row.getString("p2pHandler"),
+                                                                                 row.getString("runtime")));
         }
         return allUserHyperties;
     }
@@ -263,7 +322,8 @@ public class CassandraClient implements Connection{
         for(Row row : results){
             allHypertyDataObjects.put(row.getString("url"), new DataObjectInstance(row.getString("name"), row.getString("schem"), row.getList("dataSchemes", String.class),
                                                                               row.getList("resources", String.class), row.getString("reporter"), row.getString("url"),
-                                                                              row.getString("startingTime"), row.getString("lastModified")));
+                                                                              row.getString("startingTime"), row.getString("lastModified"), row.getString("status"), row.getInt("expires"),
+                                                                              row.getString("runtime"), row.getString("p2pRequester")));
         }
         return allHypertyDataObjects;
     }
@@ -281,7 +341,8 @@ public class CassandraClient implements Connection{
         for(Row row : results){
             foundDataObjects.put(row.getString("url"), new DataObjectInstance(row.getString("name"), row.getString("schem"), row.getList("dataSchemes", String.class),
                                                                               row.getList("resources", String.class), row.getString("reporter"), row.getString("url"),
-                                                                              row.getString("startingTime"), row.getString("lastModified")));
+                                                                              row.getString("startingTime"), row.getString("lastModified"), row.getString("status"), row.getInt("expires"),
+                                                                              row.getString("runtime"), row.getString("p2pRequester")));
         }
         return foundDataObjects;
     }
@@ -289,36 +350,56 @@ public class CassandraClient implements Connection{
     public void deleteUserHyperty(String hypertyID){
         HypertyInstance hyperty = getHyperty(hypertyID);
 
-        Statement deleteFromID = QueryBuilder.delete().from(KEYSPACE, IDHYPERTIES)
-                                                      .where(QueryBuilder.eq("hypertyID", hypertyID));
+        String oldStatus = hyperty.getStatus();
+        hyperty.setStatus(DEAD);
+        hyperty.setHypertyID(hypertyID);
+        String newStatus = hyperty.getStatus();
 
-        Statement deleteFromUsers = QueryBuilder.delete().from(KEYSPACE, USERHYPERTIES)
-                                                      .where(QueryBuilder.eq("user", hyperty.getUserID()))
-                                                      .and(QueryBuilder.eq("hypertyid", hypertyID));
+        updateHyperty(hyperty);
 
-        getSession().execute(deleteFromID);
-        getSession().execute(deleteFromUsers);
-        log.info("Deleted from database hyperty with ID: " + hypertyID);
+        log.info("Changed hyperty " + hypertyID + " status from " + oldStatus + " to " + newStatus);
+
+        // log.info("Deleted from database hyperty with ID: " + hypertyID);
+
+        // Statement deleteFromID = QueryBuilder.delete().from(KEYSPACE, IDHYPERTIES)
+        //                                               .where(QueryBuilder.eq("hypertyID", hypertyID));
+        //
+        // Statement deleteFromUsers = QueryBuilder.delete().from(KEYSPACE, USERHYPERTIES)
+        //                                               .where(QueryBuilder.eq("user", hyperty.getUserID()))
+        //                                               .and(QueryBuilder.eq("hypertyid", hypertyID));
+        //
+        // getSession().execute(deleteFromID);
+        // getSession().execute(deleteFromUsers);
     }
 
     public void deleteDataObject(String dataObjectUrl){
         DataObjectInstance dataObject = getDataObjectByUrl(dataObjectUrl);
+        String oldStatus = dataObject.getStatus();
 
-        Statement deleteFromUrls = QueryBuilder.delete().from(KEYSPACE, URLDATAOBJECTS)
-                                                .where(QueryBuilder.eq("url", dataObjectUrl));
+        dataObject.setStatus(DEAD);
+        dataObject.setUrl(dataObjectUrl);
 
-        Statement deleteFromNames = QueryBuilder.delete().from(KEYSPACE, NAMEDATAOBJECTS)
-                                                .where(QueryBuilder.eq("name", dataObject.getName()))
-                                                .and(QueryBuilder.eq("url", dataObjectUrl));
+        String newStatus = dataObject.getStatus();
 
-        Statement deleteFromReporters = QueryBuilder.delete().from(KEYSPACE, REPORTERDATAOBJECTS)
-                                                .where(QueryBuilder.eq("reporter", dataObject.getReporter()))
-                                                .and(QueryBuilder.eq("url", dataObjectUrl));
+        insertDataObject(dataObject);
+        log.info("Changed dataObject " + dataObjectUrl + " status from " + oldStatus + " to " + newStatus);
 
-        getSession().execute(deleteFromReporters);
-        getSession().execute(deleteFromUrls);
-        getSession().execute(deleteFromNames);
-        log.info("Deleted from database dataobject with name: " + dataObjectUrl);
+        // Statement deleteFromUrls = QueryBuilder.delete().from(KEYSPACE, URLDATAOBJECTS)
+        //                                         .where(QueryBuilder.eq("url", dataObjectUrl));
+        //
+        //
+        // Statement deleteFromNames = QueryBuilder.delete().from(KEYSPACE, NAMEDATAOBJECTS)
+        //                                         .where(QueryBuilder.eq("name", dataObject.getName()))
+        //                                         .and(QueryBuilder.eq("url", dataObjectUrl));
+        //
+        // Statement deleteFromReporters = QueryBuilder.delete().from(KEYSPACE, REPORTERDATAOBJECTS)
+        //                                         .where(QueryBuilder.eq("reporter", dataObject.getReporter()))
+        //                                         .and(QueryBuilder.eq("url", dataObjectUrl));
+        //
+        // getSession().execute(deleteFromReporters);
+        // getSession().execute(deleteFromUrls);
+        // getSession().execute(deleteFromNames);
+        // log.info("Deleted from database dataobject with name: " + dataObjectUrl);
     }
 
     public Session getSession(){

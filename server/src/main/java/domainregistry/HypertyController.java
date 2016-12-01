@@ -42,6 +42,7 @@ public class HypertyController {
         });
 
 
+        // GET live page
         get("/live", (req, res) -> {
             Gson gson = new Gson();
             this.numReads++;
@@ -53,6 +54,7 @@ public class HypertyController {
         });
 
 
+        // GET user hyperties
         get("/hyperty/user/*", (req,res) -> {
             Gson gson = new Gson();
             this.numReads++;
@@ -62,6 +64,12 @@ public class HypertyController {
             if(encodedURL.length == ALL_HYPERTIES_PATH_SIZE){
                 String userID = decodeUrl(encodedURL[encodedURL.length - 1]);
                 Map<String, HypertyInstance> userHyperties = hypertyService.getAllHyperties(connectionClient, userID);
+
+                if(hypertyService.allHypertiesAreUnavailable(userHyperties)){
+                    res.status(408);
+                    return gson.toJson(userHyperties);
+                }
+
                 res.status(200);
                 return gson.toJson(userHyperties);
             }
@@ -85,6 +93,32 @@ public class HypertyController {
             return gson.toJson(userHyperties);
         });
 
+        // PUT Hyperty keep alive and field update
+        put("/hyperty/url/*", (req,res) -> {
+            Gson gson = new Gson();
+            res.type("application/json");
+            String body = req.body();
+            String[] encodedURL = req.url().split("/");
+            String hypertyID = decodeUrl(encodedURL[encodedURL.length - 1]);
+
+
+            if(body.equals("{}")){
+                hypertyService.keepAlive(connectionClient, hypertyID);
+                res.status(200);
+                return gson.toJson(new Messages("Keep alive"));
+            }
+
+            else{
+                log.info("RECEIVED BODY WITH UPDATE VALUES " + body);
+                HypertyInstance hyperty = gson.fromJson(body, HypertyInstance.class);
+                hyperty.setHypertyID(hypertyID);
+                hypertyService.updateHypertyFields(connectionClient, hyperty);
+                res.status(200);
+                return gson.toJson(new Messages("Hyperty updated"));
+            }
+        });
+
+        // User Hyperty creation
         put("/hyperty/user/*", (req,res) -> {
             Gson gson = new Gson();
             this.numWrites++;
@@ -101,6 +135,8 @@ public class HypertyController {
             return gson.toJson(new Messages("Hyperty created"));
         });
 
+
+        // DELETE user Hyperty
         delete("/hyperty/user/*", (req,res) -> {
             Gson gson = new Gson();
             res.type("application/json");
@@ -112,7 +148,8 @@ public class HypertyController {
             return gson.toJson(new Messages("Hyperty deleted"));
         });
 
-        put("hyperty/dataobject/*", (req, res) -> {
+        // Create data object
+        put("/hyperty/dataobject/*", (req, res) -> {
             Gson gson = new Gson();
             this.numWrites++;
             res.type("application/json");
@@ -126,6 +163,32 @@ public class HypertyController {
             return gson.toJson(new Messages("Data object created"));
         });
 
+        // PUT Data object keep alive and field update
+        put("/dataobject/url/*", (req,res) -> {
+            Gson gson = new Gson();
+            res.type("application/json");
+            String body = req.body();
+            String[] encodedURL = req.url().split("/");
+            String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
+
+
+            if(body.equals("{}")){
+                dataObjectService.keepAlive(connectionClient, dataObjectUrl);
+                res.status(200);
+                return gson.toJson(new Messages("Keep alive"));
+            }
+
+            else{
+                log.info("RECEIVED DATA OBJECT BODY WITH UPDATE VALUES " + body);
+                DataObjectInstance dataObject = gson.fromJson(body, DataObjectInstance.class);
+                dataObject.setUrl(dataObjectUrl);
+                dataObjectService.updateDataObjectFields(connectionClient, dataObject);
+                res.status(200);
+                return gson.toJson(new Messages("data object updated"));
+            }
+        });
+
+        // GET data object by its URL
         get("hyperty/dataobject/url/*", (req, res) -> {
             Gson gson = new Gson();
             this.numReads++;
@@ -158,6 +221,7 @@ public class HypertyController {
             return gson.toJson(dataObjects);
         });
 
+        // GET data object by its reporter
         get("hyperty/dataobject/reporter/*", (req, res) -> {
             Gson gson = new Gson();
             this.numReads++;
@@ -190,6 +254,7 @@ public class HypertyController {
             return gson.toJson(dataObjects);
         });
 
+        // GET data object by its name
         get("hyperty/dataobject/name/*", (req, res) -> {
             Gson gson = new Gson();
             this.numReads++;
@@ -222,14 +287,25 @@ public class HypertyController {
             return gson.toJson(dataObjects);
         });
 
-        delete("/hyperty/dataobject/url/*", (req, res) -> {
+        // // DELETE data object by its URL
+        // delete("/hyperty/dataobject/url#<{(|", (req, res) -> {
+        //     Gson gson = new Gson();
+        //     res.type("application/json");
+        //     String[] encodedURL = req.url().split("/");
+        //     String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
+        //     dataObjectService.deleteDataObject(connectionClient, dataObjectUrl);
+        //     res.status(200);
+        //     return gson.toJson(new Messages("Data object deleted"));
+        // });
+
+        get("/throwexception", (request, response) -> {
+            throw new TemporaryUnavailableException();
+        });
+
+        exception(TemporaryUnavailableException.class, (e, req, res) -> {
             Gson gson = new Gson();
-            res.type("application/json");
-            String[] encodedURL = req.url().split("/");
-            String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
-            dataObjectService.deleteDataObject(connectionClient, dataObjectUrl);
-            res.status(200);
-            return gson.toJson(new Messages("Data object deleted"));
+            res.status(408);
+            res.body(gson.toJson(new Messages("Temporary Unavailable")));
         });
 
         get("/throwexception", (request, response) -> {
