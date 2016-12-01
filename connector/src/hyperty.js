@@ -12,6 +12,12 @@ var search = function(body, request, url, callback) {
         'code': statusCode,
         'value': response
       };
+    }else if(statusCode == 408) {
+      var body = {
+        'code': statusCode,
+        'description': 'Temporarily Unavailable',
+        'value': response
+      };
     }else {
       var body = {
         'code': statusCode,
@@ -58,6 +64,12 @@ var advancedSearch = function(body, request, url, callback) {
     }else if(statusCode == 200) {
       var body = {
         'code': statusCode,
+        'value': response
+      };
+    }else if(statusCode == 408) {
+      var body = {
+        'code': statusCode,
+        'description': 'Temporarily Unavailable',
         'value': response
       };
     }else {
