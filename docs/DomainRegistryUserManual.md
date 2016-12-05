@@ -81,7 +81,7 @@ cqlsh>
 Paste the following configuration into your cqlsh prompt to create a keyspace, and two hyperties's tables:
 
 ```
-CREATE KEYSPACE rethinkeyspace WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3};
+CREATE KEYSPACE rethinkeyspace WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 4};
 
 use rethinkeyspace;
 
@@ -90,59 +90,82 @@ CREATE TABLE hyperties_by_id (
     user text,
     descriptor text,
     startingTime text,
+    status text,
     lastModified text,
     expires int,
+    runtime text,
+    p2pRequester text,
+    p2pHandler text,
     resources list<text>,
     dataSchemes list<text>,
     PRIMARY KEY(hypertyid)
-);
+    );
 
 CREATE TABLE data_objects_by_url (
     name text,
     schem text,
     startingTime text,
     lastModified text,
+    status text,
+    runtime text,
+    p2pRequester text,
+    expires int,
     reporter text,
     url text,
     resources list<text>,
+    dataSchemes list<text>,
     PRIMARY KEY(url)
-);
+    );
 
 CREATE TABLE data_objects_by_reporter (
     name text,
     schem text,
+    status text,
+    expires int,
+    runtime text,
+    p2pRequester text,
     startingTime text,
     lastModified text,
     reporter text,
     url text,
     resources list<text>,
+    dataSchemes list<text>,
     PRIMARY KEY(reporter, url)
-);
+    );
 
 CREATE TABLE data_objects_by_name (
     name text,
     schem text,
+    status text,
+    expires int,
     startingTime text,
     lastModified text,
+    runtime text,
+    p2pRequester text,
     reporter text,
     url text,
     resources list<text>,
+    dataSchemes list<text>,
     PRIMARY KEY(name, url)
-);
+    );
 
 CREATE TABLE hyperties_by_user (
     hypertyid text,
     user text,
     descriptor text,
+    status text,
+    runtime text,
+    p2pRequester text,
+    p2pHandler text,
     startingTime text,
     lastModified text,
     expires int,
     resources list<text>,
     dataSchemes list<text>,
     PRIMARY KEY(user, hypertyid)
-);
+    );
 
-SELECT * FROM hyperties_by_id;
+  SELECT * FROM hyperties_by_id;
 ```
 An empty hyperties table should appear. You may change the replication\_factor to another value. With this configuration (4 nodes with a replication factor of 3), we can tolerate the loss of 2 nodes. 
 
