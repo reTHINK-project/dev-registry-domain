@@ -76,7 +76,7 @@ public class HypertyService{
         for (Map.Entry<String, HypertyInstance> entry : hyperties.entrySet()){
             String status = entry.getValue().getStatus();
             if(!status.equals(DEAD)){
-                hypertiesToBeReturned.put(entry.getValue().getHypertyID(), entry.getValue());
+                hypertiesToBeReturned.put(entry.getKey(), entry.getValue());
             }
         }
 
