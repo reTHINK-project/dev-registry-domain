@@ -123,6 +123,32 @@ describe 'domain registry api tests' do
     end
   end
 
+  describe 'get specific hyperty' do
+    Airborne.configure do |config|
+      config.base_url = ENV["HOST"].dup << '/hyperty/url'
+    end
+    
+    it 'should return an hyperty' do
+      get '/hyperty3' do
+        expect_status(200)
+        expect_json_sizes(12)
+        expect_json_keys([:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler])
+      end
+    end
+
+    it 'should return an hyperty' do
+      get '/hyperty61' do
+        expect_status(404)
+        expect_json_sizes(1)
+        expect_json_keys([:message])
+      end
+    end
+
+    Airborne.configure do |config|
+      config.base_url = ENV["HOST"].dup << '/hyperty/user'
+    end
+  end
+
   describe 'get all hyperties' do
 
     it 'should return all the hyperties' do

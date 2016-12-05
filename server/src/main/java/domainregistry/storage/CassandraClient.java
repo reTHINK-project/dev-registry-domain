@@ -306,6 +306,7 @@ public class CassandraClient implements Connection{
                                                                                  row.getString("p2pHandler"),
                                                                                  row.getString("runtime")));
         }
+
         return allUserHyperties;
     }
 
