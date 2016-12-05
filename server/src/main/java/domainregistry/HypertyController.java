@@ -25,6 +25,8 @@ import org.apache.log4j.Logger;
 public class HypertyController {
     static Logger log = Logger.getLogger(HypertyController.class.getName());
 
+    private static final String DEAD = "disconnected";
+
     private int numReads = 0;
     private int numWrites = 0;
 
@@ -51,6 +53,24 @@ public class HypertyController {
             Map<String, String> databaseStats = status.getDomainRegistryStats();
             res.status(200);
             return gson.toJson(databaseStats);
+        });
+
+        // GET hyperty per URL
+        get("/hyperty/url/*", (req,res) -> {
+            Gson gson = new Gson();
+            this.numReads++;
+            res.type("application/json");
+            String[] encodedURL = req.url().split("/");
+            String hypertyUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
+            HypertyInstance hyperty = hypertyService.getHypertyByUrl(connectionClient, hypertyUrl);
+
+            if(hyperty.getStatus().equals(DEAD)){
+                res.status(408);
+                return gson.toJson(hyperty);
+            }
+
+            res.status(200);
+            return gson.toJson(hyperty);
         });
 
 

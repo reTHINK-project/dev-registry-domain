@@ -51,13 +51,32 @@ public class HypertyService{
         else throw new UserNotFoundException();
     }
 
+    public HypertyInstance getHypertyByUrl(Connection connectionClient, String hypertyUrl){
+        if(!connectionClient.hypertyExists(hypertyUrl)){
+            throw new DataNotFoundException();
+        }
+
+        HypertyInstance hypertyFound = connectionClient.getHyperty(hypertyUrl);
+
+        String actualDate = Dates.getActualDate();
+        String lastModified = hypertyFound.getLastModified();
+
+        int expires = hypertyFound.getExpires();
+
+        if(Dates.dateCompare(actualDate, lastModified) > expires){
+            connectionClient.deleteUserHyperty(hypertyUrl);
+        }
+
+        return connectionClient.getHyperty(hypertyUrl);
+    }
+
     private Map<String, HypertyInstance> liveHyperties(Map<String, HypertyInstance> hyperties){
         Map<String, HypertyInstance> hypertiesToBeReturned = new HashMap();
 
         for (Map.Entry<String, HypertyInstance> entry : hyperties.entrySet()){
             String status = entry.getValue().getStatus();
             if(!status.equals(DEAD)){
-                hypertiesToBeReturned.put(entry.getValue().getHypertyID(), entry.getValue());
+                hypertiesToBeReturned.put(entry.getKey(), entry.getValue());
             }
         }
 
