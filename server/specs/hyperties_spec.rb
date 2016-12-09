@@ -29,8 +29,8 @@ describe 'domain registry api tests' do
       status: "created",
       runtime: "runtime",
       p2pRequester: "requester",
-      p2pHandler: "handler"
-
+      p2pHandler: "handler",
+      guid: "guid4"
     }
 
     @hyperty_two_details = {
@@ -52,7 +52,8 @@ describe 'domain registry api tests' do
       status: "created",
       runtime: "runtime",
       p2pRequester: "requester",
-      p2pHandler: "handler"
+      p2pHandler: "handler",
+      guid: "guid4"
     }
 
     @hyperty_four_details = {
@@ -63,7 +64,20 @@ describe 'domain registry api tests' do
       status: "created",
       runtime: "runtime",
       p2pRequester: "requester",
-      p2pHandler: "handler"
+      p2pHandler: "handler",
+      guid: "guid4"
+    }
+
+    @hyperty_ten_details = {
+      resources: ["chat", "video"],
+      dataSchemes: ["comm"],
+      descriptor: "descriptor4",
+      expires: 1200,
+      status: "created",
+      runtime: "runtime",
+      p2pRequester: "requester",
+      p2pHandler: "handler",
+      guid: "guid_10"
     }
 
     @hyperty_five_details = {
@@ -74,7 +88,8 @@ describe 'domain registry api tests' do
       status: "created",
       runtime: "runtime",
       p2pRequester: "requester",
-      p2pHandler: "handler"
+      p2pHandler: "handler",
+      guid: "guid_5"
     }
   }
 
@@ -105,7 +120,7 @@ describe 'domain registry api tests' do
     end
 
     it 'should add a new hyperty' do #existent user creates non-existent hyperty
-      put '/ruigarcia@inesc-id.pt/hyperty3', @hyperty_four_details
+      put '/ruigarcia@inesc-id.pt/hyperty3', @hyperty_ten_details
       expect_status(200)
       expect_json(:message => "Hyperty created")
     end
@@ -131,8 +146,8 @@ describe 'domain registry api tests' do
     it 'should return an hyperty' do
       get '/hyperty3' do
         expect_status(200)
-        expect_json_sizes(12)
-        expect_json_keys([:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler])
+        expect_json_sizes(13)
+        expect_json_keys([:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler, :guid])
       end
     end
 
@@ -155,10 +170,10 @@ describe 'domain registry api tests' do
       get '/ruijose@inesc-id.pt'
       expect_status(200)
       expect_json_sizes(3)
-      expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler])
-      expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler])
-      expect_json_types("hyperty1", dataSchemes: :array_of_strings, resources: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int, status: :string, runtime: :string, p2pHandler: :string, p2pRequester: :string)
-      expect_json_types("hyperty2", dataSchemes: :array_of_strings, resources: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int, status: :string, runtime: :string, p2pHandler: :string, p2pRequester: :string)
+      expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler, :guid])
+      expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler, :guid])
+      expect_json_types("hyperty1", dataSchemes: :array_of_strings, resources: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int, status: :string, runtime: :string, p2pHandler: :string, p2pRequester: :string, guid: :string)
+      expect_json_types("hyperty2", dataSchemes: :array_of_strings, resources: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int, status: :string, runtime: :string, p2pHandler: :string, p2pRequester: :string, guid: :string)
       expect(json_body[:hyperty1][:descriptor]).to eql("descriptor1")
       expect(json_body[:hyperty2][:descriptor]).to eql("descriptor4")
       expect(json_body[:hyperty6][:descriptor]).to eql("descriptor4")
@@ -177,6 +192,9 @@ describe 'domain registry api tests' do
       expect(json_body[:hyperty1][:status]).to eql("created")
       expect(json_body[:hyperty2][:status]).to eql("created")
       expect(json_body[:hyperty6][:status]).to eql("created")
+      expect(json_body[:hyperty1][:guid]).to eql("guid4")
+      expect(json_body[:hyperty2][:guid]).to eql("guid4")
+      expect(json_body[:hyperty6][:guid]).to eql("guid4")
     end
 
     it 'should return an error, user not found' do
@@ -262,10 +280,10 @@ describe 'domain registry api tests' do
       get '/ruijose@inesc-id.pt'
       expect_status(200)
       expect_json_sizes(3)
-      expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler])
-      expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler])
-      expect_json_types("hyperty1", resources: :array_of_strings, dataSchemes: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int, status: :string, runtime: :string, p2pHandler: :string, p2pRequester: :string)
-      expect_json_types("hyperty2", resources: :array_of_strings, dataSchemes: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int, status: :string, runtime: :string, p2pHandler: :string, p2pRequester: :string)
+      expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler, :guid])
+      expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler, :guid])
+      expect_json_types("hyperty1", resources: :array_of_strings, dataSchemes: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int, status: :string, runtime: :string, p2pHandler: :string, p2pRequester: :string, guid: :string)
+      expect_json_types("hyperty2", resources: :array_of_strings, dataSchemes: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int, status: :string, runtime: :string, p2pHandler: :string, p2pRequester: :string, guid: :string)
       expect(json_body[:hyperty1][:resources]).to eql(["chat", "voice", "video"])
       expect(json_body[:hyperty1][:dataSchemes]).to eql(["comm", "fake"])
       expect(json_body[:hyperty1][:expires]).to eql(1200)
@@ -273,6 +291,8 @@ describe 'domain registry api tests' do
       expect(json_body[:hyperty2][:expires]).to eql(1200)
       expect(json_body[:hyperty2][:startingTime]).to eql(json_body[:hyperty2][:lastModified])
       expect(json_body[:hyperty1][:startingTime]).to be < (json_body[:hyperty1][:lastModified])
+      expect(json_body[:hyperty1][:guid]).to eql("guid4")
+      expect(json_body[:hyperty2][:guid]).to eql("guid4")
     end
 
     it 'should return all user hyperties with voice resource type' do
