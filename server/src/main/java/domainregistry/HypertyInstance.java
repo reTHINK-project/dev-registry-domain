@@ -28,6 +28,7 @@ public class HypertyInstance {
     private String lastModified;
     private String status;
     private Integer expires;
+    private String guid;
 
     // P2P
     private String runtime;
@@ -46,7 +47,8 @@ public class HypertyInstance {
                            String status,
                            String p2pRequester,
                            String p2pHandler,
-                           String runtime){
+                           String runtime,
+                           String guid){
 
 
         this.descriptor = descriptor;
@@ -55,6 +57,7 @@ public class HypertyInstance {
         this.startingTime = startingTime;
         this.lastModified = lastModified;
         this.expires = expires;
+        this.guid = guid;
         this.status = status;
         this.runtime = runtime;
         this.p2pRequester = p2pRequester;
@@ -71,9 +74,11 @@ public class HypertyInstance {
                            String p2pHandler,
                            String lastModified,
                            int expires,
-                           String status){
+                           String status,
+                           String guid){
 
         this.descriptor = descriptor;
+        this.guid = guid;
         this.resources = resources;
         this.dataSchemes = dataSchemes;
         this.startingTime = startingTime;
@@ -186,5 +191,13 @@ public class HypertyInstance {
 
     public String getRequester(){
         return this.p2pRequester;
+    }
+
+    public void setGuid(String guid){
+        this.guid = guid;
+    }
+
+    public String getGuid(){
+        return this.guid;
     }
 }

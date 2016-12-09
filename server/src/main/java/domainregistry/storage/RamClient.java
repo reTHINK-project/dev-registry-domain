@@ -27,6 +27,25 @@ public class RamClient implements Connection{
     private Map<String, Map<String, HypertyInstance>> userServices = new HashMap<>();
     private Map<String, DataObjectInstance> dataObjects = new HashMap<>();
 
+    private Map<String, String> userByGuid = new HashMap<>();
+
+    public Map<String, HypertyInstance> getHypertiesByGuid(String guid){
+        if(guidExists(guid)){
+            String userId = getUserByGuid(guid);
+            return getUserHyperties(userId);
+        }
+
+        else return Collections.emptyMap();
+    }
+
+    public String getUserByGuid(String guid){
+       return userByGuid.get(guid); 
+    }
+
+    public boolean guidExists(String guid){
+        return userByGuid.containsKey(guid);
+    }
+
     public Map<String, HypertyInstance> getUserHyperties(String userID) {
         log.info("Received request for " + userID + " hyperties");
 
@@ -77,12 +96,14 @@ public class RamClient implements Connection{
         String user = hyperty.getUserID();
         if(userExists(user)){
             userServices.get(user).put(hyperty.getHypertyID(), hyperty);
+            userByGuid.put(hyperty.getGuid(), hyperty.getUserID());
             log.info("Inserted hyperty with ID " + hyperty.getHypertyID());
             return;
         }
         Map<String, HypertyInstance> services = new HashMap<>();
         services.put(hyperty.getHypertyID(), hyperty);
         userServices.put(user, services);
+        userByGuid.put(hyperty.getGuid(), hyperty.getUserID());
         log.info("Created user " + user + " and hyperty " + hyperty.getHypertyID());
     }
 
