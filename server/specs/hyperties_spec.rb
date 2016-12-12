@@ -159,114 +159,117 @@ describe 'domain registry api tests' do
       end
     end
 
-    describe 'get hyperties by guid' do
-      Airborne.configure do |config|
-        config.base_url = ENV["HOST"].dup << '/hyperty/guid'
-      end
-    end
+  Airborne.configure do |config|
+    config.base_url = ENV["HOST"].dup << '/hyperty/user'
+  end
+end
 
-      it 'should return four hiperties' do
-        get '/guid4' do
-          expect_status(200)
-          expect_json_sizes(4)
-          expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler, :guid])
-          expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler, :guid])
-          expect_json_keys("hyperty3", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler, :guid])
-          expect_json_keys("hyperty6", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler, :guid])
-          expect_json_types("hyperty1", dataSchemes: :array_of_strings, resources: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int, status: :string, runtime: :string, p2pHandler: :string, p2pRequester: :string, guid: :string)
-          expect_json_types("hyperty2", dataSchemes: :array_of_strings, resources: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int, status: :string, runtime: :string, p2pHandler: :string, p2pRequester: :string, guid: :string)
-          expect_json_types("hyperty3", dataSchemes: :array_of_strings, resources: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int, status: :string, runtime: :string, p2pHandler: :string, p2pRequester: :string, guid: :string)
-          expect_json_types("hyperty6", dataSchemes: :array_of_strings, resources: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int, status: :string, runtime: :string, p2pHandler: :string, p2pRequester: :string, guid: :string)
-          expect(json_body[:hyperty1][:descriptor]).to eql("descriptor1")
-          expect(json_body[:hyperty2][:descriptor]).to eql("descriptor4")
-          expect(json_body[:hyperty3][:descriptor]).to eql("descriptor4")
-          expect(json_body[:hyperty6][:descriptor]).to eql("descriptor4")
-          expect(json_body[:hyperty1][:expires]).to eql(1200)
-          expect(json_body[:hyperty2][:expires]).to eql(1200)
-          expect(json_body[:hyperty3][:expires]).to eql(1200)
-          expect(json_body[:hyperty6][:expires]).to eql(1200)
-          expect(json_body[:hyperty1][:startingTime]).to eql(json_body[:hyperty1][:lastModified])
-          expect(json_body[:hyperty2][:startingTime]).to eql(json_body[:hyperty2][:lastModified])
-          expect(json_body[:hyperty3][:startingTime]).to eql(json_body[:hyperty3][:lastModified])
-          expect(json_body[:hyperty6][:startingTime]).to eql(json_body[:hyperty6][:lastModified])
-          expect(json_body[:hyperty1][:resources]).to eql(["chat", "voice"])
-          expect(json_body[:hyperty2][:resources]).to eql(["chat", "voice"])
-          expect(json_body[:hyperty3][:resources]).to eql(["chat", "voice"])
-          expect(json_body[:hyperty6][:resources]).to eql(["chat", "voice"])
-          expect(json_body[:hyperty1][:dataSchemes]).to eql(["comm"])
-          expect(json_body[:hyperty2][:dataSchemes]).to eql(["comm"])
-          expect(json_body[:hyperty3][:dataSchemes]).to eql(["comm"])
-          expect(json_body[:hyperty6][:dataSchemes]).to eql(["comm"])
-          expect(json_body[:hyperty1][:status]).to eql("created")
-          expect(json_body[:hyperty2][:status]).to eql("created")
-          expect(json_body[:hyperty3][:status]).to eql("created")
-          expect(json_body[:hyperty6][:status]).to eql("created")
-          expect(json_body[:hyperty1][:guid]).to eql("guid4")
-          expect(json_body[:hyperty2][:guid]).to eql("guid4")
-          expect(json_body[:hyperty3][:guid]).to eql("guid4")
-          expect(json_body[:hyperty6][:guid]).to eql("guid4")
-        end
-      end
-
-      it 'should return one hyperty' do
-        get '/guid_10' do
-          expect_status(404)
-          expect_json_sizes(1)
-          expect_json_keys("hypert3", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler, :guid])
-        end
-      end
-
-      it 'should return hyperties not found error' do
-        get '/notexist_guid' do
-          expect_status(404);
-          expect_json(:message => "Not Found")
-        end
-      end
-
-    Airborne.configure do |config|
-      config.base_url = ENV["HOST"].dup << '/hyperty/user'
-    end
+describe 'get hyperties by guid' do
+  Airborne.configure do |config|
+    config.base_url = ENV["HOST"].dup << '/hyperty/guid'
   end
 
-  describe 'get all hyperties' do
-
-    it 'should return all the hyperties' do
-      get '/ruijose@inesc-id.pt'
+  it 'should return four hyperties' do
+    get '/guid4' do
       expect_status(200)
-      expect_json_sizes(3)
+      expect_json_sizes(4)
       expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler, :guid])
       expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler, :guid])
+      expect_json_keys("hyperty3", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler, :guid])
+      expect_json_keys("hyperty6", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler, :guid])
       expect_json_types("hyperty1", dataSchemes: :array_of_strings, resources: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int, status: :string, runtime: :string, p2pHandler: :string, p2pRequester: :string, guid: :string)
       expect_json_types("hyperty2", dataSchemes: :array_of_strings, resources: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int, status: :string, runtime: :string, p2pHandler: :string, p2pRequester: :string, guid: :string)
+      expect_json_types("hyperty3", dataSchemes: :array_of_strings, resources: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int, status: :string, runtime: :string, p2pHandler: :string, p2pRequester: :string, guid: :string)
+      expect_json_types("hyperty6", dataSchemes: :array_of_strings, resources: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int, status: :string, runtime: :string, p2pHandler: :string, p2pRequester: :string, guid: :string)
       expect(json_body[:hyperty1][:descriptor]).to eql("descriptor1")
       expect(json_body[:hyperty2][:descriptor]).to eql("descriptor4")
+      expect(json_body[:hyperty3][:descriptor]).to eql("descriptor4")
       expect(json_body[:hyperty6][:descriptor]).to eql("descriptor4")
       expect(json_body[:hyperty1][:expires]).to eql(1200)
       expect(json_body[:hyperty2][:expires]).to eql(1200)
+      expect(json_body[:hyperty3][:expires]).to eql(1200)
       expect(json_body[:hyperty6][:expires]).to eql(1200)
       expect(json_body[:hyperty1][:startingTime]).to eql(json_body[:hyperty1][:lastModified])
       expect(json_body[:hyperty2][:startingTime]).to eql(json_body[:hyperty2][:lastModified])
+      expect(json_body[:hyperty3][:startingTime]).to eql(json_body[:hyperty3][:lastModified])
       expect(json_body[:hyperty6][:startingTime]).to eql(json_body[:hyperty6][:lastModified])
       expect(json_body[:hyperty1][:resources]).to eql(["chat", "voice"])
-      expect(json_body[:hyperty2][:resources]).to eql(["chat", "video"])
-      expect(json_body[:hyperty6][:resources]).to eql(["chat", "video"])
+      expect(json_body[:hyperty2][:resources]).to eql(["chat", "voice"])
+      expect(json_body[:hyperty3][:resources]).to eql(["chat", "voice"])
+      expect(json_body[:hyperty6][:resources]).to eql(["chat", "voice"])
       expect(json_body[:hyperty1][:dataSchemes]).to eql(["comm"])
       expect(json_body[:hyperty2][:dataSchemes]).to eql(["comm"])
+      expect(json_body[:hyperty3][:dataSchemes]).to eql(["comm"])
       expect(json_body[:hyperty6][:dataSchemes]).to eql(["comm"])
       expect(json_body[:hyperty1][:status]).to eql("created")
       expect(json_body[:hyperty2][:status]).to eql("created")
+      expect(json_body[:hyperty3][:status]).to eql("created")
       expect(json_body[:hyperty6][:status]).to eql("created")
       expect(json_body[:hyperty1][:guid]).to eql("guid4")
       expect(json_body[:hyperty2][:guid]).to eql("guid4")
+      expect(json_body[:hyperty3][:guid]).to eql("guid4")
       expect(json_body[:hyperty6][:guid]).to eql("guid4")
     end
+  end
 
-    it 'should return an error, user not found' do
-      get '/nuno@inesc-id.pt'
-      expect_status(404)
+  it 'should return one hyperty' do
+    get '/guid_10' do
+      expect_status(200)
+      expect_json_sizes(1)
+      expect_json_keys('hyperty3', [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler, :guid])
+    end
+  end
+
+  it 'should return hyperties not found error' do
+    get '/notexist_guid' do
+      expect_status(404);
       expect_json(:message => "Not Found")
     end
   end
+
+  Airborne.configure do |config|
+    config.base_url = ENV["HOST"].dup << '/hyperty/user'
+  end
+end
+
+describe 'get all hyperties' do
+  it 'should return all the hyperties' do
+    get '/ruijose@inesc-id.pt'
+    expect_status(200)
+    expect_json_sizes(3)
+    expect_json_keys("hyperty1", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler, :guid])
+    expect_json_keys("hyperty2", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler, :guid])
+    expect_json_types("hyperty1", dataSchemes: :array_of_strings, resources: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int, status: :string, runtime: :string, p2pHandler: :string, p2pRequester: :string, guid: :string)
+    expect_json_types("hyperty2", dataSchemes: :array_of_strings, resources: :array_of_strings, descriptor: :string, startingTime: :string, lastModified: :string, expires: :int, status: :string, runtime: :string, p2pHandler: :string, p2pRequester: :string, guid: :string)
+    expect(json_body[:hyperty1][:descriptor]).to eql("descriptor1")
+    expect(json_body[:hyperty2][:descriptor]).to eql("descriptor4")
+    expect(json_body[:hyperty6][:descriptor]).to eql("descriptor4")
+    expect(json_body[:hyperty1][:expires]).to eql(1200)
+    expect(json_body[:hyperty2][:expires]).to eql(1200)
+    expect(json_body[:hyperty6][:expires]).to eql(1200)
+    expect(json_body[:hyperty1][:startingTime]).to eql(json_body[:hyperty1][:lastModified])
+    expect(json_body[:hyperty2][:startingTime]).to eql(json_body[:hyperty2][:lastModified])
+    expect(json_body[:hyperty6][:startingTime]).to eql(json_body[:hyperty6][:lastModified])
+    expect(json_body[:hyperty1][:resources]).to eql(["chat", "voice"])
+    expect(json_body[:hyperty2][:resources]).to eql(["chat", "video"])
+    expect(json_body[:hyperty6][:resources]).to eql(["chat", "video"])
+    expect(json_body[:hyperty1][:dataSchemes]).to eql(["comm"])
+    expect(json_body[:hyperty2][:dataSchemes]).to eql(["comm"])
+    expect(json_body[:hyperty6][:dataSchemes]).to eql(["comm"])
+    expect(json_body[:hyperty1][:status]).to eql("created")
+    expect(json_body[:hyperty2][:status]).to eql("created")
+    expect(json_body[:hyperty6][:status]).to eql("created")
+    expect(json_body[:hyperty1][:guid]).to eql("guid4")
+    expect(json_body[:hyperty2][:guid]).to eql("guid4")
+    expect(json_body[:hyperty6][:guid]).to eql("guid4")
+  end
+
+  it 'should return an error, user not found' do
+    get '/nuno@inesc-id.pt'
+    expect_status(404)
+    expect_json(:message => "Not Found")
+  end
+end
 
   describe 'get specific hyperties' do
 
