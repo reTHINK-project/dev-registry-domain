@@ -1,7 +1,7 @@
 var search = function(body, request, url, callback) {
 
   var endpoint;
-  var prefix = msg.body.split('://')[0];
+  var prefix = body.resource.split('://')[0];
 
   if(prefix === 'user') {
     endpoint = '/hyperty/user/';
