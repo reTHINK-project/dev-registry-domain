@@ -54,7 +54,7 @@ RegistryConnector.prototype.checkResourceType = function(url) {
 
   var prefix = url.split('://')[0];
 
-  if(prefix === 'user' || prefix === 'hyperty'){
+  if(prefix === 'user' || prefix === 'hyperty' || prefix === 'hyperty-runtime'){
     return 'hyperty';
   }else {
     return 'dataObject';
