@@ -6,8 +6,6 @@ var search = function(body, request, url, callback) {
 
   if(type === 'comm') {
     resourceType = 'url/';
-  } else if(type === 'hyperty') {
-    resourceType = 'reporter/';
   } else {
     resourceType = 'name/';
   }

@@ -1,6 +1,15 @@
 var search = function(body, request, url, callback) {
 
-  request.get(url + '/hyperty/user/' + encodeURIComponent(body.resource), function(err, response, statusCode) {
+  var endpoint;
+  var prefix = body.resource.split('://')[0];
+
+  if(prefix === 'user') {
+    endpoint = '/hyperty/user/';
+  } else {
+    endpoint = '/hyperty/url/';
+  }
+
+  request.get(url + endpoint + encodeURIComponent(body.resource), function(err, response, statusCode) {
 
     if(err) {
       var body = {
