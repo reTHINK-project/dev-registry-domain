@@ -29,7 +29,8 @@ describe 'domain registry api tests' do
       status: "created",
       runtime: "runtime",
       p2pRequester: "requester",
-      p2pHandler: "handler"
+      p2pHandler: "handler",
+      guid: "guid_4"
     }
   }
 
@@ -47,7 +48,7 @@ describe 'domain registry api tests' do
     it 'should get hyperty fields' do
       get '/hyperty/user/ruijose@inesc-id'
       expect_status(200)
-      expect_json_keys("hyperty_keep_alive", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler])
+      expect_json_keys("hyperty_keep_alive", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler, :guid])
       expect(json_body[:hyperty_keep_alive][:descriptor]).to eql("descriptor1")
       expect(json_body[:hyperty_keep_alive][:resources]).to eql(["chat", "voice"])
       expect(json_body[:hyperty_keep_alive][:dataSchemes]).to eql(["comm"])
@@ -56,6 +57,7 @@ describe 'domain registry api tests' do
       expect(json_body[:hyperty_keep_alive][:runtime]).to eql("runtime")
       expect(json_body[:hyperty_keep_alive][:p2pRequester]).to eql("requester")
       expect(json_body[:hyperty_keep_alive][:p2pHandler]).to eql("handler")
+      expect(json_body[:hyperty_keep_alive][:guid]).to eql("guid_4")
     end
 
     it 'should update expires and descriptor field' do
@@ -73,7 +75,7 @@ describe 'domain registry api tests' do
     it 'should get new hyperty fields' do
       get '/hyperty/user/ruijose@inesc-id'
       expect_status(200)
-      expect_json_keys("hyperty_keep_alive", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler])
+      expect_json_keys("hyperty_keep_alive", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler, :guid])
       expect(json_body[:hyperty_keep_alive][:descriptor]).to eql("new_descriptor")
       expect(json_body[:hyperty_keep_alive][:resources]).to eql(["chat", "voice"])
       expect(json_body[:hyperty_keep_alive][:dataSchemes]).to eql(["comm"])
@@ -82,6 +84,7 @@ describe 'domain registry api tests' do
       expect(json_body[:hyperty_keep_alive][:runtime]).to eql("runtime")
       expect(json_body[:hyperty_keep_alive][:p2pRequester]).to eql("requester")
       expect(json_body[:hyperty_keep_alive][:p2pHandler]).to eql("handler")
+      expect(json_body[:hyperty_keep_alive][:guid]).to eql("guid_4")
     end
 
     it 'should perform a keep alive' do
@@ -96,7 +99,7 @@ describe 'domain registry api tests' do
     it 'should get new hyperty fields' do
       get '/hyperty/user/ruijose@inesc-id'
       expect_status(200)
-      expect_json_keys("hyperty_keep_alive", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler])
+      expect_json_keys("hyperty_keep_alive", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler, :guid])
       expect(json_body[:hyperty_keep_alive][:descriptor]).to eql("new_descriptor")
       expect(json_body[:hyperty_keep_alive][:resources]).to eql(["chat", "voice"])
       expect(json_body[:hyperty_keep_alive][:dataSchemes]).to eql(["comm"])
@@ -105,6 +108,7 @@ describe 'domain registry api tests' do
       expect(json_body[:hyperty_keep_alive][:runtime]).to eql("runtime")
       expect(json_body[:hyperty_keep_alive][:p2pRequester]).to eql("requester")
       expect(json_body[:hyperty_keep_alive][:p2pHandler]).to eql("handler")
+      expect(json_body[:hyperty_keep_alive][:guid]).to eql("guid_4")
     end
 
     it 'should try to update an non existant hyperty' do

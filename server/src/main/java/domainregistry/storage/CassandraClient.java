@@ -41,6 +41,7 @@ public class CassandraClient implements Connection{
     public static final String URLDATAOBJECTS = "data_objects_by_url";
     public static final String REPORTERDATAOBJECTS = "data_objects_by_reporter";
     public static final String NAMEDATAOBJECTS = "data_objects_by_name";
+    public static final String GUIDBYUSER = "guid_by_user_id";
     public static final String DOWN = "DOWN";
 
     private Cluster cluster;
@@ -69,12 +70,26 @@ public class CassandraClient implements Connection{
     public void insertHyperty(HypertyInstance hyperty){
         insertStatement(hyperty, USERHYPERTIES);
         insertStatement(hyperty, IDHYPERTIES);
+        insertGuid(hyperty, GUIDBYUSER);
+    }
+
+    private void insertGuid(HypertyInstance hyperty, String table){
+        Statement statement = QueryBuilder.insertInto(KEYSPACE, table)
+            .value("guid", hyperty.getGuid())
+            .value("user", hyperty.getUserID());
+
+        if(getSession() != null){
+            getSession().execute(statement);
+            log.info("Inserted in database guid: " + hyperty.getGuid() + " from user " + hyperty.getUserID());
+        }
+        else log.error("Invalid cassandra session.");
     }
 
     private void insertStatement(HypertyInstance hyperty, String table){
         Statement statement = QueryBuilder.insertInto(KEYSPACE, table)
             .value("hypertyID", hyperty.getHypertyID())
             .value("user", hyperty.getUserID())
+            .value("guid", hyperty.getGuid())
             .value("descriptor", hyperty.getDescriptor())
             .value("resources", hyperty.getResources())
             .value("dataSchemes", hyperty.getDataSchemes())
@@ -182,8 +197,30 @@ public class CassandraClient implements Connection{
         return new HypertyInstance(row.getString("descriptor"), row.getString("startingTime"),
                 row.getString("user"), row.getList("resources", String.class), row.getList("dataSchemes", String.class),
                 row.getString("runtime"), row.getString("p2pRequester"), row.getString("p2pHandler"),
-                row.getString("lastModified"), row.getInt("expires"), row.getString("status"));
+                row.getString("lastModified"), row.getInt("expires"), row.getString("status"), row.getString("guid"));
 
+    }
+
+    public Map<String, HypertyInstance> getHypertiesByGuid(String guid){
+        String userId = getUserByGuid(guid);
+        return getUserHyperties(userId);
+    }
+
+    public String getUserByGuid(String guid){
+        Statement select = QueryBuilder.select().all().from(KEYSPACE, GUIDBYUSER)
+                                                      .where(QueryBuilder.eq("guid", guid));
+        ResultSet results = session.execute(select);
+        Row row = results.one();
+        return row.getString("user");
+    }
+
+    public boolean guidExists(String guid){
+        Statement select = QueryBuilder.select().all().from(KEYSPACE, GUIDBYUSER)
+                                                      .where(QueryBuilder.eq("guid", guid));
+
+        ResultSet results = session.execute(select);
+        Row row = results.one();
+        return row != null;
     }
 
     public DataObjectInstance getDataObjectByUrl(String dataObjectUrl){
@@ -238,6 +275,7 @@ public class CassandraClient implements Connection{
                                        .and(QueryBuilder.set("p2pRequester", hyperty.getRequester()))
                                        .and(QueryBuilder.set("p2pHandler", hyperty.getHandler()))
                                        .and(QueryBuilder.set("status", hyperty.getStatus()))
+                                       .and(QueryBuilder.set("guid", hyperty.getGuid()))
                                        .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()));
         if(getSession() != null){
             getSession().execute(update);
@@ -257,6 +295,7 @@ public class CassandraClient implements Connection{
                                        .and(QueryBuilder.set("p2pRequester", hyperty.getRequester()))
                                        .and(QueryBuilder.set("p2pHandler", hyperty.getHandler()))
                                        .and(QueryBuilder.set("status", hyperty.getStatus()))
+                                       .and(QueryBuilder.set("guid", hyperty.getGuid()))
                                        .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()))
                                        .and(QueryBuilder.eq("user", hyperty.getUserID()));
         if(getSession() != null){
@@ -304,7 +343,8 @@ public class CassandraClient implements Connection{
                                                                                  row.getString("status"),
                                                                                  row.getString("p2pRequester"),
                                                                                  row.getString("p2pHandler"),
-                                                                                 row.getString("runtime")));
+                                                                                 row.getString("runtime"),
+                                                                                 row.getString("guid")));
         }
 
         return allUserHyperties;
