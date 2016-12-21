@@ -5,6 +5,8 @@ var search = function(body, request, url, callback) {
 
   if(prefix === 'user') {
     endpoint = '/hyperty/user/';
+  } else if(prefix === 'user-guid') {
+    endpoint = '/hyperty/guid/';
   } else {
     endpoint = '/hyperty/url/';
   }
