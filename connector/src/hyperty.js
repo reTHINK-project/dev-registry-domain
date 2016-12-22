@@ -5,6 +5,8 @@ var search = function(body, request, url, callback) {
 
   if(prefix === 'user') {
     endpoint = '/hyperty/user/';
+  } else if(prefix === 'user-guid') {
+    endpoint = '/hyperty/guid/';
   } else {
     endpoint = '/hyperty/url/';
   }
@@ -113,7 +115,8 @@ var hyperty = {
       'status': body.value.status,
       'runtime': body.value.runtime,
       'p2pRequester': body.value.p2pRequester,
-      'p2pHandler': body.value.p2pHandler
+      'p2pHandler': body.value.p2pHandler,
+      'guid': body.value.guid
     };
 
     request.put(url + endpoint, data, function(err, response, statusCode) {
