@@ -85,11 +85,18 @@ CREATE KEYSPACE rethinkeyspace WITH replication = {'class':'SimpleStrategy', 're
 
 use rethinkeyspace;
 
+CREATE TABLE guid_by_user_id (
+    user text,
+    guid text,
+    PRIMARY KEY(guid)
+);
+
 CREATE TABLE hyperties_by_id (
     hypertyid text,
     user text,
     descriptor text,
     startingTime text,
+    guid text,
     status text,
     lastModified text,
     expires int,
@@ -99,7 +106,7 @@ CREATE TABLE hyperties_by_id (
     resources list<text>,
     dataSchemes list<text>,
     PRIMARY KEY(hypertyid)
-    );
+);
 
 CREATE TABLE data_objects_by_url (
     name text,
@@ -115,7 +122,7 @@ CREATE TABLE data_objects_by_url (
     resources list<text>,
     dataSchemes list<text>,
     PRIMARY KEY(url)
-    );
+);
 
 CREATE TABLE data_objects_by_reporter (
     name text,
@@ -131,7 +138,7 @@ CREATE TABLE data_objects_by_reporter (
     resources list<text>,
     dataSchemes list<text>,
     PRIMARY KEY(reporter, url)
-    );
+);
 
 CREATE TABLE data_objects_by_name (
     name text,
@@ -147,12 +154,13 @@ CREATE TABLE data_objects_by_name (
     resources list<text>,
     dataSchemes list<text>,
     PRIMARY KEY(name, url)
-    );
+);
 
 CREATE TABLE hyperties_by_user (
     hypertyid text,
     user text,
     descriptor text,
+    guid text,
     status text,
     runtime text,
     p2pRequester text,
@@ -163,9 +171,9 @@ CREATE TABLE hyperties_by_user (
     resources list<text>,
     dataSchemes list<text>,
     PRIMARY KEY(user, hypertyid)
-    );
+);
 
-  SELECT * FROM hyperties_by_id;
+SELECT * FROM hyperties_by_id;
 ```
 An empty hyperties table should appear. You may change the replication\_factor to another value. With this configuration (4 nodes with a replication factor of 3), we can tolerate the loss of 2 nodes. 
 

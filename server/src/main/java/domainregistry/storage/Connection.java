@@ -29,6 +29,9 @@ interface Connection{
     public Map<String, HypertyInstance> getUserHyperties(String userID);
     public void deleteUserHyperty(String hypertyID);
     public int getNumberOfHyperties();
+    public Map<String, HypertyInstance> getHypertiesByGuid(String guid);
+    public String getUserByGuid(String guid);
+    public boolean guidExists(String guid);
     //dataobjects
     public void insertDataObject(DataObjectInstance dataObject);
     public boolean dataObjectExists(String dataObjectName);

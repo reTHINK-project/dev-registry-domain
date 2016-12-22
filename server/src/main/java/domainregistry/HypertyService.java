@@ -51,6 +51,27 @@ public class HypertyService{
         else throw new UserNotFoundException();
     }
 
+    public Map<String, HypertyInstance> getHypertiesByGuid(Connection connectionClient, String guid){
+        if(!connectionClient.guidExists(guid)){
+            throw new UserNotFoundException();
+        }
+
+        Map<String, HypertyInstance> returnedHyperties = connectionClient.getHypertiesByGuid(guid);
+
+        if(returnedHyperties.isEmpty())
+            throw new DataNotFoundException();
+
+        String userID = connectionClient.getUserByGuid(guid);
+        deleteExpiredHyperties(connectionClient, userID);
+        Map<String, HypertyInstance> hypertiesWithStatusUpdated = connectionClient.getUserHyperties(userID);
+
+        if(allHypertiesAreUnavailable(hypertiesWithStatusUpdated)){
+            return hypertiesWithStatusUpdated;
+        }
+
+        return liveHyperties(hypertiesWithStatusUpdated);
+    }
+
     public HypertyInstance getHypertyByUrl(Connection connectionClient, String hypertyUrl){
         if(!connectionClient.hypertyExists(hypertyUrl)){
             throw new DataNotFoundException();

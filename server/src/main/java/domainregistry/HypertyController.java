@@ -72,6 +72,24 @@ public class HypertyController {
             res.status(200);
             return gson.toJson(hyperty);
         });
+        
+        // GET hyperties per GUID
+        get("/hyperty/guid/*", (req,res) -> {
+            Gson gson = new Gson();
+            this.numReads++;
+            res.type("application/json");
+            String[] encodedURL = req.url().split("/");
+            String guid = decodeUrl(encodedURL[encodedURL.length - 1]);
+            Map<String, HypertyInstance> hyperties = hypertyService.getHypertiesByGuid(connectionClient, guid);
+
+            if(hypertyService.allHypertiesAreUnavailable(hyperties)){
+                res.status(408);
+                return gson.toJson(hyperties);
+            }
+
+            res.status(200);
+            return gson.toJson(hyperties);
+        });
 
 
         // GET user hyperties
