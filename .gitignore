@@ -8,6 +8,9 @@ Session.vim
 .netrwhist
 *~
 
+### certs
+*.jks
+
 
 ### Java ###
 *.class
