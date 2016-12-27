@@ -62,12 +62,11 @@ public class HypertyController {
             String accept = req.headers("Accept");
 
             if (accept != null && accept.contains("text/html")) {
-                // produce HTML
+                // produce HTML -> Present all users URLs with hyperties and the data related to each hyperty
                 res.type("text/html");
-                Map<String, Object> attributes = new HashMap<>();
-                attributes.put("message", "Domain Registry Status Page");
+                Map<String, List<Object>> attributes = status.getDomainRegistryStatsGlobal();
                 res.status(200);
-                return freeMarkerEngine.render(new ModelAndView(attributes, "posts.ftl"));
+                return freeMarkerEngine.render(new ModelAndView(attributes, "status.ftl"));
             } else {
                 // produce JSON
                 res.status(200);

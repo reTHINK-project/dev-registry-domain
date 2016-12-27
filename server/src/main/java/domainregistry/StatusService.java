@@ -28,13 +28,13 @@ import java.io.IOException;
 public class StatusService {
     static Logger log = Logger.getLogger(StatusService.class.getName());
 
-    private static final String TYPE = "Storage type";
+    private static final String TYPE = "Storage_type";
     private static final String DB_CONNECTION_STATUS = "Database connection";
     private static final String DB_SIZE = "Database cluster size";
     private static final String LIVE_NODES = "Database up nodes";
     private static final String UP = "up";
     private static final String STATUS = "status";
-    private static final String NUM_OBJECTS = "Hyperties stored";
+    private static final String NUM_OBJECTS = "Hyperties_stored";
     private static final String NUM_REQUESTS = "User requests performed on the cluster";
     private static final String CASSANDRA = "Cassandra";
     private static final String INMEMORY = "Ram";
@@ -45,6 +45,8 @@ public class StatusService {
     private Connection connection;
 
     private Map<String, String> domainRegistryStats = new HashMap();
+    private Map<String, List<Object>> domainRegistryStatsHtml = new HashMap<String, List<Object>>();
+
 
     public StatusService(){
     }
@@ -52,6 +54,39 @@ public class StatusService {
     public StatusService(String databaseType, Connection connection){
         this.databaseType = databaseType;
         this.connection = connection;
+    }
+
+    public Map<String, List<Object>> getDomainRegistryStatsGlobal(){
+
+      if(databaseType.equals(INMEMORY)){
+          populateRamStorageStatsHtml();
+          infoAboutUsersAndHyperties();
+      }
+      //How many users exist and hyperties per users and description
+
+      return this.domainRegistryStatsHtml;
+    }
+
+    private void populateRamStorageStatsHtml(){
+      ArrayList<Object> list = new ArrayList<Object>();
+      StatusInfo info = new StatusInfo();
+      info.setStorageType(INMEMORY);
+      info.setNumHyperties(getNumHyperties());
+      info.setNumUsers(String.valueOf(((RamClient) this.connection).getNumUsersWithHyperties()));
+      list.add(info);
+      domainRegistryStatsHtml.put("Init", list);
+    }
+
+    private void infoAboutUsersAndHyperties(){
+      Map<String, String> usersByGuid = ((RamClient) this.connection).getMapUsersByGuid();
+      ArrayList<Object> users = new ArrayList<Object>();
+      for(String guid : usersByGuid.keySet()){
+        StatusInfo info = new StatusInfo();
+        info.setUserGuid(guid);
+        info.setUserURL(usersByGuid.get(guid));
+        users.add(info);
+      }
+      domainRegistryStatsHtml.put("Users", users);
     }
 
     public Map<String, String> getDomainRegistryStats(){
@@ -74,14 +109,11 @@ public class StatusService {
         domainRegistryStats.put(DB_CONNECTION_STATUS, UP);
         domainRegistryStats.put(NUM_OBJECTS, getNumHyperties());
         domainRegistryStats.put(LIVE_NODES, getClusterLiveNodes());
-        //domainRegistryStats.put(NUM_REQUESTS, getNumRequests());
-        //domainRegistryStats.put(NUM_APP_SERVERS, getNumAppServers());
-        //domainRegistryStats.put(UP_APP_SERVERS, getNumLiveServers());
     }
 
     private void populateRamStorageStats(){
-        domainRegistryStats.put(TYPE, INMEMORY);
-        domainRegistryStats.put(NUM_OBJECTS, getNumHyperties());
+      domainRegistryStats.put(TYPE, INMEMORY);
+      domainRegistryStats.put(NUM_OBJECTS, getNumHyperties());
     }
 
     private String getClusterDBSize(){
