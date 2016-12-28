@@ -30,11 +30,11 @@ public class RamClient implements Connection{
     private Map<String, String> userByGuid = new HashMap<>();
 
     public Map<String,String> getMapUsersByGuid(){
-      return userByGuid;
+        return userByGuid;
     }
 
     public int getNumUsersWithHyperties(){
-      return userByGuid.size();
+        return userByGuid.size();
     }
 
     public Map<String, HypertyInstance> getHypertiesByGuid(String guid){

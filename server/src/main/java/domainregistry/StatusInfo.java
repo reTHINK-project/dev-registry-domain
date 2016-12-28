@@ -16,6 +16,8 @@
 
 package domainregistry;
 
+import java.util.*;
+
 
 public class StatusInfo {
 
@@ -24,44 +26,84 @@ public class StatusInfo {
     private String storageType;
     private String numHyperties;
     private String numUsers;
+    private String totalHyperties;
+    private String liveHyperties;
+    private String deadHyperties;
+    private List<HypertyInstance> listHyperties;
 
     public void UserInfo () {
 
     }
 
     public void setUserGuid(String guid){
-      this.userGuid=guid;
+        this.userGuid=guid;
     }
+
     public String getUserGuid(){
-      return this.userGuid;
+        return this.userGuid;
     }
 
     public void setUserURL(String userURL){
-      this.userURL=userURL;
+        this.userURL=userURL;
     }
+
     public String getUserURL(){
-      return this.userURL;
+        return this.userURL;
     }
 
     public void setStorageType(String storageType){
-      this.storageType=storageType;
+        this.storageType=storageType;
     }
+
     public String getStorageType(){
-      return this.storageType;
+        return this.storageType;
     }
 
     public void setNumHyperties(String numHyperties){
-      this.numHyperties=numHyperties;
+        this.numHyperties=numHyperties;
     }
+
     public String getNumHyperties(){
-      return this.numHyperties;
+        return this.numHyperties;
     }
 
     public void setNumUsers(String numUsers){
-      this.numUsers=numUsers;
+        this.numUsers=numUsers;
     }
+
     public String getNumUsers(){
-      return this.numUsers;
+        return this.numUsers;
+    }
+
+    public void setTotalHyperties(String totalHyperties){
+        this.totalHyperties=totalHyperties;
+    }
+
+    public String getTotalHyperties(){
+        return this.totalHyperties;
+    }
+
+    public void setLiveHyperties(String liveHyperties){
+        this.liveHyperties=liveHyperties;
+    }
+    public String getLiveHyperties(){
+        return this.liveHyperties;
+    }
+
+    public void setDeadHyperties(String deadHyperties){
+        this.deadHyperties=deadHyperties;
+    }
+
+    public String getDeadHyperties(){
+        return this.deadHyperties;
+    }
+
+    public void setListHyperties(List<HypertyInstance> listHyperties){
+        this.listHyperties=listHyperties;
+    }
+
+    public List<HypertyInstance> getListHyperties(){
+        return this.listHyperties;
     }
 
 }

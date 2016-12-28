@@ -44,10 +44,10 @@ public class HypertyController {
 
     public HypertyController(StatusService status, final HypertyService hypertyService, final Connection connectionClient, final DataObjectService dataObjectService) {
 
-      FreeMarkerEngine freeMarkerEngine = new FreeMarkerEngine();
-      Configuration freeMarkerConfiguration = new Configuration();
-      freeMarkerConfiguration.setTemplateLoader(new ClassTemplateLoader(HypertyController.class, "/"));
-      freeMarkerEngine.setConfiguration(freeMarkerConfiguration);
+        FreeMarkerEngine freeMarkerEngine = new FreeMarkerEngine();
+        Configuration freeMarkerConfiguration = new Configuration();
+        freeMarkerConfiguration.setTemplateLoader(new ClassTemplateLoader(HypertyController.class, "/"));
+        freeMarkerEngine.setConfiguration(freeMarkerConfiguration);
 
         get("/", (req, res) -> {
             res.redirect("/live");

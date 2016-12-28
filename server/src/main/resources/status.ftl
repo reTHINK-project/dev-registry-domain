@@ -5,6 +5,8 @@
         body { margin: 20px; }
         .hyperties { padding: 15px; border: 1px solid #ccc; border-radius: 5px; margin: 15px 0; background: #FCFCFC; }
         .hyperties h2 { margin-top: 0; padding-bottom: 15px; border-bottom: 1px solid #ddd; }
+        .listHyperties { padding: 15px; border: 1px solid #ccc; border-radius: 5px; margin: 15px 0; background: #FCFCFC; }
+        .listHyperties h2 { margin-top: 0; padding-bottom: 15px; border-bottom: 1px solid #ddd; }
 
         /*ul { margin-top: 0; padding: 0; }
         .post h3 { font-size: 16px; margin-bottom: 5px; }
@@ -25,9 +27,13 @@
 <#if Users??>
 <#list Users as user>
 <div class="hyperties">
-    <h2>GUID: ${user.userGuid}, UserURL: ${user.userURL}</h2>
+    <h2>GUID: ${user.userGuid}, UserURL: ${user.userURL}, Total Hyperties: ${user.totalHyperties}, Active Hyperties: ${user.liveHyperties}, Disconnected Hyperties: ${user.deadHyperties} </h2>
     <!-- Falta ver quantas hyperties o user tem, se tiver tera uma lista com HypertyInstance?! e depois é só percorrer aqui e tirar as infos uteis -->
-
+    <#list user.listHyperties as hyperty>
+    <div class="listHyperties">
+      <h2> ${hyperty.hypertyID} </h2>
+    </div>
+    </#list>
 </div>
 </#list>
 </#if>

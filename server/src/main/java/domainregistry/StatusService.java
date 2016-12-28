@@ -57,36 +57,60 @@ public class StatusService {
     }
 
     public Map<String, List<Object>> getDomainRegistryStatsGlobal(){
+        if(databaseType.equals(INMEMORY)){
+            populateRamStorageStatsHtml();
+            infoAboutUsersAndHyperties();
+        }
+        //How many users exist and hyperties per users and description
 
-      if(databaseType.equals(INMEMORY)){
-          populateRamStorageStatsHtml();
-          infoAboutUsersAndHyperties();
-      }
-      //How many users exist and hyperties per users and description
-
-      return this.domainRegistryStatsHtml;
+        return this.domainRegistryStatsHtml;
     }
 
     private void populateRamStorageStatsHtml(){
-      ArrayList<Object> list = new ArrayList<Object>();
-      StatusInfo info = new StatusInfo();
-      info.setStorageType(INMEMORY);
-      info.setNumHyperties(getNumHyperties());
-      info.setNumUsers(String.valueOf(((RamClient) this.connection).getNumUsersWithHyperties()));
-      list.add(info);
-      domainRegistryStatsHtml.put("Init", list);
+        ArrayList<Object> list = new ArrayList<Object>();
+        StatusInfo info = new StatusInfo();
+        info.setStorageType(INMEMORY);
+        info.setNumHyperties(getNumHyperties());
+        info.setNumUsers(String.valueOf(((RamClient) this.connection).getNumUsersWithHyperties()));
+        list.add(info);
+        domainRegistryStatsHtml.put("Init", list);
     }
 
     private void infoAboutUsersAndHyperties(){
-      Map<String, String> usersByGuid = ((RamClient) this.connection).getMapUsersByGuid();
-      ArrayList<Object> users = new ArrayList<Object>();
-      for(String guid : usersByGuid.keySet()){
-        StatusInfo info = new StatusInfo();
-        info.setUserGuid(guid);
-        info.setUserURL(usersByGuid.get(guid));
-        users.add(info);
-      }
-      domainRegistryStatsHtml.put("Users", users);
+        Map<String, String> usersByGuid = ((RamClient) this.connection).getMapUsersByGuid();
+        ArrayList<Object> users = new ArrayList<Object>();
+        for(String guid : usersByGuid.keySet()){
+            StatusInfo info = new StatusInfo();
+            info.setUserGuid(guid);
+            info.setUserURL(usersByGuid.get(guid));
+            Map<String, HypertyInstance> hyperties = ((RamClient) this.connection).getHypertiesByGuid(guid);
+            checkhypertiesState(hyperties, info);
+            users.add(info);
+        }
+        domainRegistryStatsHtml.put("Users", users);
+    }
+
+    public void checkhypertiesState(Map<String,HypertyInstance> hyperties, StatusInfo info){
+        int totalHyperties = 0;
+        int liveHyperties = 0;
+        int deadHyperties = 0;
+        List<HypertyInstance> listHyperties =  new ArrayList();
+        //PERGUNTAR AO MANGAS SE NÃO FAZ SENTIDO ATIVAR O VARRIMENTO DO ESTADO DAS HYPERTIES NESTE MOMENTO
+        for(HypertyInstance hyperty : hyperties.values()){
+            if(hyperty.getStatus().equals("live")){
+                totalHyperties++;
+                liveHyperties++;
+            }
+            else{
+                totalHyperties++;
+                deadHyperties++;
+            }
+            listHyperties.add(hyperty);
+        }
+        info.setTotalHyperties(String.valueOf(totalHyperties));
+        info.setLiveHyperties(String.valueOf(liveHyperties));
+        info.setDeadHyperties(String.valueOf(deadHyperties));
+        info.setListHyperties(listHyperties);
     }
 
     public Map<String, String> getDomainRegistryStats(){
