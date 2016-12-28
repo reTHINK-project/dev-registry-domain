@@ -43,6 +43,8 @@ public class StatusService {
 
     private String databaseType;
     private Connection connection;
+    private HypertyService hypertyService;
+    private DataObjectService dataObjectService;
 
     private Map<String, String> domainRegistryStats = new HashMap();
     private Map<String, List<Object>> domainRegistryStatsHtml = new HashMap<String, List<Object>>();
@@ -51,9 +53,11 @@ public class StatusService {
     public StatusService(){
     }
 
-    public StatusService(String databaseType, Connection connection){
+    public StatusService(String databaseType, Connection connection, HypertyService hypertyService, DataObjectService dataObjectService){
         this.databaseType = databaseType;
         this.connection = connection;
+        this.hypertyService = hypertyService;
+        this.dataObjectService = dataObjectService;
     }
 
     public Map<String, List<Object>> getDomainRegistryStatsGlobal(){
@@ -83,7 +87,7 @@ public class StatusService {
             StatusInfo info = new StatusInfo();
             info.setUserGuid(guid);
             info.setUserURL(usersByGuid.get(guid));
-            Map<String, HypertyInstance> hyperties = ((RamClient) this.connection).getHypertiesByGuid(guid);
+            Map<String, HypertyInstance> hyperties = this.hypertyService.getHypertiesByGuid(this.connection, guid);
             checkhypertiesState(hyperties, info);
             users.add(info);
         }
