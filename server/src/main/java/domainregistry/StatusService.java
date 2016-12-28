@@ -87,7 +87,7 @@ public class StatusService {
             StatusInfo info = new StatusInfo();
             info.setUserGuid(guid);
             info.setUserURL(usersByGuid.get(guid));
-            Map<String, HypertyInstance> hyperties = this.hypertyService.getHypertiesByGuid(this.connection, guid);
+            Map<String, HypertyInstance> hyperties = this.hypertyService.getHypertiesForStatusPage(this.connection, guid);
             checkhypertiesState(hyperties, info);
             users.add(info);
         }
@@ -99,18 +99,18 @@ public class StatusService {
         int liveHyperties = 0;
         int deadHyperties = 0;
         List<HypertyInstance> listHyperties =  new ArrayList();
-        //PERGUNTAR AO MANGAS SE NÃO FAZ SENTIDO ATIVAR O VARRIMENTO DO ESTADO DAS HYPERTIES NESTE MOMENTO
+        
         for(HypertyInstance hyperty : hyperties.values()){
-            if(hyperty.getStatus().equals("live")){
-                totalHyperties++;
+            totalHyperties++;
+
+            if(hyperty.getStatus().equals("live"))
                 liveHyperties++;
-            }
-            else{
-                totalHyperties++;
-                deadHyperties++;
-            }
+
+            else deadHyperties++;
+
             listHyperties.add(hyperty);
         }
+
         info.setTotalHyperties(String.valueOf(totalHyperties));
         info.setLiveHyperties(String.valueOf(liveHyperties));
         info.setDeadHyperties(String.valueOf(deadHyperties));

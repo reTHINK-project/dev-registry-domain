@@ -44,11 +44,6 @@ public class HypertyController {
 
     public HypertyController(StatusService status, final HypertyService hypertyService, final Connection connectionClient, final DataObjectService dataObjectService) {
 
-        FreeMarkerEngine freeMarkerEngine = new FreeMarkerEngine();
-        Configuration freeMarkerConfiguration = new Configuration();
-        freeMarkerConfiguration.setTemplateLoader(new ClassTemplateLoader(HypertyController.class, "/"));
-        freeMarkerEngine.setConfiguration(freeMarkerConfiguration);
-
         get("/", (req, res) -> {
             res.redirect("/live");
             return null;
@@ -62,8 +57,12 @@ public class HypertyController {
             String accept = req.headers("Accept");
 
             if (accept != null && accept.contains("text/html")) {
-                // produce HTML -> Present all users URLs with hyperties and the data related to each hyperty
+                // produce HTML
                 res.type("text/html");
+                FreeMarkerEngine freeMarkerEngine = new FreeMarkerEngine();
+                Configuration freeMarkerConfiguration = new Configuration();
+                freeMarkerConfiguration.setTemplateLoader(new ClassTemplateLoader(HypertyController.class, "/"));
+                freeMarkerEngine.setConfiguration(freeMarkerConfiguration);
                 Map<String, List<Object>> attributes = status.getDomainRegistryStatsGlobal();
                 res.status(200);
                 return freeMarkerEngine.render(new ModelAndView(attributes, "status.ftl"));

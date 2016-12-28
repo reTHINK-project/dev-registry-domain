@@ -31,7 +31,7 @@ public class StatusInfo {
     private String deadHyperties;
     private List<HypertyInstance> listHyperties;
 
-    public void UserInfo () {
+    public void StatusInfo () {
 
     }
 

@@ -72,6 +72,13 @@ public class HypertyService{
         return liveHyperties(hypertiesWithStatusUpdated);
     }
 
+    // Status page shows all hyperties independent of the their status
+    public Map<String, HypertyInstance> getHypertiesForStatusPage(Connection connectionClient, String guid){
+        String userID = connectionClient.getUserByGuid(guid);
+        deleteExpiredHyperties(connectionClient, userID);
+        return connectionClient.getUserHyperties(userID);
+    }
+
     public HypertyInstance getHypertyByUrl(Connection connectionClient, String hypertyUrl){
         if(!connectionClient.hypertyExists(hypertyUrl)){
             throw new DataNotFoundException();
