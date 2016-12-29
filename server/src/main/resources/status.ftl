@@ -24,7 +24,7 @@
 <#if Users??>
 <#list Users as user>
 <div class="hyperties">
-    <h2>GUID: ${user.userGuid} UserURL: ${user.userURL} Total Hyperties: ${user.totalHyperties} Active Hyperties: ${user.liveHyperties} Disconnected Hyperties: ${user.deadHyperties} </h2>
+    <h2>GUID: ${user.userGuid} User: ${user.userURL} Total Hyperties: ${user.totalHyperties} Active Hyperties: ${user.liveHyperties} Disconnected Hyperties: ${user.deadHyperties} </h2>
     <#list user.listHyperties as hyperty>
     <div class="listHyperties">
       <h3> HypertyID: ${hyperty.hypertyID} </h2>
