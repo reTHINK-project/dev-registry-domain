@@ -26,6 +26,8 @@ public class StatusInfo {
     private String storageType;
     private String numHyperties;
     private String numUsers;
+    private String clusterDBSize;
+    private String clusterLiveNodes;
     private String totalHyperties;
     private String liveHyperties;
     private String deadHyperties;
@@ -73,6 +75,22 @@ public class StatusInfo {
 
     public String getNumUsers(){
         return this.numUsers;
+    }
+
+    public void setClusterDBSize(String clusterDBSize){
+        this.clusterDBSize=clusterDBSize;
+    }
+
+    public String getClusterDBSize(){
+        return this.clusterDBSize;
+    }
+
+    public void setClusterLiveNodes(String clusterLiveNodes){
+        this.clusterLiveNodes=clusterLiveNodes;
+    }
+
+    public String getClusterLiveNodes(){
+        return this.clusterLiveNodes;
     }
 
     public void setTotalHyperties(String totalHyperties){

@@ -63,9 +63,13 @@ public class StatusService {
     public Map<String, List<Object>> getDomainRegistryStatsGlobal(){
         if(databaseType.equals(INMEMORY)){
             populateRamStorageStatsHtml();
-            infoAboutUsersAndHyperties();
+            infoAboutUsersAndHypertiesRam();
         }
-        //How many users exist and hyperties per users and description
+
+        else if(databaseType.equals(CASSANDRA)){
+            populateCassandraStatsHtml();
+            infoAboutUsersAndHypertiesCassandra();
+        }
 
         return this.domainRegistryStatsHtml;
     }
@@ -80,8 +84,35 @@ public class StatusService {
         domainRegistryStatsHtml.put("Init", list);
     }
 
-    private void infoAboutUsersAndHyperties(){
+
+    private void populateCassandraStatsHtml(){
+        ArrayList<Object> list = new ArrayList<Object>();
+        StatusInfo info = new StatusInfo();
+        info.setStorageType(CASSANDRA);
+        info.setNumHyperties(getNumHyperties());
+        info.setNumUsers(String.valueOf(((CassandraClient) this.connection).getNumUsersWithHyperties()));
+        info.setClusterDBSize(getClusterDBSize());
+        info.setClusterLiveNodes(getClusterLiveNodes());
+        list.add(info);
+        domainRegistryStatsHtml.put("Init", list);
+    }
+
+    private void infoAboutUsersAndHypertiesRam(){
         Map<String, String> usersByGuid = ((RamClient) this.connection).getMapUsersByGuid();
+        ArrayList<Object> users = new ArrayList<Object>();
+        for(String guid : usersByGuid.keySet()){
+            StatusInfo info = new StatusInfo();
+            info.setUserGuid(guid);
+            info.setUserURL(usersByGuid.get(guid));
+            Map<String, HypertyInstance> hyperties = this.hypertyService.getHypertiesForStatusPage(this.connection, guid);
+            checkhypertiesState(hyperties, info);
+            users.add(info);
+        }
+        domainRegistryStatsHtml.put("Users", users);
+    }
+
+    private void infoAboutUsersAndHypertiesCassandra(){
+        Map<String, String> usersByGuid = ((CassandraClient) this.connection).getMapUsersByGuid();
         ArrayList<Object> users = new ArrayList<Object>();
         for(String guid : usersByGuid.keySet()){
             StatusInfo info = new StatusInfo();
@@ -99,7 +130,7 @@ public class StatusService {
         int liveHyperties = 0;
         int deadHyperties = 0;
         List<HypertyInstance> listHyperties =  new ArrayList();
-        
+
         for(HypertyInstance hyperty : hyperties.values()){
             totalHyperties++;
 
