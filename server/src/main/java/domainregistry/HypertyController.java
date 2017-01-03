@@ -41,6 +41,8 @@ public class HypertyController {
     public static final int ALL_DO_PATH_SIZE = 7;
     public static final int SPECIFIC_DO_PATH_SIZE = 8;
 
+    private static final String DEVELOPMENT = "DEVELOPMENT";
+    private static final String DOMAIN_ENV = "DOMAIN_ENV";
 
     public HypertyController(StatusService status, final HypertyService hypertyService, final Connection connectionClient, final DataObjectService dataObjectService) {
 
@@ -56,8 +58,10 @@ public class HypertyController {
             log.info("Live page requested. Status on the way...");
             String accept = req.headers("Accept");
 
-            if (accept != null && accept.contains("text/html")) {
-                // produce HTML
+            String domainEnv = System.getenv(DOMAIN_ENV);
+
+            if (accept != null && accept.contains("text/html") && domainEnv != null && domainEnv.equals(DEVELOPMENT)) {
+                // produces HTML
                 res.type("text/html");
                 FreeMarkerEngine freeMarkerEngine = new FreeMarkerEngine();
                 Configuration freeMarkerConfiguration = new Configuration();
@@ -67,7 +71,7 @@ public class HypertyController {
                 res.status(200);
                 return freeMarkerEngine.render(new ModelAndView(attributes, "status.ftl"));
             } else {
-                // produce JSON
+                // produces JSON
                 res.status(200);
                 res.type("application/json");
                 Map<String, String> databaseStats = status.getDomainRegistryStats();
