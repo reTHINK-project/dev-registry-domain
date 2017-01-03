@@ -29,6 +29,14 @@ public class RamClient implements Connection{
 
     private Map<String, String> userByGuid = new HashMap<>();
 
+    public Map<String,String> getMapUsersByGuid(){
+        return userByGuid;
+    }
+
+    public int getNumUsersWithHyperties(){
+        return userByGuid.size();
+    }
+
     public Map<String, HypertyInstance> getHypertiesByGuid(String guid){
         if(guidExists(guid)){
             String userId = getUserByGuid(guid);
@@ -39,7 +47,7 @@ public class RamClient implements Connection{
     }
 
     public String getUserByGuid(String guid){
-       return userByGuid.get(guid); 
+       return userByGuid.get(guid);
     }
 
     public boolean guidExists(String guid){
