@@ -20,3 +20,6 @@ env:
 
 script:
   - rspec server/specs/data_objects_keep_alive_spec.rb
+  - rspec server/specs/data_objects_spec.rb
+  - rspec server/specs/hyperties_spec.rb
+  - rspec server/specs/hyperty_keep_alive_spec.rb
