@@ -1,5 +1,7 @@
 # dev-registry-domain
 
+[![Build Status](https://travis-ci.org/reTHINK-project/dev-registry-domain.svg?branch=develop)](https://travis-ci.org/reTHINK-project/dev-registry-domain)
+
 ### [Documentation](https://github.com/reTHINK-project/dev-registry-domain/tree/master/docs)
 
 
