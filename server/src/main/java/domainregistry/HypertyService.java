@@ -194,6 +194,13 @@ public class HypertyService{
         else throw new HypertiesNotFoundException();
     }
 
+    public void addHypertySubscription(Connection connectionClient, String hypertyUrl, String runtimeUrl){
+        if(connectionClient.hypertyExists(hypertyUrl))
+            connectionClient.createSubscription(hypertyUrl, runtimeUrl);
+
+        else throw new HypertiesNotFoundException();
+    }
+
 
     protected void deleteExpiredHyperties(Connection connectionClient, String userID){
         String actualDate = Dates.getActualDate();

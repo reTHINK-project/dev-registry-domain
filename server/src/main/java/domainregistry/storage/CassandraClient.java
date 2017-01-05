@@ -478,6 +478,9 @@ public class CassandraClient implements Connection{
         // log.info("Deleted from database dataobject with name: " + dataObjectUrl);
     }
 
+    public void createSubscription(String hypertyUrl, String runtimeUrl){
+    }
+
     public Session getSession(){
         return this.session;
     }

@@ -36,6 +36,7 @@ interface Connection{
     public void insertDataObject(DataObjectInstance dataObject);
     public boolean dataObjectExists(String dataObjectName);
     public void deleteDataObject(String dataObjectName);
+    public void createSubscription(String hypertyUrl, String runtimeUrl);
     public DataObjectInstance getDataObjectByUrl(String dataObjectUrl);
     public Map<String, DataObjectInstance> getDataObjectsByHyperty(String hypertyReporter);
     public Map<String, DataObjectInstance> getDataObjectsByName(String dataObjectName);

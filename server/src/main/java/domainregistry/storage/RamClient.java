@@ -26,8 +26,20 @@ public class RamClient implements Connection{
 
     private Map<String, Map<String, HypertyInstance>> userServices = new HashMap<>();
     private Map<String, DataObjectInstance> dataObjects = new HashMap<>();
+    private Map<String, ArrayList<String>> subscriptions = new HashMap<String, ArrayList<String>>();
 
     private Map<String, String> userByGuid = new HashMap<>();
+
+    public void createSubscription(String hypertyUrl, String runtimeUrl){
+        if(subscriptions.containsKey(hypertyUrl))
+            subscriptions.get(hypertyUrl).add(runtimeUrl);
+
+        else {
+            ArrayList<String> runtimes = new ArrayList<String>();
+            runtimes.add(runtimeUrl);
+            subscriptions.put(hypertyUrl, runtimes);
+        }
+    }
 
     public Map<String,String> getMapUsersByGuid(){
         return userByGuid;

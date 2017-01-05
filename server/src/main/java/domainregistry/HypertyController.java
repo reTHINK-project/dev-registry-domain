@@ -349,16 +349,30 @@ public class HypertyController {
             return gson.toJson(dataObjects);
         });
 
-        // // DELETE data object by its URL
-        // delete("/hyperty/dataobject/url#<{(|", (req, res) -> {
-        //     Gson gson = new Gson();
-        //     res.type("application/json");
-        //     String[] encodedURL = req.url().split("/");
-        //     String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
-        //     dataObjectService.deleteDataObject(connectionClient, dataObjectUrl);
-        //     res.status(200);
-        //     return gson.toJson(new Messages("Data object deleted"));
-        // });
+        // Subscribe to notifications
+        put("subscribe/hyperty/*", (req, res) -> {
+            Gson gson = new Gson();
+            res.type("application/json");
+            String body = req.body();
+            String[] encodedURL = req.url().split("/");
+
+            String hypertyUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
+
+            Map<String, String> map = new HashMap<String, String>();
+            map = (Map<String, String>) gson.fromJson(body, map.getClass());
+
+            if(map.containsKey("runtimeURL")){
+                String runtimeUrl = map.get("runtimeURL");
+                hypertyService.addHypertySubscription(connectionClient, hypertyUrl, runtimeUrl);
+                res.status(200);
+                return gson.toJson(new Messages("Hyperty was successfully subscribed"));
+            }
+            else {
+                res.status(400);
+                log.info("Key runtimeURL not present");
+                return gson.toJson(new Messages("Key runtimeURL not present"));
+            }
+        });
 
         get("/throwexception", (request, response) -> {
             throw new TemporaryUnavailableException();
