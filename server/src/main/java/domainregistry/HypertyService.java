@@ -203,21 +203,23 @@ public class HypertyService{
     }
 
     public Map<String, ArrayList<String>> getSubscribedRuntimes(Connection connectionClient, String hypertyUrl){
-        Map<String, ArrayList<String>> runtimes = new HashMap<String, ArrayList<String>>();
-
         if(connectionClient.hypertyExists(hypertyUrl)){
-            log.info(connectionClient.getRuntimes(hypertyUrl));
+            Map<String, ArrayList<String>> runtimes = new HashMap();
             runtimes.put(RUNTIMES, connectionClient.getRuntimes(hypertyUrl));
-            return runtimes;
+
+            Map<String, ArrayList<String>> newRuntimes = new HashMap(runtimes);
+
+            clearRuntimesSubscriptions(connectionClient, hypertyUrl);
+
+            return newRuntimes;
         }
 
         else throw new HypertiesNotFoundException();
     }
 
     public void clearRuntimesSubscriptions(Connection connectionClient, String hypertyUrl){
-        if(connectionClient.hypertyExists(hypertyUrl)){
+        if(connectionClient.hypertyExists(hypertyUrl))
             connectionClient.clearSubscriptions(hypertyUrl);
-        }
 
         else throw new HypertiesNotFoundException();
     }

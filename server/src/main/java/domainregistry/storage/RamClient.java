@@ -42,7 +42,8 @@ public class RamClient implements Connection{
     }
 
     public void clearSubscriptions(String hypertyUrl){
-        subscriptions.get(hypertyUrl).clear();
+        if(subscriptions.containsKey(hypertyUrl))
+            subscriptions.put(hypertyUrl, new ArrayList<String>());
     }
 
     public ArrayList<String> getRuntimes(String hypertyUrl){
