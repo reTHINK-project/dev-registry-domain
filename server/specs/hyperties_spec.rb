@@ -98,13 +98,13 @@ describe 'domain registry api tests' do
     it 'should add a new hyperty' do #non-existent user creates non-existent hyperty
       put '/ruijose@inesc-id.pt/hyperty1', @hyperty_details
       expect_status(200)
-      expect_json(:message => "Hyperty created")
+      expect_json_types('runtimes': :array)
     end
 
     it 'should add a new hyperty' do
       put '/ruigil@inesc-id.pt/hyperty11', @hyperty_five_details
       expect_status(200)
-      expect_json(:message => "Hyperty created")
+      expect_json_types('runtimes': :array)
     end
 
     it 'should add a new hyperty' do #hyperty already exists and belongs to user: ruijose
@@ -116,13 +116,13 @@ describe 'domain registry api tests' do
     it 'should add a new hyperty' do #existent user creates non-existent hyperty
       put '/ruijose@inesc-id.pt/hyperty2', @hyperty_four_details
       expect_status(200)
-      expect_json(:message => "Hyperty created")
+      expect_json_types('runtimes': :array)
     end
 
     it 'should add a new hyperty' do #existent user creates non-existent hyperty
       put '/ruigarcia@inesc-id.pt/hyperty3', @hyperty_ten_details
       expect_status(200)
-      expect_json(:message => "Hyperty created")
+      expect_json_types('runtimes': :array)
     end
 
     it 'should add a new hyperty' do #existent user tries to create or update another user's hyperty
@@ -134,7 +134,7 @@ describe 'domain registry api tests' do
     it 'should add a new hyperty' do ##existent user creates non-existent hyperty
       put '/ruijose@inesc-id.pt/hyperty6', @hyperty_four_details
       expect_status(200)
-      expect_json(:message => "Hyperty created")
+      expect_json_types('runtimes': :array)
     end
   end
 
@@ -159,10 +159,10 @@ describe 'domain registry api tests' do
       end
     end
 
-  Airborne.configure do |config|
-    config.base_url = ENV["HOST"].dup << '/hyperty/user'
+    Airborne.configure do |config|
+      config.base_url = ENV["HOST"].dup << '/hyperty/user'
+    end
   end
-end
 
 describe 'get hyperties by guid' do
   Airborne.configure do |config|
@@ -337,7 +337,7 @@ end
       sleep(1)
       put '/ruijose@inesc-id.pt/hyperty1', @hyperty_three_details
       expect_status(200)
-      expect_json(:message => "Hyperty created")
+      expect_json_types('runtimes': :array)
     end
 
     it 'should get all updated hyperties' do

@@ -481,6 +481,13 @@ public class CassandraClient implements Connection{
     public void createSubscription(String hypertyUrl, String runtimeUrl){
     }
 
+    public void clearSubscriptions(String hypertyUrl) {
+    }
+
+    public ArrayList<String> getRuntimes(String hypertyUrl){
+        return new ArrayList<String>();
+    }
+
     public Session getSession(){
         return this.session;
     }

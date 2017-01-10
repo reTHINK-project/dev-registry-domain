@@ -41,6 +41,19 @@ public class RamClient implements Connection{
         }
     }
 
+    public void clearSubscriptions(String hypertyUrl){
+        subscriptions.get(hypertyUrl).clear();
+    }
+
+    public ArrayList<String> getRuntimes(String hypertyUrl){
+        ArrayList<String> runtimes = subscriptions.get(hypertyUrl);
+
+        if(subscriptions.containsKey(hypertyUrl) && runtimes != null)
+            return runtimes;
+
+        else return new ArrayList<String>();
+    }
+
     public Map<String,String> getMapUsersByGuid(){
         return userByGuid;
     }

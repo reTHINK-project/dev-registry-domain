@@ -39,7 +39,7 @@ describe 'domain registry api tests' do
     it 'should add a new hyperty' do #non-existent user creates non-existent hyperty
       put '/hyperty/user/ruijose@inesc-id/hyperty_keep_alive', @hyperty_details
       expect_status(200)
-      expect_json(:message => "Hyperty created")
+      expect_json_types('runtimes': :array)
     end
   end
 
@@ -69,7 +69,7 @@ describe 'domain registry api tests' do
 
       put '/hyperty/url/hyperty_keep_alive', new_fields
       expect_status(200)
-      expect_json(:message => "Hyperty updated")
+      expect_json_types('runtimes': :array)
     end
 
     it 'should get new hyperty fields' do
@@ -93,7 +93,7 @@ describe 'domain registry api tests' do
 
       put '/hyperty/url/hyperty_keep_alive', new_fields
       expect_status(200)
-      expect_json(:message => "Keep alive")
+      expect_json_types('runtimes': :array)
     end
 
     it 'should get new hyperty fields' do

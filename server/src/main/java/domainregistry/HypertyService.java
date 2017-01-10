@@ -30,6 +30,7 @@ public class HypertyService{
     private static final String EXPIRES = "EXPIRES";
     private static final String DEAD = "disconnected";
     private static final String LIVE = "live";
+    private static final String RUNTIMES = "runtimes";
 
     public Map<String, HypertyInstance> getAllHyperties(Connection connectionClient, String userID) {
         Map<String, HypertyInstance> allUserHyperties = connectionClient.getUserHyperties(userID);
@@ -201,6 +202,25 @@ public class HypertyService{
         else throw new HypertiesNotFoundException();
     }
 
+    public Map<String, ArrayList<String>> getSubscribedRuntimes(Connection connectionClient, String hypertyUrl){
+        Map<String, ArrayList<String>> runtimes = new HashMap<String, ArrayList<String>>();
+
+        if(connectionClient.hypertyExists(hypertyUrl)){
+            log.info(connectionClient.getRuntimes(hypertyUrl));
+            runtimes.put(RUNTIMES, connectionClient.getRuntimes(hypertyUrl));
+            return runtimes;
+        }
+
+        else throw new HypertiesNotFoundException();
+    }
+
+    public void clearRuntimesSubscriptions(Connection connectionClient, String hypertyUrl){
+        if(connectionClient.hypertyExists(hypertyUrl)){
+            connectionClient.clearSubscriptions(hypertyUrl);
+        }
+
+        else throw new HypertiesNotFoundException();
+    }
 
     protected void deleteExpiredHyperties(Connection connectionClient, String userID){
         String actualDate = Dates.getActualDate();

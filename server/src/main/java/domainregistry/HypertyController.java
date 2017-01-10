@@ -31,6 +31,7 @@ public class HypertyController {
     static Logger log = Logger.getLogger(HypertyController.class.getName());
 
     private static final String DEAD = "disconnected";
+    private static final String RUNTIMES = "runtimes";
 
     private int numReads = 0;
     private int numWrites = 0;
@@ -166,8 +167,9 @@ public class HypertyController {
 
             if(body.equals("{}")){
                 hypertyService.keepAlive(connectionClient, hypertyID);
+                Map<String, ArrayList<String>> subscribedRuntimes = hypertyService.getSubscribedRuntimes(connectionClient, hypertyID);
                 res.status(200);
-                return gson.toJson(new Messages("Keep alive"));
+                return gson.toJson(subscribedRuntimes);
             }
 
             else{
@@ -175,8 +177,9 @@ public class HypertyController {
                 HypertyInstance hyperty = gson.fromJson(body, HypertyInstance.class);
                 hyperty.setHypertyID(hypertyID);
                 hypertyService.updateHypertyFields(connectionClient, hyperty);
+                Map<String, ArrayList<String>> subscribedRuntimes = hypertyService.getSubscribedRuntimes(connectionClient, hypertyID);
                 res.status(200);
-                return gson.toJson(new Messages("Hyperty updated"));
+                return gson.toJson(subscribedRuntimes);
             }
         });
 
@@ -193,8 +196,9 @@ public class HypertyController {
             hyperty.setUserID(userID);
             hyperty.setHypertyID(hypertyID);
             hypertyService.createUserHyperty(connectionClient, hyperty);
+            Map<String, ArrayList<String>> subscribedRuntimes = hypertyService.getSubscribedRuntimes(connectionClient, hypertyID);
             res.status(200);
-            return gson.toJson(new Messages("Hyperty created"));
+            return gson.toJson(subscribedRuntimes);
         });
 
 
