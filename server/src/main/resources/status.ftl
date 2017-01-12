@@ -13,21 +13,25 @@
     </style>
 </head>
 <body>
-<h1>Domain Registry Status Page</h1>
+<h1>Domain Registry Status Page </h1>
 
 <#if Init??>
 <#list Init as info>
 <h3>Storage type: ${info.storageType}, Users with Hyperties: ${info.numUsers}, Hyperties stored: ${info.numHyperties} </h3>
+<#assign domainURL="${info.domainURL}">
 </#list>
 </#if>
 
 <#if Users??>
 <#list Users as user>
 <div class="hyperties">
-    <h2>GUID: ${user.userGuid} User: ${user.userURL} Total Hyperties: ${user.totalHyperties} Active Hyperties: ${user.liveHyperties} Disconnected Hyperties: ${user.deadHyperties} </h2>
-    <#list user.listHyperties as hyperty>
+  <#setting url_escaping_charset="UTF-8">
+  <#assign requestUserURL="${domainURL}/hyperty/user/${user.userURL?url}">
+  <h2>GUID: ${user.userGuid} User: <a href=${requestUserURL}>${user.userURL}</a> Total Hyperties: ${user.totalHyperties} Active Hyperties: ${user.liveHyperties} Disconnected Hyperties: ${user.deadHyperties} </h2>
+  <#list user.listHyperties as hyperty>
     <div class="listHyperties">
-      <h3> HypertyID: ${hyperty.hypertyID} </h2>
+      <#assign requestHypertyURL="${domainURL}/hyperty/url/${hyperty.hypertyID?url}">
+      <h3> HypertyID: <a href=${requestHypertyURL}>${hyperty.hypertyID}</a></h2>
       <ul class="hypertiesInfo">
         <li class="hypertiesStats"> Descriptor: ${hyperty.descriptor} </li>
         <li class="hypertiesStats"> DataSchemes:  </li>
@@ -45,9 +49,9 @@
         <li class="hypertiesStats"> Peer-To-Peer Requester: ${hyperty.requester} </li>
         <li class="hypertiesStats"> Peer-To-Peer Handler: ${hyperty.handler} </li>
         <li class="hypertiesStats"> Runtime: ${hyperty.runtime} </li>
-    </ul>
+      </ul>
     </div>
-    </#list>
+  </#list>
 </div>
 </#list>
 </#if>

@@ -40,6 +40,7 @@ public class StatusService {
     private static final String INMEMORY = "Ram";
     private static final String NUM_APP_SERVERS = "Number of app servers";
     private static final String UP_APP_SERVERS = "Number of live app servers";
+    private static String DOMAIN_URL;
 
     private String databaseType;
     private Connection connection;
@@ -60,7 +61,8 @@ public class StatusService {
         this.dataObjectService = dataObjectService;
     }
 
-    public Map<String, List<Object>> getDomainRegistryStatsGlobal(){
+    public Map<String, List<Object>> getDomainRegistryStatsGlobal(String domainURL){
+        DOMAIN_URL=domainURL;
         if(databaseType.equals(INMEMORY)){
             populateRamStorageStatsHtml();
             infoAboutUsersAndHypertiesRam();
@@ -77,6 +79,7 @@ public class StatusService {
     private void populateRamStorageStatsHtml(){
         ArrayList<Object> list = new ArrayList<Object>();
         StatusInfo info = new StatusInfo();
+        info.setDomainURL(DOMAIN_URL);
         info.setStorageType(INMEMORY);
         info.setNumHyperties(getNumHyperties());
         info.setNumUsers(String.valueOf(((RamClient) this.connection).getNumUsersWithHyperties()));
@@ -84,10 +87,10 @@ public class StatusService {
         domainRegistryStatsHtml.put("Init", list);
     }
 
-
     private void populateCassandraStatsHtml(){
         ArrayList<Object> list = new ArrayList<Object>();
         StatusInfo info = new StatusInfo();
+        info.setDomainURL(DOMAIN_URL);
         info.setStorageType(CASSANDRA);
         info.setNumHyperties(getNumHyperties());
         info.setNumUsers(String.valueOf(((CassandraClient) this.connection).getNumUsersWithHyperties()));
