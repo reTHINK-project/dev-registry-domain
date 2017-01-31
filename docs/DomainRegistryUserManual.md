@@ -95,7 +95,14 @@ use rethinkeyspace;
 CREATE TABLE guid_by_user_id (
     user text,
     guid text,
+    emails list<text>,
     PRIMARY KEY(guid)
+);
+
+CREATE TABLE hyperties_by_email (
+    email text,
+    hyperties_ids list<text>,
+    PRIMARY KEY(email)
 );
 
 CREATE TABLE hyperties_by_id (
