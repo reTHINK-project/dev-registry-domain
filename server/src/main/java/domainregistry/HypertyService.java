@@ -72,6 +72,21 @@ public class HypertyService{
         return liveHyperties(hypertiesWithStatusUpdated);
     }
 
+    public Map<String, HypertyInstance> getHypertiesByEmail(Connection connectionClient, String email) {
+        ArrayList<HypertyInstance> foundHyperties = connectionClient.getHypertiesByEmail(email);
+
+        if(foundHyperties.isEmpty())
+            throw new DataNotFoundException();
+
+        Map<String, HypertyInstance> hyperties = new HashMap<>();
+
+        for(HypertyInstance hyperty : foundHyperties){
+            hyperties.put(hyperty.getHypertyID(), hyperty);
+        }
+
+        return hyperties;
+    }
+
     // Status page shows all hyperties independent of the their status
     public Map<String, HypertyInstance> getHypertiesForStatusPage(Connection connectionClient, String guid){
         String userID = connectionClient.getUserByGuid(guid);

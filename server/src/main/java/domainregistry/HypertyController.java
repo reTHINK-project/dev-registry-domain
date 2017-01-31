@@ -153,6 +153,17 @@ public class HypertyController {
             return gson.toJson(hyperties);
         });
 
+        // GET hyperties by email
+        get("/hyperty/email/*", (req,res) -> {
+            Gson gson = new Gson();
+            this.numReads++;
+            res.type("application/json");
+            String[] encodedURL = req.url().split("/");
+            String userEmail = decodeUrl(encodedURL[encodedURL.length - 1]);
+            Map<String, HypertyInstance> hyperties = hypertyService.getHypertiesByEmail(connectionClient, userEmail);
+            res.status(200);
+            return gson.toJson(hyperties);
+        });
 
         // GET user hyperties
         get("/hyperty/user/*", (req,res) -> {

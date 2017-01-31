@@ -137,6 +137,10 @@ public class CassandraClient implements Connection{
         else log.error("Invalid cassandra session.");
     }
 
+    public ArrayList<HypertyInstance> getHypertiesByEmail(String email){
+        return new ArrayList();
+    }
+
     public int getNumberOfHyperties(){
         ArrayList<String> data = new ArrayList<String>();
 
