@@ -26,7 +26,7 @@ public class RamClient implements Connection{
 
     private Map<String, Map<String, HypertyInstance>> userServices = new HashMap<>();
     private Map<String, DataObjectInstance> dataObjects = new HashMap<>();
-    private Map<String, ArrayList<String>> subscriptions = new HashMap<String, ArrayList<String>>();
+    private Map<String, HashSet<String>> subscriptions = new HashMap<String, HashSet<String>>();
 
     private Map<String, String> userByGuid = new HashMap<>();
 
@@ -35,7 +35,7 @@ public class RamClient implements Connection{
             subscriptions.get(hypertyUrl).add(runtimeUrl);
 
         else {
-            ArrayList<String> runtimes = new ArrayList<String>();
+            HashSet<String> runtimes = new HashSet<String>();
             runtimes.add(runtimeUrl);
             subscriptions.put(hypertyUrl, runtimes);
         }
@@ -43,16 +43,16 @@ public class RamClient implements Connection{
 
     public void clearSubscriptions(String hypertyUrl){
         if(subscriptions.containsKey(hypertyUrl))
-            subscriptions.put(hypertyUrl, new ArrayList<String>());
+            subscriptions.put(hypertyUrl, new HashSet<String>());
     }
 
-    public ArrayList<String> getRuntimes(String hypertyUrl){
-        ArrayList<String> runtimes = subscriptions.get(hypertyUrl);
+    public HashSet<String> getRuntimes(String hypertyUrl){
+        HashSet<String> runtimes = subscriptions.get(hypertyUrl);
 
         if(subscriptions.containsKey(hypertyUrl) && runtimes != null)
             return runtimes;
 
-        else return new ArrayList<String>();
+        else return new HashSet<String>();
     }
 
     public Map<String,String> getMapUsersByGuid(){

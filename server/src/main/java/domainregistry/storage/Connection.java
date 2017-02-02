@@ -34,7 +34,7 @@ interface Connection{
     public boolean guidExists(String guid);
     public void createSubscription(String hypertyUrl, String runtimeUrl);
     public void clearSubscriptions(String hypertyUrl);
-    public ArrayList<String> getRuntimes(String hypertyUrl);
+    public HashSet<String> getRuntimes(String hypertyUrl);
     //dataobjects
     public void insertDataObject(DataObjectInstance dataObject);
     public boolean dataObjectExists(String dataObjectName);

@@ -204,7 +204,7 @@ public class HypertyService{
 
     public Map<String, ArrayList<String>> getSubscribedRuntimes(Connection connectionClient, String hypertyUrl){
         if(connectionClient.hypertyExists(hypertyUrl)){
-            Map<String, ArrayList<String>> runtimes = new HashMap();
+            Map<String, HashSet<String>> runtimes = new HashMap();
             runtimes.put(RUNTIMES, connectionClient.getRuntimes(hypertyUrl));
 
             Map<String, ArrayList<String>> newRuntimes = new HashMap(runtimes);
