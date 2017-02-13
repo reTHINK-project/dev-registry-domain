@@ -15,7 +15,26 @@
 *
 */
 
-var client = vertx.createHttpClient({});
+var trustStoreBuffer = vertx.fileSystem().readFileBlocking("ca-bundle.pem");
+var clientKeyBuffer = vertx.fileSystem().readFileBlocking("connector.key.pem");
+var clientCertBuffer = vertx.fileSystem().readFileBlocking("connector.cert.pem");
+
+
+var options  = {
+  "ssl": true,
+  "pemTrustOptions": {
+    "certValues": [
+      trustStoreBuffer
+    ]
+  },
+  "pemKeyCertOptions": {
+    "keyValue": clientKeyBuffer,
+    "certValue": clientCertBuffer
+  }
+};
+
+var client = vertx.createHttpClient(options);
+
 
 var JavaRequest = {
 
