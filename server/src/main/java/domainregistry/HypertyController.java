@@ -48,6 +48,8 @@ public class HypertyController {
     private static final String DEVELOPMENT = "DEVELOPMENT";
     private static final String DOMAIN_ENV = "DOMAIN_ENV";
 
+    private static final String LOAD_BALANCER_IP = "LOAD_BALANCER_IP";
+
 
     public HypertyController(StatusService status, final HypertyService hypertyService, final Connection connectionClient, final DataObjectService dataObjectService) {
 
@@ -60,6 +62,24 @@ public class HypertyController {
         }
 
         else log.info("You did not provide either a keystore or a keystore password. HTTP enabled...");
+
+        before((request, response) -> {
+            boolean authenticated;
+
+            String loadBalancerIp = System.getenv(LOAD_BALANCER_IP);
+
+            if(loadBalancerIp == null ){
+                log.info("Load balancer IP not found. Unauthorized.");
+                halt(401, "Load balancer IP not found. Unauthorized request.");
+            }
+
+            String originIp = request.ip().toString();
+
+            if (loadBalancerIp != null && !loadBalancerIp.equals(originIp)){
+                log.info("Unauthorized request...");
+                halt(401, "Unauthorized request");
+            }
+        });
 
         get("/", (req, res) -> {
             res.redirect("/live");
