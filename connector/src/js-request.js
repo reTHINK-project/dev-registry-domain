@@ -20,63 +20,75 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-var http = require('http');
-var querystring = require('querystring');
-var url = require('url');
-var requestify = require('requestify');
+
+var request = require('request');
+var fs = require('fs');
+var path = require('path');
+
+var certFile = path.resolve(__dirname, 'connector.cert.pem');
+var keyFile = path.resolve(__dirname, 'connector.key.pem');
+var caFile = path.resolve(__dirname, 'ca-bundle.pem');
+
+var defaulOptions = {
+  cert: fs.readFileSync(certFile),
+  key: fs.readFileSync(keyFile),
+  ca: fs.readFileSync(caFile)
+};
 
 var JSRequest = {
 
   get: function(url, callback) {
-    requestify.request(url, {
-      method: 'GET'
-    })
-    .then(function(response) {
-      callback(null, response.getBody(), response.getCode());
-    })
-    .fail(function(error) {
-      if(error.getCode() != 404 && error.getCode() != 408) {
-        console.log("[REGISTRY-CONNECTOR] Error code: " + error.getCode() + " Error: " + error.getBody());
-        callback(error);
-      }else {
-        callback(null, error.getBody(), error.getCode());
-      }
+    request.get(url, defaultOptions, function(err, response, body) {
+    if(!err) {
+      return callback(null, body, response.statusCode)
+    } else if(err.statusCode !== 404 && err.statusCode !== 408) {
+      console.log("[REGISTRY-CONNECTOR] Error: " + err);
+      return callback(err);
+    } else {
+      return callback(null, err.body, err.statusCode);
+    }
     });
   },
 
   put: function(url, message, callback) {
-    requestify.request(url, {
+
+    var putOptions = {
+      url: url,
       method: 'PUT',
-      body: message,
-      headers: {'content-type': 'application/json'},
-      dataType: 'json'
-    })
-    .then(function(response) {
-      callback(null, response.getBody(), response.getCode());
-    })
-    .fail(function(error) {
-      if(error.getCode() != 404 && error.getCode() != 408) {
-        console.log("[REGISTRY-CONNECTOR] Error code: " + error.getCode() + " Error: " + error.getBody());
-        callback(error);
-      }else {
-        callback(null, error.getBody(), error.getCode());
+      json: message
+    };
+
+    var options = Object.assign({}, defaultOptions, putOptions);
+
+    request(options, function(err, response, body) {
+      if(!err) {
+        return callback(null, body, response.statusCode)
+      } else if(err.statusCode !== 404 && err.statusCode !== 408) {
+        console.log("[REGISTRY-CONNECTOR] Error: " + err);
+        return callback(err);
+      } else {
+        return callback(null, err.body, err.statusCode);
       }
     });
   },
 
   del: function(url, callback) {
-    requestify.request(url, {
+
+    var deleteOptions = {
+      url: url,
       method: 'DELETE'
-    })
-    .then(function(response) {
-      callback(null, response.getBody(), response.getCode());
-    })
-    .fail(function(e) {
-      if(error.getcode() != 404 && error.getCode() != 408) {
-        console.log("[REGISTRY-CONNECTOR] Error code: " + error.getCode() + " Error: " + error.getBody());
-        callback(error);
-      }else {
-        callback(null, error.getbody(), error.getcode());
+    };
+
+    var options = Object.assign({}, defaultOptions, deleteOptions);
+
+    request(options, function(err, response, body) {
+      if(!err) {
+        return callback(null, body, response.statusCode)
+      } else if(err.statusCode !== 404 && err.statusCode !== 408) {
+        console.log("[REGISTRY-CONNECTOR] Error: " + err);
+        return callback(err);
+      } else {
+        return callback(null, err.body, err.statusCode);
       }
     });
   }
