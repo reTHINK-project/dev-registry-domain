@@ -25,11 +25,13 @@ var request = require('request');
 var fs = require('fs');
 var path = require('path');
 
-var certFile = path.resolve(__dirname, 'connector.cert.pem');
-var keyFile = path.resolve(__dirname, 'connector.key.pem');
-var caFile = path.resolve(__dirname, 'ca-bundle.pem');
+var dir = path.dirname(require.main.filename);
 
-var defaulOptions = {
+var certFile = path.resolve(dir, 'connector.cert.pem');
+var keyFile = path.resolve(dir, 'connector.key.pem');
+var caFile = path.resolve(dir, 'ca-bundle.pem');
+
+var defaultOptions = {
   cert: fs.readFileSync(certFile),
   key: fs.readFileSync(keyFile),
   ca: fs.readFileSync(caFile)
