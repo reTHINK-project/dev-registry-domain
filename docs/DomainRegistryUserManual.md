@@ -766,6 +766,7 @@ PUT /hyperty/dataobject/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5bec-e
   "resources" : ["chat"],
   "dataSchemes" : ["comm"],
   "name" : "myChat",
+  "expires" : 120,
   "reporter" : "hyperty://localhost/893c256e-c65c-4aaf-966c-8c89d061d6cf"
 }
 
