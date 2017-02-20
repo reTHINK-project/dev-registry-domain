@@ -25,8 +25,7 @@ var JavaRequest = {
        var response = client.get(url);
        var parsedResponse = JSON.parse(response);
 
-       print(response);
-       callback(null, JSON.parse(parsedResponse.data), response.code);
+       callback(null, JSON.parse(parsedResponse.data), parsedResponse.code);
      } catch(e) {
        e.printStackTrace();
      }
@@ -38,8 +37,7 @@ var JavaRequest = {
        var response = client.put(url, finalData);
        var parsedResponse = JSON.parse(response);
 
-       print(response);
-       callback(null, JSON.parse(parsedResponse.data), response.code);
+       callback(null, JSON.parse(parsedResponse.data), parsedResponse.code);
      } catch(e) {
        e.printStackTrace();
      }
@@ -50,8 +48,7 @@ var JavaRequest = {
        var response = client.del(url);
        var parsedResponse = JSON.parse(response);
 
-       print(response);
-       callback(null, JSON.parse(parsedResponse.data), response.code);
+       callback(null, JSON.parse(parsedResponse.data), parsedResponse.code);
      } catch(e) {
        e.printStackTrace();
      }
