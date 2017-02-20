@@ -11,7 +11,7 @@ services:
 before_install:
   - gem install rspec airborne
   - docker build -t domain-registry server
-  - docker run -d -e STORAGE_TYPE=RAM -e EXPIRES=3600 -e LOAD_BALANCER_IP=127.0.0.1 -p 127.0.0.1:4568:4567 domain-registry
+  - docker run -d -e STORAGE_TYPE=RAM -e EXPIRES=3600 -p 127.0.0.1:4568:4567 domain-registry
   - docker ps -a
   - sleep 5
 

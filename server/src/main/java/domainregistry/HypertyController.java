@@ -68,11 +68,6 @@ public class HypertyController {
 
             String loadBalancerIp = System.getenv(LOAD_BALANCER_IP);
 
-            if(loadBalancerIp == null ){
-                log.info("Load balancer IP not found. Unauthorized.");
-                halt(401, "Load balancer IP not found. Unauthorized request.");
-            }
-
             String originIp = request.ip().toString();
 
             if (loadBalancerIp != null && !loadBalancerIp.equals(originIp)){
