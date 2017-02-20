@@ -243,6 +243,40 @@ Next, follow the same steps as before. Establish a connection to the cluster wit
 $ docker build -t domain-registry .
 $ docker run -e STORAGE_TYPE=CASSANDRA -e CONTACT_POINTS_IPS=ip -e EXPIRES=3600 -p 4568:4567 domain-registry
 ```
+
+## High availability deployment
+
+The previously tutorial assumuded that only one Domain Registry application server was running.
+Although, in order to increase both capacity (concurrent users) and application’s reliability, a Load Balancer can be added to distribute network traffic across several Domain Registry servers.
+Moreover, load balancers offer content-aware distribution, redundancy and health checking to ensure that the servers are indeed running and accepting requests.
+If a server is found to be down, the load balancer removes it from rotation and stops sending it requests.
+
+This process of load balancing Internet traffic is entirely related to scalability.
+As servers become overloaded, system administrators are generally faced with two possibilities: vertically or horizontal scalability.
+The first is performed by adding more resources to a single server, typically by adding more RAM or CPUs.
+However, a single server could only scale so far.
+At some point, it is impossible to add more resources since the hardware platform has its limits.
+Also, the server needs to be taken down in order for this upgrade to be concluded.
+On the other hand, horizontal scalability is the ability to add more nodes to the system.
+This usually requires one of several load balancing techniques, topic that will be explored further on - but first, DNS-based load balancing will be summarized since it is also a process to distribute traffic across multiple servers.
+
+DNS-based load balancing, also known as DNS round robin, is a function of DNS that allows one hostname to be associated with one or more IP addresses.
+Although very easy to deploy, round robin DNS has a few drawbacks, such as if a server corresponding to one of the IP addresses is down, DNS will continue to deliver that IP address and clients will attempt to connect to a service that has failed.
+
+Load balancing can be accomplished at various layers of OSI. Here we make an overview of the two most used load balancing options: layer 4 and layer 7 load balancing.
+
+1) Layer 4 load balancing operates at the transport layer, which redirects requests no matter the type of the request or its contents.
+It is simplest method of balancing traffic across servers.
+This simplicity means fastness balancing with minimal hardware.
+However, limitations are present.
+Since the load balancer can not see the contents of the request, it can not make routing decisions based on that.
+That is, it can not decide what is the best server to deal with a specific request.
+
+2) Layer 7 load balancing operates at a high level application layer, which deals, and can make decisions based on the actual content of each message.
+This kind of load balancers differ form layer 4 load balancers because the servers do not need to serve the exact same content.
+Instead, each of the servers can specifically and efficiently serve specific content such as, video or images.
+So now a request for an image or video can be routed to specific servers that store and are optimized to serve multimedia content.
+
 ## Rest API definition and available endpoints
 
 The Domain Registry is a REST server that allows to create, update and remove data (Hyperty Instances and Data Objects). Next, are described, the available Data Objects and Hyperties API endpoints.
@@ -254,7 +288,6 @@ Hyperties:
 * GET /hyperty/user/:user_id/hyperty?dataSchemes=DS1,...,DSn
 * GET /hyperty/user/:user_id/hyperty?resources=R1,...,Rn
 * PUT /hyperty/user/:user_id/:hyperty_instance_id
-* DELETE /hyperty/user/:user_id/:hyperty_instance_id
 
 Data Objects:
 
@@ -270,7 +303,6 @@ Data Objects:
 * GET /hyperty/dataobject/url/:data_object_url/do?resources=R1,...,Rn&dataSchemes=DS1,...,DSn
 * GET /hyperty/dataobject/url/:data_object_url/do?dataSchemes=DS1,...,DSn
 * GET /hyperty/dataobject/url/:data_object_url/do?resources=R1,...,Rn
-* DELETE /hyperty/dataobject/url/:data_object_url
 * PUT /hyperty/dataobject/:data_object_url
 
 
@@ -798,23 +830,6 @@ PUT /hyperty/dataobject/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5bec-e
 }
 
 ```
-
-### DELETE /hyperty/dataobject/url/:data_object_url
-
-#### Example request
-
-DELETE /hyperty/dataobject/url/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5bec-e3f7-471f-8ace-44c64edb8a6d
-
-#### Example result
-
-```
-{
-  "message" : "Data object deleted"
-}
-
-```
-
-Note that the requested URL’s are encoded.
 
 ## Future functionalities
 
