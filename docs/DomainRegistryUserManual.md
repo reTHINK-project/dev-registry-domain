@@ -277,6 +277,38 @@ This kind of load balancers differ form layer 4 load balancers because the serve
 Instead, each of the servers can specifically and efficiently serve specific content such as, video or images.
 So now a request for an image or video can be routed to specific servers that store and are optimized to serve multimedia content.
 
+Between Layer 7 and layer 4 load balancers, we end up configuring a layer 7 load balancer because layer 4 load balancers treat connections as just a stream of information, rather than using its functions to evaluate and interpret the HTTP requests.
+
+### How to deploy the Domain Registry with a load balancer
+
+Inside the folder /server/load-balancer is included a basic [Haproxy](http://www.haproxy.org/) 1.8 Load Balancer configuration.
+These settings are meant to enhanced as needed.
+Inside **haproxy.cfg** we have four sections: global, defaults, frontend and backend.
+Parameters inside 'global' section are process-wide and often OS-specific.
+They are set once and generally do not change.
+The section 'defaults' set all default configuration for all sections, 'frontend' specified how to deal with incoming connections and 'backend' contains the set of servers that are ready to accept requests.
+Haproxy is can be heavily configurated. Take a look [here](https://cbonte.github.io/haproxy-dconv/1.8/configuration.html#1).
+
+#### How to run the base configuration
+
+```
+$ docker build -t my-haproxy .
+```
+
+Check the validatity of all settings using:
+
+```
+$ docker run -it --rm --name haproxy-syntax-check my-haproxy haproxy -c -f /usr/local/etc/haproxy/haproxy.cfg
+```
+
+Run Haproxy:
+
+```
+$ docker run -d --name domain-haproxy -p 4569:443 my-haproxy
+```
+
+## Domain Registry security
+
 ## Rest API definition and available endpoints
 
 The Domain Registry is a REST server that allows to create, update and remove data (Hyperty Instances and Data Objects). Next, are described, the available Data Objects and Hyperties API endpoints.
