@@ -10,6 +10,8 @@ Session.vim
 
 ### certs
 *.jks
+*.pem
+*.crt
 
 
 ### Java ###
