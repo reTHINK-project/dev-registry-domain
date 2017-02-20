@@ -298,19 +298,6 @@ GET /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose
 
 ```
 {
-  "hyperty://inesc-id.pt/b7b3rs4-3245-42gn-4327-238jhdq83d8": {
-    "resources" : [
-      "chat",
-      "voice"
-    ],
-    "dataSchemes" : [
-      "comm"
-    ],
-    "descriptor": "hyperty-catalogue://localhost/HelloHyperty",
-    "startingTime": "2016-02-08T13:40:26Z",
-    "lastModified": "2016-02-08T13:41:27Z,
-    "expires" : 3600
-  }
   "hyperty://inesc-id.pt/b7b3rs4-3245-42gn-4127-238jhdq83d8": {
     "resources" : [
       "video",
@@ -320,8 +307,35 @@ GET /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose
     ]
     "descriptor": "hyperty-catalogue://localhost/HelloHyperty",
     "startingTime": "2016-02-08T13:42:00Z",
+    "hypertyID": "hyperty://localhost/075932a5-7ef3-40dd-bcc4-34094ab907e7",
+    "userID": "user://inesc-id.pt/rui",
     "lastModified": "2016-02-08T13:42:53Z",
-    "expires" : 30
+    "status": "live",
+    "expires": 1211,
+    "guid": "guid",
+    "runtime": "runtime",
+    "p2pRequester": "p2pRequester",
+    "p2pHandler": "p2pHandler"
+  },
+
+  "hyperty://inesc-id.pt/b7b123123213rs4-3245-42gn-4127-238jhdq83d8": {
+    "resources" : [
+      "video",
+    ],
+    "dataSchemes" : [
+      "comm"
+    ]
+    "descriptor": "hyperty-catalogue://localhost/HelloHyperty",
+    "startingTime": "2015-02-08T13:42:00Z",
+    "hypertyID": "hyperty://localhost/075932a5-7ef3-40dd-bcc4-34094ab907e7",
+    "userID": "user://inesc-id.pt/nuno",
+    "lastModified": "2017-02-08T13:42:53Z",
+    "status": "live",
+    "expires": 50,
+    "guid": "guid",
+    "runtime": "runtime",
+    "p2pRequester": "p2pRequester",
+    "p2pHandler": "p2pHandler"
   }
 }
 ```
@@ -383,7 +397,12 @@ PUT /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose/hyperty%3A%2F%2Fua.pt%2F428
     "resources" : ["chat", "voice"],
     "dataSchemes" : ["comm"],
     "descriptor": "hyperty-catalogue://localhost/HelloHyperty",
-    "expires" : 3600
+    "expires" : 3600,
+    "status": "live",
+    "runtime": "runtime",
+    "p2pRequester": "p2pRequester",
+    "p2pHandler": "p2phandler",
+    "guid": "guid"
 }
 ```
 
@@ -396,32 +415,6 @@ PUT /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose/hyperty%3A%2F%2Fua.pt%2F428
 ```
 
 Note that the requested URL’s are encoded.
-
-### DELETE /hyperty/user/:user_id/:hyperty_instance_id
-
-Deletes a Hyperty Instance from a user indicated by the user_id parameter.
-
-#### Parameters
-
-**user_id**: The owner of the Hyperty.
-
-**Example_value**: user://inesc-id.pt/ruijose
-
-**hyperty_id**: The ID of the Hyperty to be deleted.
-
-**Example_value**: hyperty://ua.pt/428bee1b-887a8ee8cb32
-
-#### Example request
-
-DELETE /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose/hyperty%3A%2F%2Fua.pt%2F428bee1b-887a8ee8cb32
-
-#### Example result
-
-```
-{
-  “message” : “hyperty deleted”
-}
-```
 
 ### GET /hyperty/dataobject/name/:data_object_name
 
@@ -438,6 +431,8 @@ GET /hyperty/dataobject/name/mychat
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "status": "live",
+    "expires" : 120,
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -464,6 +459,8 @@ GET /hyperty/dataobject/url/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5b
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "expires" : 120,
+    "status": "live",
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -491,6 +488,8 @@ GET /hyperty/dataobject/reporter/hyperty%3A%2F%2Fhybroker.rethink.ptinovacao.pt%
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "status": "live",
+    "expires" : 120,
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -518,6 +517,8 @@ GET /hyperty/dataobject/reporter/hyperty%3A%2F%2Fhybroker.rethink.ptinovacao.pt%
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "status": "live",
+    "expires" : 120,
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -546,6 +547,8 @@ GET /hyperty/dataobject/reporter/hyperty%3A%2F%2Fhybroker.rethink.ptinovacao.pt%
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "status": "live",
+    "expires" : 120,
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -574,6 +577,8 @@ GET /hyperty/dataobject/reporter/hyperty%3A%2F%2Fhybroker.rethink.ptinovacao.pt%
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "status": "live",
+    "expires" : 120,
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -602,6 +607,8 @@ GET /hyperty/dataobject/name/mychat/do?resources=chat&dataSchemes=comm
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "status": "live",
+    "expires" : 120,
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -629,6 +636,8 @@ GET /hyperty/dataobject/name/mychat/do?resources=chat
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "status": "live",
+    "expires" : 120,
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -657,6 +666,8 @@ GET /hyperty/dataobject/name/mychat/do?dataSchemes=comm
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "expires" : 120,
+    "status": "live",
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -685,6 +696,8 @@ GET /hyperty/dataobject/url/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5b
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "status": "live",
+    "expires" : 120,
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -713,6 +726,8 @@ GET /hyperty/dataobject/url/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5b
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "status": "live",
+    "expires" : 120,
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -741,6 +756,8 @@ GET /hyperty/dataobject/url/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5b
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "status": "live",
+    "expires" : 120,
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -766,6 +783,8 @@ PUT /hyperty/dataobject/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5bec-e
   "resources" : ["chat"],
   "dataSchemes" : ["comm"],
   "name" : "myChat",
+  "status" : "live",
+  "expires" : 120,
   "reporter" : "hyperty://localhost/893c256e-c65c-4aaf-966c-8c89d061d6cf"
 }
 
@@ -801,4 +820,4 @@ Note that the requested URL’s are encoded.
 
 The current version is missing any authentication mechanisms. Currently, it is assumed that the Message Node is the only one capable of interacting with the Local Registry, with the former being trusted by the latter to verify the user’s authorization to perform the requests. This model will have to be replaced with a secure mechanism where either the identity of the Message Node or of the user is verified.
 
-A load balancer will also be added to distribute network traffic across the Domain Registry servers. Thereby, we hope to increase capacity (concurrent users) and application’s reliability. Another feature yet to be documented is advanced monitoring with [ riemann](http://riemann.io/).
+A load balancer will also be added to distribute network traffic across the Domain Registry servers. Thereby, we hope to increase capacity (concurrent users) and application’s reliability.
