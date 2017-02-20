@@ -223,6 +223,39 @@ public class CassandraClient implements Connection{
         return row != null;
     }
 
+    public int getNumUsersWithHyperties(){
+        ArrayList<String> data = new ArrayList<String>();
+
+        Statement select = QueryBuilder.select().column("guid").from(KEYSPACE, GUIDBYUSER);
+        ResultSet results = session.execute(select);
+
+        if(results == null) return 0;
+
+        for (Row row : results){
+            String hyperty = row.getString("guid");
+            if(!data.contains(hyperty)){
+                data.add(hyperty);
+            }
+        }
+        return data.size();
+    }
+
+    public Map<String, String> getMapUsersByGuid(){
+        log.info("Requested info from table guid_by_user_id");
+        Map<String, String> usersByGuid = new HashMap();
+
+        Statement select = QueryBuilder.select().all().from(KEYSPACE, GUIDBYUSER);
+        ResultSet results = session.execute(select);
+
+        if(results == null) return Collections.emptyMap();
+
+        for(Row row : results){
+            usersByGuid.put(row.getString("guid"), row.getString("user"));
+        }
+
+        return usersByGuid;
+    }
+
     public DataObjectInstance getDataObjectByUrl(String dataObjectUrl){
         Statement select = QueryBuilder.select().all().from(KEYSPACE, URLDATAOBJECTS)
                                                       .where(QueryBuilder.eq("url", dataObjectUrl));
@@ -334,17 +367,19 @@ public class CassandraClient implements Connection{
         if(results == null) return Collections.emptyMap();
 
         for(Row row : results){
-            allUserHyperties.put(row.getString("hypertyID"), new HypertyInstance(row.getString("descriptor"),
-                                                                                 row.getList("resources", String.class),
-                                                                                 row.getList("dataSchemes", String.class),
-                                                                                 row.getString("startingTime"),
-                                                                                 row.getString("lastModified"),
-                                                                                 row.getInt("expires"),
-                                                                                 row.getString("status"),
-                                                                                 row.getString("p2pRequester"),
-                                                                                 row.getString("p2pHandler"),
-                                                                                 row.getString("runtime"),
-                                                                                 row.getString("guid")));
+             HypertyInstance hyperty = new HypertyInstance(row.getString("descriptor"),
+                                                         row.getList("resources", String.class),
+                                                         row.getList("dataSchemes", String.class),
+                                                         row.getString("startingTime"),
+                                                         row.getString("lastModified"),
+                                                         row.getInt("expires"),
+                                                         row.getString("status"),
+                                                         row.getString("p2pRequester"),
+                                                         row.getString("p2pHandler"),
+                                                         row.getString("runtime"),
+                                                         row.getString("guid"));
+             hyperty.setHypertyID(row.getString("hypertyID"));
+             allUserHyperties.put(row.getString("hypertyID"), hyperty);
         }
 
         return allUserHyperties;
