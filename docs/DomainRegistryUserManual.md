@@ -278,6 +278,7 @@ Instead, each of the servers can specifically and efficiently serve specific con
 So now a request for an image or video can be routed to specific servers that store and are optimized to serve multimedia content.
 
 Between Layer 7 and layer 4 load balancers, we end up configuring a layer 7 load balancer because layer 4 load balancers treat connections as just a stream of information, rather than using its functions to evaluate and interpret the HTTP requests.
+This would mean that we would be forced to configure traffic encryption on the application servers.
 
 ### How to deploy the Domain Registry with a load balancer
 
@@ -286,8 +287,9 @@ These settings are meant to enhanced as needed.
 Inside **haproxy.cfg** we have four sections: global, defaults, frontend and backend.
 Parameters inside 'global' section are process-wide and often OS-specific.
 They are set once and generally do not change.
-The section 'defaults' set all default configuration for all sections, 'frontend' specified how to deal with incoming connections and 'backend' contains the set of servers that are ready to accept requests.
-Haproxy is can be heavily configurated. Take a look [here](https://cbonte.github.io/haproxy-dconv/1.8/configuration.html#1).
+The section 'defaults' set all default configuration for all sections, 'frontend' specifies how to deal with incoming connections and 'backend' contains the set of servers that are ready to accept requests.
+Change the 'backend' section by adding one or more Domain Registry IP addresses.
+Haproxy can be heavily configurated. Take a look [here](https://cbonte.github.io/haproxy-dconv/1.8/configuration.html#1).
 
 #### How to run the base configuration
 
@@ -308,6 +310,22 @@ $ docker run -d --name domain-haproxy -p 4569:443 my-haproxy
 ```
 
 ## Domain Registry security
+
+As discussed [here](https://github.com/reTHINK-project/dev-registry-domain/issues/20), the Domain Registry should be configured with:
+
+1) Mutual authentication between the domain's Message Node and Domain Registry.
+Writes will only be permited through this connection.
+
+2) The REST API open for read access from everyone (at least for the time being).
+
+As such, and since the framework ([Spark Java Framework](http://sparkjava.com/)) used to develop the Domain Registry does not support mutual authentication, this was configured in the Haproxy load balancer.
+As can be seen inside Haproxy configuration file, this was achieved by using certificates. As a consequence, a certificate authority must exist in order to sign and verify the validaty of client certificates.
+Just provide Haproxy with a server certificate and a CA file and use further configuration options as needed.
+Our configuration starts with only one backend server and connections only reached it if they came from an authenticated client or if its a HTTP GET request.
+Basically we are blocking non authenticated HTTP PUT requests.
+
+Between the load balancer and the Domain Registry servers is used HTTPS connections and the backend servers only accept requests from the load balancer.
+Read the main README for more information.
 
 ## Rest API definition and available endpoints
 
