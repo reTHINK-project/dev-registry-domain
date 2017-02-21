@@ -42,13 +42,19 @@ Regarding the structure of the code, a MVC inspired approach was used to make a 
 
 In the Domain Registry’s code, the _HypertyController_, _HypertyService_ and _DataObjectService_ classes provide all the functionality of the server. The first, the controller, is the link between the user and the system. It interprets user's HTTP requests and passes them to the second class, the service. This class handles the data and responds back to the controller with a response, which will be sent to the user in a JSON format. A collaboration between the components can be seen in Figure 2.
 
-The _HypertyService_, and _DataObjectService_ class (the “M” in “MVC”) provides methods to create (or update) and return Hyperties and DataObjects that are being stored in a in-memory data structure or in a Database, such as Cassandra DB.
+The _HypertyService_ and _DataObjectService_ classes (the “M” in “MVC”) provide methods to create (or update) and return Hyperties and DataObjects that are being stored in a in-memory data structure (Hashtable) or in a Database, such as Cassandra DB. Currently, both these storage models (in-memory vs Cassandra DB) are supported.
+
+The StatusService class is used to generate data to be presented into the /live page.
 
 The way code is organized in the Github repository is shown in the Following figure.
 
 ![Domain Registry Architecture](ac.jpg)
 
+ **Figure 2:** Domain Registry inner services organization
+
 ![Domain Registry Code Structure](code-structure.png)
+
+ **Figure 3:** Domain Registry code structure
 
 Each folder contains the following:
 
