@@ -46,7 +46,7 @@ The _HypertyService_, and _DataObjectService_ class (the “M” in “MVC”) p
 
 The way code is organized in the Github repository is shown in Figure 3.
 
-<img src="architecture_pattern.png" width="400"> 
+![Domain Registry Architecture](ac.jpg)
 
 **Figure 2:** Domain Registry architecture pattern
  
