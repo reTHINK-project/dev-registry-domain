@@ -349,7 +349,7 @@ $ docker run -d --name domain-haproxy -p 4569:443 my-haproxy
 
 **After the load balancer is running, start the Domain Registry with one, or a combination of all, configuration possibilities explained above.**
 
-** By using a load balancer in front of Domain Registry application servers we achieve two goals: high availability and mutual authentication between the Domain Registry and the Connector **
+**By using a load balancer in front of Domain Registry application servers we achieve two goals: high availability and mutual authentication between the Domain Registry and the Connector.**
 
 
 ## Rest API definition and available endpoints
