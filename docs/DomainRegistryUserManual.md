@@ -244,7 +244,43 @@ $ docker build -t domain-registry .
 $ docker run -e STORAGE_TYPE=CASSANDRA -e CONTACT_POINTS_IPS=ip -e EXPIRES=3600 -p 4568:4567 domain-registry
 ```
 
-## High availability deployment
+#### With HTTPS connections
+
+In order to use HTTPS connections a keystore file ([more info](https://www.sslshopper.com/article-how-to-create-a-self-signed-certificate-using-java-keytool.html)) and its password are required. Create a keystore.jks inside server/cert, change the ENV variables as needed and run the following commands:
+
+```
+$ docker build -t domain-registry .
+$ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -e KEYSTORE_PASSWORD=password -e KEYSTORE=keystore.jks -e DOMAIN_ENV=DEVELOPMENT -p 4568:4567 domain-registry
+```
+
+#### Mutual authentication between the Domain Registry and the Connector
+
+As discussed [here](https://github.com/reTHINK-project/dev-registry-domain/issues/20), the Domain Registry should be configured with:
+
+1) Mutual authentication between the domain's Message Node and Domain Registry.
+Writes will only be permited through this connection.
+
+2) The REST API open for read access from everyone (at least for the time being).
+
+As such, and since the framework ([Spark Java Framework](http://sparkjava.com/)) used to develop the Domain Registry does not support mutual authentication, this was configured in a Haproxy load balancer that resides in front of the Domain Registry.
+As can be seen inside Haproxy configuration file (inside server/load-balancer), this was achieved by using certificates. As a consequence, a certificate authority must exist in order to sign and verify client certificates.
+Just provide Haproxy with a server certificate and a CA file and use further configuration options as needed.
+The provided Haproxy configuration assumes that this certificates are created inside /server/load-balancer folder.
+Our configuration starts with only one backend server and connections only reached it if they came from an authenticated client or if its a HTTP GET request.
+Basically we are blocking non authenticated HTTP PUT requests.
+
+#### Blocking requests from untrusted sources
+
+The mutual authenticated scenario includes a Load Balancer that performs authorization and authentication mechanisms to restrict which requests from which clients are served by the Domain Registry. This use case only makes sense if the Domain Registry application servers only accept requests coming from the Load Balancer itself. As such, this can be configured by using the ENV variable 'LOAD_BALANCER_IP'.
+
+Example:
+
+```
+$ docker build -t domain-registry .
+$ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -e DOMAIN_ENV=DEVELOPMENT -e LOAD_BALANCER_IP=ip -p 4568:4567 domain-registry
+```
+
+### High availability deployment
 
 The previously tutorial assumuded that only one Domain Registry application server was running.
 Although, in order to increase both capacity (concurrent users) and application’s reliability, a Load Balancer can be added to distribute network traffic across several Domain Registry servers.
@@ -309,23 +345,6 @@ Run Haproxy:
 $ docker run -d --name domain-haproxy -p 4569:443 my-haproxy
 ```
 
-## Domain Registry security
-
-As discussed [here](https://github.com/reTHINK-project/dev-registry-domain/issues/20), the Domain Registry should be configured with:
-
-1) Mutual authentication between the domain's Message Node and Domain Registry.
-Writes will only be permited through this connection.
-
-2) The REST API open for read access from everyone (at least for the time being).
-
-As such, and since the framework ([Spark Java Framework](http://sparkjava.com/)) used to develop the Domain Registry does not support mutual authentication, this was configured in the Haproxy load balancer.
-As can be seen inside Haproxy configuration file, this was achieved by using certificates. As a consequence, a certificate authority must exist in order to sign and verify the validaty of client certificates.
-Just provide Haproxy with a server certificate and a CA file and use further configuration options as needed.
-Our configuration starts with only one backend server and connections only reached it if they came from an authenticated client or if its a HTTP GET request.
-Basically we are blocking non authenticated HTTP PUT requests.
-
-Between the load balancer and the Domain Registry servers is used HTTPS connections and the backend servers only accept requests from the load balancer.
-Read the main README for more information.
 
 ## Rest API definition and available endpoints
 
