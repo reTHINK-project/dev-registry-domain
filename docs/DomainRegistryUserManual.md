@@ -269,6 +269,8 @@ The provided Haproxy configuration assumes that these certificates are created i
 Our configuration starts with only one backend server (much more can be added) and connections only reached it if they came from an authenticated client or if its a HTTP GET request.
 Basically we are blocking non authenticated HTTP PUT requests.
 
+The following sections explain how to run the Domain Registry with a load balancer.
+
 #### Blocking requests from untrusted sources
 
 The mutual authenticated scenario includes a Load Balancer that performs authorization and authentication mechanisms to restrict which requests from which clients are served by the Domain Registry. This use case only makes sense if the Domain Registry application servers only accept requests coming from the Load Balancer itself. As such, this can be configured by using the ENV variable 'LOAD_BALANCER_IP'.
@@ -346,6 +348,8 @@ $ docker run -d --name domain-haproxy -p 4569:443 my-haproxy
 ```
 
 **After the load balancer is running, start the Domain Registry with one, or a combination of all, configuration possibilities explained above.**
+
+** By using a load balancer in front of Domain Registry application servers we achieve two goals: high availability and mutual authentication between the Domain Registry and the Connector **
 
 
 ## Rest API definition and available endpoints

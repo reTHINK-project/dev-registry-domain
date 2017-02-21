@@ -11,34 +11,8 @@ $ docker build -t domain-registry .
 $ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -e DOMAIN_ENV=DEVELOPMENT -p 4568:4567 domain-registry
 ```
 A development environment will provide an overview of the Hyperties stored on the status page (/live).
-The Domain Registry can be run with another configurations, such as a multi-host database cluster. See the [user manual](https://github.com/reTHINK-project/dev-registry-domain/blob/database-integration/docs/DomainRegistryUserManual.md) for more information.
+The Domain Registry can be run with another configurations, such as a with multi-host database cluster or with mutual authentication. See the [user manual](https://github.com/reTHINK-project/dev-registry-domain/blob/database-integration/docs/DomainRegistryUserManual.md) for more information.
 
-### 1) How to run with HTTPS connections
-
-In order to use HTTPS connections a keystore file ([more info](https://www.sslshopper.com/article-how-to-create-a-self-signed-certificate-using-java-keytool.html)) and its password are required. Create a keystore.jks inside server/cert, change the ENV variables as needed and run the following commands:
-
-```
-$ docker build -t domain-registry .
-$ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -e KEYSTORE_PASSWORD=password -e KEYSTORE=keystore.jks -e DOMAIN_ENV=DEVELOPMENT -p 4568:4567 domain-registry
-```
-
-### 2) Requests from untrusted sources
-
-Our deployable scenario includes a Load Balancer that performs authorization and authentication mechanisms to restrict which requests from which clients are served by the Domain Registry. This use case only makes sense if the Domain Registry application servers only accept requests coming from the Load Balancer itself. As such, this can be configured by using the ENV variable 'LOAD_BALANCER_IP'.
-
-Example:
-
-```
-$ docker build -t domain-registry .
-$ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -e DOMAIN_ENV=DEVELOPMENT -e LOAD_BALANCER_IP=ip -p 4568:4567 domain-registry
-```
-
-### Combining 1) and 2)
-
-```
-$ docker build -t domain-registry .
-$ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -e DOMAIN_ENV=DEVELOPMENT -e LOAD_BALANCER_IP=ip -e KEYSTORE_PASSWORD=password -e KEYSTORE=keystore -p 4568:4567 domain-registry
-```
 
 ### Integration tests
 Inside the server/specs folder run the following docker commands.
