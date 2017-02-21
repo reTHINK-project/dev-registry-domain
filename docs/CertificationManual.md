@@ -1,13 +1,14 @@
 # Certificate Authority Tutorial
 
 This tutorial explains the basic steps to create a Certificate Authority (CA), Intermediate CA and server/client certificates.
-This guide is based in the [OpenSSL Certificate Authority Book](https://jamielinux.com/docs/openssl-certificate-authority/index.html).
+
+### This guide is based on the [OpenSSL Certificate Authority Book](https://jamielinux.com/docs/openssl-certificate-authority/index.html).
 
 ### Certificate Authority
 
 First is necessary to create the **directory structure**.
 
-```
+```shell
 mkdir rethink-ca
 cd rethink-ca
 mkdir certs crl newcerts private
@@ -45,7 +46,7 @@ localityName_default            =
 
 #### CA root key generation:
 
-```
+```shell
 cd rethink-ca
 openssl genrsa -aes256 -out private/ca.key.pem 4096
 
@@ -57,7 +58,7 @@ chmod 400 private/ca.key.pem
 
 #### CA root certificate:
 
-```
+```shell
 cd rethink-ca
 openssl req -config openssl.cnf \
     -key private/ca.key.pem \
@@ -83,7 +84,7 @@ chmod 444 certs/ca.cert.pem
 
 First is necessary to create the **directory structure**:
 
-```
+```shell
 mkdir rethink-ca/intermediate
 cd rethink-ca/intermediate
 
@@ -123,7 +124,7 @@ localityName_default            =
 
 #### Intermediate CA key generation:
 
-```
+```shell
 cd rethink-ca
 openssl genrsa -aes256 -out intermediate/private/intermediate.key.pem 4096
 
@@ -138,7 +139,7 @@ chmod 400 intermediate/private/intermediate.key.pem
 Is necessary to generate the CSR, in order to the CA sign the certificate.
 The details *should* match the root CA, but the **Common Name** must be different.
 
-```
+```shell
 cd rethink-ca
 openssl req -config intermediate/openssl.cnf -new -sha256 \
     -key intermediate/private/intermediate.key.pem
@@ -159,7 +160,7 @@ Email Address []:
 
 #### Sign the CSR
 
-```
+```shell
 cd rethink-ca
 openssl ca -config openssl.cnf -extensions v3_intermediate_ca \
     -days 3650 -notext -md sha256 \
@@ -176,29 +177,29 @@ chmod 444 intermediate/certs/intermediate.cert.pem
 
 Concatenate the intermediate and root certificates together, so is possible to verify the chain of trust.
 
-```
+```shell
 cat intermediate/certs/intermediate.cert.pem \
     certs/ca.cert.pem > intermediate/certs/ca-chain.cert.pem
 chmod 444 intermediate/certs/ca-chain.cert.pem
 ```
 
-### Create server certificate
+### Create client/server certificate
 
-This is the certificate/key necessary to the Domain Registry.
+This are the certificates necessary to the Domain Registry and Domain Registry Connector.
 
-#### Server key generation:
-```
+#### Client/Server key generation:
+```shell
 cd rethink-ca
 openssl genrsa -aes256 \
     -out intermediate/private/domain.inesc.com.key.pem 2048
 chmod 400 intermediate/private/domain.inesc.com.key.pem
 ```
-#### Server Certificate Signing Request (CSR):
+#### Client/Server Certificate Signing Request (CSR):
 
 Is necessary to generate the CSR, in order to the CA sign the certificate.
 The details *should* match the root CA, but the **Common Name** must be different.
 
-```
+```shell
 cd rethink-ca
 openssl req -config intermediate/openssl.cnf \
     -key intermediate/private/domain.inesc.com.key.pem \
@@ -221,8 +222,9 @@ Email Address []:
 #### Sign the CSR
 
 We need to use the intermediate CA to sign the server CSR.
+In the `extensions` argument should be passed `server_cert` if a server certificate, or `usr_cert` if a client certificate.
 
-```
+```shell
 cd rethink-ca
 openssl ca -config intermediate/openssl.cnf \
     -extensions server_cert -days 375 -notext -md sha256 \
