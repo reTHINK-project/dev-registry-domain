@@ -25,22 +25,26 @@ var request = require('request');
 var fs = require('fs');
 var path = require('path');
 
-var dir = path.dirname(require.main.filename);
+var JSRequest = function(sslConfig) {
+  if(sslConfig.enabled) {
+    var dir = path.dirname(require.main.filename);
+    var certFile = path.resolve(dir, sslConfig.ca);
+    var keyFile = path.resolve(dir, sslConfig.key);
+    var caFile = path.resolve(dir, sslConfig.keyCert);
 
-var certFile = path.resolve(dir, 'connector.cert.pem');
-var keyFile = path.resolve(dir, 'connector.key.pem');
-var caFile = path.resolve(dir, 'ca-bundle.pem');
-
-var defaultOptions = {
-  cert: fs.readFileSync(certFile),
-  key: fs.readFileSync(keyFile),
-  ca: fs.readFileSync(caFile)
+    this._defaultOptions = {
+      cert: fs.readFileSync(certFile),
+      key: fs.readFileSync(keyFile),
+      keyPassphrase: sslConfig.keyPassphrase,
+      ca: fs.readFileSync(caFile)
+    };
+  } else {
+    this._defaultOptions = {};
+  }
 };
 
-var JSRequest = {
-
-  get: function(url, callback) {
-    request.get(url, defaultOptions, function(err, response, body) {
+JSRequest.prototype.get = function(url, callback) {
+  request.get(url, this._defaultOptions, function(err, response, body) {
     if(!err) {
       return callback(null, body, response.statusCode)
     } else if(err.statusCode !== 404 && err.statusCode !== 408) {
@@ -49,52 +53,50 @@ var JSRequest = {
     } else {
       return callback(null, err.body, err.statusCode);
     }
-    });
-  },
+  });
+};
 
-  put: function(url, message, callback) {
+JSRequest.prototype.put = function(url, message, callback) {
 
-    var putOptions = {
-      url: url,
-      method: 'PUT',
-      json: message
-    };
+  var putOptions = {
+    url: url,
+    method: 'PUT',
+    json: message
+  };
 
-    var options = Object.assign({}, defaultOptions, putOptions);
+  var options = Object.assign({}, this._defaultOptions, putOptions);
 
-    request(options, function(err, response, body) {
-      if(!err) {
-        return callback(null, body, response.statusCode)
-      } else if(err.statusCode !== 404 && err.statusCode !== 408) {
-        console.log("[REGISTRY-CONNECTOR] Error: " + err);
-        return callback(err);
-      } else {
-        return callback(null, err.body, err.statusCode);
-      }
-    });
-  },
+  request(options, function(err, response, body) {
+    if(!err) {
+      return callback(null, body, response.statusCode)
+    } else if(err.statusCode !== 404 && err.statusCode !== 408) {
+      console.log("[REGISTRY-CONNECTOR] Error: " + err);
+      return callback(err);
+    } else {
+      return callback(null, err.body, err.statusCode);
+    }
+  });
+};
 
-  del: function(url, callback) {
+JSRequest.prototype.del = function(url, callback) {
 
-    var deleteOptions = {
-      url: url,
-      method: 'DELETE'
-    };
+  var deleteOptions = {
+    url: url,
+    method: 'DELETE'
+  };
 
-    var options = Object.assign({}, defaultOptions, deleteOptions);
+  var options = Object.assign({}, this._defaultOptions, deleteOptions);
 
-    request(options, function(err, response, body) {
-      if(!err) {
-        return callback(null, body, response.statusCode)
-      } else if(err.statusCode !== 404 && err.statusCode !== 408) {
-        console.log("[REGISTRY-CONNECTOR] Error: " + err);
-        return callback(err);
-      } else {
-        return callback(null, err.body, err.statusCode);
-      }
-    });
-  }
-
+  request(options, function(err, response, body) {
+    if(!err) {
+      return callback(null, body, response.statusCode)
+    } else if(err.statusCode !== 404 && err.statusCode !== 408) {
+      console.log("[REGISTRY-CONNECTOR] Error: " + err);
+      return callback(err);
+    } else {
+      return callback(null, err.body, err.statusCode);
+    }
+  });
 };
 
 module.exports = JSRequest;

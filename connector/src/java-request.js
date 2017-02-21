@@ -16,44 +16,48 @@
 */
 
 var HttpRequest = Java.type('eu.rethink.mn.util.HttpRequest');
-var client = new HttpRequest();
 
-var JavaRequest = {
-
-  get: function(url, callback) {
-     try {
-       var response = client.get(url);
-       var parsedResponse = JSON.parse(response);
-
-       callback(null, JSON.parse(parsedResponse.data), parsedResponse.code);
-     } catch(e) {
-       e.printStackTrace();
-     }
-  },
-
-  put: function(url, data, callback) {
-     try {
-       var finalData = JSON.stringify(data);
-       var response = client.put(url, finalData);
-       var parsedResponse = JSON.parse(response);
-
-       callback(null, JSON.parse(parsedResponse.data), parsedResponse.code);
-     } catch(e) {
-       e.printStackTrace();
-     }
-  },
-
-  del: function(url, callback) {
-     try {
-       var response = client.del(url);
-       var parsedResponse = JSON.parse(response);
-
-       callback(null, JSON.parse(parsedResponse.data), parsedResponse.code);
-     } catch(e) {
-       e.printStackTrace();
-     }
+var JavaRequest =  function(sslConfig) {
+  if(sslConfig.enabled) {
+    this._client = new HttpRequest(sslConfig.trustStore, sslConfig.trustStorePass,
+          sslConfig.keyStore, sslConfig.keyStorePass, sslConfig.keyPassphrase);
+  } else {
+    this._client = new HttpRequest();
   }
+};
 
+JavaRequest.prototype.get = function(url, callback) {
+  try {
+    var response = this._client.get(url);
+    var parsedResponse = JSON.parse(response);
+
+    callback(null, JSON.parse(parsedResponse.data), parsedResponse.code);
+  } catch(e) {
+    e.printStackTrace();
+  }
+};
+
+JavaRequest.prototype.put = function(url, data, callback) {
+  try {
+    var finalData = JSON.stringify(data);
+    var response = this._client.put(url, finalData);
+    var parsedResponse = JSON.parse(response);
+
+    callback(null, JSON.parse(parsedResponse.data), parsedResponse.code);
+  } catch(e) {
+    e.printStackTrace();
+  }
+};
+
+JavaRequest.prototype.del = function(url, callback) {
+  try {
+    var response = this._client.del(url);
+    var parsedResponse = JSON.parse(response);
+
+    callback(null, JSON.parse(parsedResponse.data), parsedResponse.code);
+  } catch(e) {
+    e.printStackTrace();
+  }
 };
 
 module.exports = JavaRequest;
