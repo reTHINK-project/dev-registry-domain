@@ -46,13 +46,13 @@ The _HypertyService_ and _DataObjectService_ classes (the “M” in “MVC”) 
 
 The StatusService class is used to generate data to be presented into the /live page.
 
-The way code is organized in the Github repository is shown in the Following figure.
-
 ![Domain Registry Architecture](ac.jpg)
 
  **Figure 2:** Domain Registry inner services organization
 
 ![Domain Registry Code Structure](code-structure.png)
+
+The way code is organized in the Github repository is shown in the Following figure.
 
  **Figure 3:** Domain Registry code structure
 
