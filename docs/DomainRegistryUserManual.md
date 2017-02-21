@@ -262,11 +262,11 @@ Writes will only be permited through this connection.
 
 2) The REST API open for read access from everyone (at least for the time being).
 
-As such, and since the framework ([Spark Java Framework](http://sparkjava.com/)) used to develop the Domain Registry does not support mutual authentication, this was configured in a Haproxy load balancer that resides in front of the Domain Registry.
-As can be seen inside Haproxy configuration file (inside server/load-balancer), this was achieved by using certificates. As a consequence, a certificate authority must exist in order to sign and verify client certificates.
+As such, and since the framework ([Spark Java Framework](http://sparkjava.com/)) used to develop the Domain Registry does not support mutual authentication, this was configured in a [Haproxy](http://www.haproxy.org/) load balancer that resides in front of the Domain Registry.
+As can be seen inside Haproxy configuration file (server/load-balancer/haproxy.cfg), this was achieved by using certificates. As a consequence, a certificate authority must exist in order to sign and verify client certificates.
 Just provide Haproxy with a server certificate and a CA file and use further configuration options as needed.
-The provided Haproxy configuration assumes that this certificates are created inside /server/load-balancer folder.
-Our configuration starts with only one backend server and connections only reached it if they came from an authenticated client or if its a HTTP GET request.
+The provided Haproxy configuration assumes that these certificates are created inside /server/load-balancer folder.
+Our configuration starts with only one backend server (much more can be added) and connections only reached it if they came from an authenticated client or if its a HTTP GET request.
 Basically we are blocking non authenticated HTTP PUT requests.
 
 #### Blocking requests from untrusted sources
@@ -282,7 +282,7 @@ $ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -e DOMAIN_ENV=DEVELOPMENT -e LO
 
 ### High availability deployment
 
-The previously tutorial assumuded that only one Domain Registry application server was running.
+The previously tutorial assumed that only one Domain Registry application server was running.
 Although, in order to increase both capacity (concurrent users) and application’s reliability, a Load Balancer can be added to distribute network traffic across several Domain Registry servers.
 Moreover, load balancers offer content-aware distribution, redundancy and health checking to ensure that the servers are indeed running and accepting requests.
 If a server is found to be down, the load balancer removes it from rotation and stops sending it requests.
@@ -344,6 +344,8 @@ Run Haproxy:
 ```
 $ docker run -d --name domain-haproxy -p 4569:443 my-haproxy
 ```
+
+**After the load balancer is running, start the Domain Registry with one, or a combination of all, configuration possibilities explained above.**
 
 
 ## Rest API definition and available endpoints

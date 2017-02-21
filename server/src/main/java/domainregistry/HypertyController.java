@@ -81,6 +81,13 @@ public class HypertyController {
             return null;
         });
 
+        get("/error", (req, res) -> {
+            Gson gson = new Gson();
+            res.type("application/json");
+            res.status(401);
+            return gson.toJson(new Messages("Unauthorized."));
+        });
+
         // GET live page
         get("/live", (req, res) -> {
             Gson gson = new Gson();
