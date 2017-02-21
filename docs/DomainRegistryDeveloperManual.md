@@ -44,15 +44,11 @@ In the Domain Registry’s code, the _HypertyController_, _HypertyService_ and _
 
 The _HypertyService_, and _DataObjectService_ class (the “M” in “MVC”) provides methods to create (or update) and return Hyperties and DataObjects that are being stored in a in-memory data structure or in a Database, such as Cassandra DB.
 
-The way code is organized in the Github repository is shown in Figure 3.
+The way code is organized in the Github repository is shown in the Following figure.
 
 ![Domain Registry Architecture](ac.jpg)
 
-**Figure 2:** Domain Registry architecture pattern
- 
-<img src="source_code_tree.png" width="400">
-
-**Figure 3:** Domain Registry directory structure
+![Domain Registry Code Structure](code-structure.png)
 
 Each folder contains the following:
 
