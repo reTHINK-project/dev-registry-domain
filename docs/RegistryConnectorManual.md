@@ -131,6 +131,71 @@ Both shims provide the same methods:
 A callback function should be provided, which will receive an error object,
 response body and status code, as arguments.
 
+### Connector installation
+Install the Registry Connector module by adding the following dependency to the corresponding *package.json* file:
+```
+ "dev-registry-domain": "rethink-project/dev-registry-domain#R0.8.0"
+```
+or by executing the following command:
+```
+npm install rethink-project/dev-registry-domain#R0.8.0 --save
+```
+
+Then is possible to require it in the code. Example:
+```
+const RegistryConnector = require('dev-registry-domain/connector');
+const registry = new RegistryConnector(config);
+```
+### Config options
+
+**HTTP Domain Registry** 
+```
+const config = {
+  url: 'http://citysdk.tecnico.ulisboa.pt',
+  retries: 2
+  ssl: {
+    enabled: false
+  }
+};
+
+const registry = new RegistryConnector(config);
+```
+
+**HTTPS Domain Registry** 
+
+More information about how to generate the necessary CA infrastructure and certificates is in the [Certification Manual](https://github.com/reTHINK-project/dev-registry-domain/blob/master/docs/CertificationManual.md).
+```
+# vertx config
+const config = {
+  url: 'https://citysdk.tecnico.ulisboa.pt',
+  retries: 2
+  ssl: {
+    enabled: true,
+    trustStore: 'domain.jks',
+    trustStorePass: 'rethink',
+    keyStore: 'connector.jks',
+    keyStorePass: 'rethink',
+    keyPassphrase: 'rethink'
+  }
+};
+
+# node.js config
+const config = {
+  url: 'https://citysdk.tecnico.ulisboa.pt',
+  retries: 2
+  ssl: {
+    enabled: true,
+    cert: 'connector.cert.pem',
+    key: 'connector.key.pem',
+    keyPassphrase: 'rethink',
+    ca: 'ca-bundle.pem'
+  }
+};
+
+const registry = new RegistryConnector(config);
+```
+
+
 
 
 
