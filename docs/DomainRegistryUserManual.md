@@ -25,6 +25,13 @@ A Dockerfile is provided, so it is possible to run the Domain Registry through a
 2. Storing requests in a multi-host Cassandra database cluster.
 3. Storing requests in a single Cassandra node;
 
+Regarding security, the possibilities on how to run the Domain Registry include:
+
+1. HTTPS connections
+2. Mutual authentication between the Domain Registry and the Registry Connector (using a load balancer)
+3. Blocking connections from untrusted sources
+4. A combination of 1), 2) and 3)
+
 #### Requests saved in-memory
 
 Requests may be saved in-memory. It is the simplest way to deploy the server. However, when the server is shutdown, all information stored there is lost. The commands are the following:
@@ -241,7 +248,7 @@ Next, follow the same steps as before. Establish a connection to the cluster wit
 
 ```
 $ docker build -t domain-registry .
-$ docker run -e STORAGE_TYPE=CASSANDRA -e CONTACT_POINTS_IPS=ip -e EXPIRES=3600 -p 4568:4567 domain-registry
+$ docker run -e STORAGE_TYPE=CASSANDRA -e CONTACT_POINTS_IPS=<ip> -e EXPIRES=3600 -p 4568:4567 domain-registry
 ```
 
 #### With HTTPS connections
