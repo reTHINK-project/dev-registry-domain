@@ -49,10 +49,11 @@ The StatusService class is used to generate data to be presented into the /live 
 ![Domain Registry Architecture](ac.jpg)
 
  **Figure 2:** Domain Registry inner services organization
+ 
+ 
+ The way code is organized in the Github repository is shown in the Following figure.
 
 ![Domain Registry Code Structure](code-structure.png)
-
-The way code is organized in the Github repository is shown in the Following figure.
 
  **Figure 3:** Domain Registry code structure
 
