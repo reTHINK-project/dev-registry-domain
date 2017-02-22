@@ -41,14 +41,51 @@ public class HypertyController {
     public static final int ALL_DO_PATH_SIZE = 7;
     public static final int SPECIFIC_DO_PATH_SIZE = 8;
 
+
+    private static final String KEYSTORE = "KEYSTORE";
+    private static final String KEYSTORE_PASSWORD = "KEYSTORE_PASSWORD";
+
     private static final String DEVELOPMENT = "DEVELOPMENT";
     private static final String DOMAIN_ENV = "DOMAIN_ENV";
 
+    private static final String LOAD_BALANCER_IP = "LOAD_BALANCER_IP";
+
+
     public HypertyController(StatusService status, final HypertyService hypertyService, final Connection connectionClient, final DataObjectService dataObjectService) {
+
+        String keystore = System.getenv(KEYSTORE);
+        String keystorePassword = System.getenv(KEYSTORE_PASSWORD);
+
+        if(keystore != null && keystorePassword != null){
+            secure("cert/" + keystore, keystorePassword, null, null);
+            log.info("HTTPS enabled...");
+        }
+
+        else log.info("You did not provide either a keystore or a keystore password. HTTP enabled...");
+
+        before((request, response) -> {
+            boolean authenticated;
+
+            String loadBalancerIp = System.getenv(LOAD_BALANCER_IP);
+
+            String originIp = request.ip().toString();
+
+            if (loadBalancerIp != null && !loadBalancerIp.equals(originIp)){
+                log.info("Unauthorized request...");
+                halt(401, "Unauthorized request");
+            }
+        });
 
         get("/", (req, res) -> {
             res.redirect("/live");
             return null;
+        });
+
+        get("/error", (req, res) -> {
+            Gson gson = new Gson();
+            res.type("application/json");
+            res.status(401);
+            return gson.toJson(new Messages("Unauthorized."));
         });
 
         // GET live page

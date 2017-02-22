@@ -14,6 +14,8 @@ RUN ["mvn", "verify"]
 
 # Compile and package jar
 ADD src /build/src
+ADD cert /build/cert
+
 RUN ["mvn", "package"]
 
 EXPOSE 4567
