@@ -38,9 +38,9 @@ Requests may be saved in-memory. It is the simplest way to deploy the server. Ho
 
 ```
 $ docker build -t domain-registry .
-$ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -p 4568:4567 domain-registry
+$ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -e DOMAIN_ENV=DEVELOPMENT -p 4568:4567 domain-registry
 ```
-Expires global variable defines the maximum amount of time (in seconds) a Hyperty stays in the server (see [soft state issue](https://github.com/reTHINK-project/dev-registry-domain/issues/7)). Note that the published port 4568 may be changed to another port that better suits your needs. Running the server with this configuration will work exactly as the last version (R0.1.0).
+Expires global variable defines the maximum amount of time (in seconds) a Hyperty stays in the server (see [soft state issue](https://github.com/reTHINK-project/dev-registry-domain/issues/7)). Note that the published port 4568 may be changed to another port that better suits your needs. Running the server with this configuration will work exactly as the last release. The global variable 'DOMAIN_END' can be set to 'DEVELOPMENT' to enable a customized Domain Registry status page.
 
 #### Requests saved in a multi-host Cassandra cluster
 
@@ -257,7 +257,7 @@ In order to use HTTPS connections a keystore file ([more info](https://www.sslsh
 
 ```
 $ docker build -t domain-registry .
-$ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -e KEYSTORE_PASSWORD=password -e KEYSTORE=keystore.jks -e DOMAIN_ENV=DEVELOPMENT -p 4568:4567 domain-registry
+$ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -e KEYSTORE_PASSWORD=<password> -e KEYSTORE=keystore.jks -e DOMAIN_ENV=DEVELOPMENT -p 4568:4567 domain-registry
 ```
 
 #### Mutual authentication between the Domain Registry and the Connector
@@ -270,8 +270,8 @@ Writes will only be permited through this connection.
 2) The REST API open for read access from everyone (at least for the time being).
 
 As such, and since the framework ([Spark Java Framework](http://sparkjava.com/)) used to develop the Domain Registry does not support mutual authentication, this was configured in a [Haproxy](http://www.haproxy.org/) load balancer that resides in front of the Domain Registry.
-As can be seen inside Haproxy configuration file (server/load-balancer/haproxy.cfg), this was achieved by using certificates. As a consequence, a certificate authority must exist in order to sign and verify client certificates.
-Just provide Haproxy with a server certificate and a CA file and use further configuration options as needed.
+As can be seen from [Haproxy configuration file](https://github.com/reTHINK-project/dev-registry-domain/blob/develop/server/load-balancer/haproxy.cfg#L14), this was achieved by using certificates. As a consequence, a certificate authority must exist in order to sign and verify client certificates.
+Provide Haproxy with a server certificate and a CA file (tutorial [here](https://github.com/reTHINK-project/dev-registry-domain/blob/develop/docs/CertificationManual.md)) and use further configuration options as needed.
 The provided Haproxy configuration assumes that these certificates are created inside /server/load-balancer folder.
 Our configuration starts with only one backend server (much more can be added) and connections only reached it if they came from an authenticated client or if its a HTTP GET request.
 Basically we are blocking non authenticated HTTP PUT requests.
@@ -286,7 +286,7 @@ Example:
 
 ```
 $ docker build -t domain-registry .
-$ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -e DOMAIN_ENV=DEVELOPMENT -e LOAD_BALANCER_IP=ip -p 4568:4567 domain-registry
+$ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -e DOMAIN_ENV=DEVELOPMENT -e LOAD_BALANCER_IP=<ip> -p 4568:4567 domain-registry
 ```
 
 ### High availability deployment
@@ -327,8 +327,8 @@ This would mean that we would be forced to configure traffic encryption on the a
 
 ### How to deploy the Domain Registry with a load balancer
 
-Inside the folder /server/load-balancer is included a basic [Haproxy](http://www.haproxy.org/) 1.8 Load Balancer configuration.
-These settings are meant to enhanced as needed.
+Inside the folder /server/load-balancer is included a basic [Haproxy](http://www.haproxy.org/) 1.7 Load Balancer configuration.
+These settings are meant to be enhanced as needed.
 Inside **haproxy.cfg** we have four sections: global, defaults, frontend and backend.
 Parameters inside 'global' section are process-wide and often OS-specific.
 They are set once and generally do not change.
