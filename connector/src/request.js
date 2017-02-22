@@ -1,6 +1,8 @@
 var retry = require('async/retry');
 
-var Request = function(retries) {
+var Request = function(sslConfig, retries) {
+
+  var RequestWrapper;
 
   if( typeof(engine) != 'undefined' &&
      typeof(engine.factory) != 'undefined' &&
@@ -8,10 +10,12 @@ var Request = function(retries) {
      typeof(engine.factory.engineName.contains) == 'function' &&
            engine.factory.engineName.contains("Nashorn")) {
 
-    this._request = require('./java-request');
+    RequestWrapper = require('./java-request');
   }else {
-    this._request = require('./js-request');
+    RequestWrapper = require('./js-request');
   }
+
+  this._request = new RequestWrapper(sslConfig);
 
   this._opts = {
     times: retries,
@@ -39,4 +43,3 @@ Request.prototype.del = function(url, callback) {
 };
 
 module.exports = Request;
-
