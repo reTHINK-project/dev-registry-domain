@@ -1,5 +1,7 @@
 # dev-registry-domain
 
+[![Build Status](https://travis-ci.org/reTHINK-project/dev-registry-domain.svg?branch=develop)](https://travis-ci.org/reTHINK-project/dev-registry-domain)
+
 ### [Documentation](https://github.com/reTHINK-project/dev-registry-domain/tree/master/docs)
 
 
@@ -19,7 +21,7 @@ Inside the server/specs folder run the following docker commands.
 
 ```
 $ docker build -t domain-specs .
-$ docker run -e SERVER=my.domain.server -e PORT=port domain-specs
+$ docker run -e HOST=my.domain.server:port domain-specs
 ```
 
 ### Connector installation

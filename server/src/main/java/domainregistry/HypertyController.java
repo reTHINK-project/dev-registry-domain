@@ -96,6 +96,7 @@ public class HypertyController {
             String accept = req.headers("Accept");
 
             String domainEnv = System.getenv(DOMAIN_ENV);
+            String domainURL = req.host();
 
             if (accept != null && accept.contains("text/html") && domainEnv != null && domainEnv.equals(DEVELOPMENT)) {
                 // produces HTML
@@ -104,7 +105,7 @@ public class HypertyController {
                 Configuration freeMarkerConfiguration = new Configuration();
                 freeMarkerConfiguration.setTemplateLoader(new ClassTemplateLoader(HypertyController.class, "/"));
                 freeMarkerEngine.setConfiguration(freeMarkerConfiguration);
-                Map<String, List<Object>> attributes = status.getDomainRegistryStatsGlobal();
+                Map<String, List<Object>> attributes = status.getDomainRegistryStatsGlobal(req.host());
                 res.status(200);
                 return freeMarkerEngine.render(new ModelAndView(attributes, "status.ftl"));
             } else {
