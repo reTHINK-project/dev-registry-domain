@@ -232,3 +232,32 @@ openssl ca -config intermediate/openssl.cnf \
     -out intermediate/certs/domain.inesc.com.cert.pem
 chmod 444 intermediate/certs/domain.inesc.com.cert.pem
 ```
+
+## Usage in Domain Registry
+
+## Instructions
+### TODO
+
+## Usage in Registry Connector
+
+### Node.js instructions
+The request library used in node.js supports PEM files, so the generated files can be used directly.
+In the given example:
+ - **Key File**: `rethink-ca/intermediate/private/connector.key.pem`
+ - **Client Certificate**: `rethink-ca/intermediate/certs/connector.cert.pem`
+ - **CA Bundle**: `rethink-ca/intermediate/certs/ca-chain.cert.pem`
+ 
+ 
+### Vertx/Java instructions
+Vertx/Java request wrapper requires the usage of Java Keystore files.
+So first is necessary to create the necessary Keystore and Truststore:
+
+```
+# Truststore
+keytool -import -file rethink-ca/intermediate/certs/ca-chain.cert.pem -alias ca-chain -keystore truststore.jks -storepass rethink
+ 
+# Keystore
+openssl pkcs12 -export -inkey rethink-ca/intermediate/private/connector.key.pem -in rethink-ca/intermediate/certs/connector.cert.pem -name connector-keystore connector.p12
+keytool -importkeystore -srckeystore connector.p12 -srcstoretype pkcs12 -destkeystore connector.jks
+```
+ 
