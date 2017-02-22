@@ -50,6 +50,7 @@ functionality calling Java methods from Javascript, which is accomplished by
 the use of a shim layer. This is also applicable to the Node.js runtime, where
 a Node.js HTTP client library ([request](https://github.com/request/request)) is used.
 
+The Registry Connector can be required as a module through [NPM](www.npmjs.com).
 
 ### Implementation
 In this Section, the specific Vert.x Messaging Node implementation is detailed.
@@ -80,167 +81,48 @@ Register Connector verticle will register a handler to process messages sent to
 this address, and call the respective Registry Connector API functions.
 
 #### Message Format
-
-In this document, the following is assumed:
- * `<RegistryDataObject>` is a JSON object compliant with
-   [RegistryDataObject](https://github.com/reTHINK-project/dev-service-framework/tree/master/docs/datamodel/hyperty-registry)
-   data model;
- * `<userURL>` is a user address compliant with
-   [UserURL](https://github.com/reTHINK-project/dev-service-framework/blob/master/docs/datamodel/address/readme.md#user-url-type)
-   data model.
- * `<DiscoveredHypertyInstance>` is a JSON object compliant with
-   [HypertyInstance](https://github.com/reTHINK-project/dev-service-framework/tree/develop/docs/datamodel/hyperty-registry#hyperty-instance)
-   data model;
- * `<DiscoveredDataObjectInstance>` is a JSON object compliant with
-   [HypertyDataObjectInstance](https://github.com/reTHINK-project/dev-service-framework/tree/develop/docs/datamodel/hyperty-registry#hyperty-instance)
-   data model.
-
-The Registry Connector expects and handles several different message types.
-Each message shares a common format, detailed in [Message Format](https://github.com/reTHINK-project/dev-service-framework/tree/develop/docs/datamodel/message) documentation, and summarized in the following table:
-
-| name |                                                      type                                                     | description                                                                                             |
-|:----:|:-------------------------------------------------------------------------------------------------------------:|---------------------------------------------------------------------------------------------------------|
-| id   | numeric                                                                                                       | Used to associate Response messages to the initial request message.                                     |
-| type | string                                                                                                        | Message type that will be used to define the Message Body format.                                       |
-| from | [URL](https://github.com/reTHINK-project/dev-service-framework/blob/develop/docs/datamodel/address/readme.md) | URL of Hyperty instance or User associated with it                                                      |
-| to   | [URL](https://github.com/reTHINK-project/dev-service-framework/blob/develop/docs/datamodel/address/readme.md) | One or more URLs of Message recipients. According to the URL scheme it may be handled in different ways |
-| body | JSON-Object                                                                                                   | The message body according to the type that is identified by the type attribute in the message header.  |
-
-##### Registration Request
-
-Message sent by the Hyperty Runtime Registry function to the Registry Domain
-Server (Connector or Protostub).
-
-```
-"id" : "1"
-"type" : "CREATE",
-"from" : "hyperty-runtime://<sp-domain>/<runtime-instance-identifier>/registry",
-"to" : "domain://registry.<sp-domain>",
-"body" : { "value" : <RegistryDataObject> }
-```
-
-**Response**: Message sent by the Registry Domain server (Connector or
-Protostub) to the Hyperty Runtime Registry function.
-
-```
-"id" : "<1>"
-"type" : "RESPONSE",
-"from" : "domain://registry.<sp-domain>",
-"to" : "hyperty-runtime://<sp-domain>/<runtime-instance-identifier>/registry",
-"body" : { "code": 200 }
-```
-
-##### Unregistration Request
-Message sent by the Hyperty Runtime Registry function to Registry Domain Server
-(Connector or Protostub).
-
-```
-"id" : "4"
-"type" : "DELETE",
-"from" : "hyperty-runtime://<sp-domain>/<runtime-instance-identifier>/registry",
-"to" : "domain://registry.<sp-domain>",
-"body" : { "value" : <RegistryDataObject> }
-```
-
-**Response**: Message sent by the Registry Domain server (Connector or Protostub)
-to Hyperty Runtime Registry function.
-
-```
-"id" : "<4>"
-"type" : "RESPONSE",
-"from" : "domain://registry.<sp-domain>",
-"to" : "hyperty-runtime://<sp-domain>/<runtime-instance-identifier>/registry",
-"body" : { "code": 200 }
-```
-
-##### Hyperty Instance Query per User
-Message sent by an Hyperty Instance to Registry Domain Server (Connector or
-Protostub).
-
-```
-"id" : "2",
-"type" : "READ",
-"from" : "hyperty://<sp-domain>/<hyperty-instance-identifier>",
-"to" : "domain://registry.<sp1>"
-"body" : { "resource" : "/hyperty-instance/user/<userURL>" }
-```
-
-**Response**: Message returning the discovered Hyperty Instances.
-Message sent by the Registry Domain server (Connector or Protostub) to an
-Hyperty Instance.
-
-```
-"id" : "2"
-"type" : "RESPONSE",
-"from" : "domain://registry.<sp-domain>",
-"to" : "hyperty://<sp-domain>/<hyperty-instance-identifier>",
-"body" : { "code": 200, "value" : ["<discoveredHypertyInstance>"] }
-```
-
-##### Data Object Query per User
-Message sent by an Hyperty Instance to Registry Domain Server (Connector or
-Protostub).
-
-```
-"id" : "3",
-"type" : "READ",
-"from" : "hyperty://<sp-domain>/<hyperty-instance-identifier>",
-"to" : "domain://registry.<sp-domain>"
-"body" : { "resource" : "/hyperty-data-object-instance/<scheme>/owner/<userURL>" }
-```
-**Response**: Message returning the discovered Hyperty Data Object Instances.
-Message sent by the Registry Domain server (Connector or Protostub) to an Hyperty Instance.
-
-```
-"id" : "3"
-"type" : "RESPONSE",
-"from" : "domain://registry.<sp-domain>",
-"to" : "hyperty://<sp-domain>/<hyperty-instance-identifier>",
-"body" : { "code": 200, "value" : ["<DiscoveredDataObjectInstance>"] }
-```
+The Messages received by the Registry Connector are described in [Registration Messages](https://github.com/reTHINK-project/specs/blob/master/messages/registration-messages.md).
 
 ### Code Structure
-The Registry Connector code comprehends three files: RegistryConnector.js, js-request.js and java-request.js.
 
-![Registry Connector code structure](registry-connector-code.png)
-
-**Figure 3** - Registry Connector code files structure.
-
+```
+├── index.js
+├── src
+│   ├── RegistryConnector.js
+│   ├── dataObject.js
+│   ├── hyperty.js
+│   ├── java-request.js
+│   ├── js-request.js
+│   └── request.js
+```
+**Registry Connector code files structure.**
 
 #### RegistryConnector file
-In the RegistryConnector file the main Registry Connector functions are defined.
-
-##### getUser
-Obtain the Hyperty instances associated with the specified user identifier.
-Translates into a `GET /hyperty/user/<userid>` HTTP request to the Domain Registry API.
-
-##### addHyperty
-Create a new Hyperty instance associated with the specified user identifier.
-Translates into a `PUT /hyperty/user/<userid>/<hyperty-instance-id>` HTTP request to the Domain Registry API.
-
-##### deleteHyperty
-Delete the hyperty instance with the specified identifier.
-Translates into a `DELETE /hyperty/user/<userid>/<hyperty-instance-id>` HTTP request to the Domain Registry API.
-
-##### processMessage
-Processes an arbitrary message directed to the Domain Registry, and call the
-respective function according to the `type` field.
-The following mapping between the `type` field and the called function is done:
- - **CREATE** - addHyperty function
- - **READ** - getUser function
- - **DELETE** - deleteHyperty function
-
-Each of these functions receive a callback as an argument, which will be called
+In the RegistryConnector file the main messages processing logic is defined.
+The method `processMessage` will inspect the message type field, and call the apropriate method to deal with the request:
+ - `readOperation` - if message field `type: 'read'`
+ - `createOperation` - if message field `type: 'create'`
+ - `updateOperation` - if message field `type: 'update'` 
+ - `deleteOperation` - if message field `type: 'delete'`
+ 
+Each of these methods will verify if the request is an hyperty or data object request, and will call the respective hyperty/data object methods to deal with the request. All the methods receive a callback as an argument, which will be called
 with the response message as an argument.
 
-When initializing an RegistryConnector object, the constructor will check the
-Javascript engine, and load the corresponding HTTP request shim library.
+##### Request file
+This file provides a wrapper for the request methods.
+When initializing an Request object, the constructor will check the Javascript engine, and load the corresponding HTTP request shim library.
 
-#### HTTP request shim files
+##### hyperty and dataObject file
+Each of these files implement the methods described in the Request file, that provide CRUD operations to hyperties and dataobjects:
+
+#### HTTP/HTTPS request shim files
 As mentioned before, even thought the code is able to run in different
-Javascript engines, due to the lack of a common API for executing HTTP requests, is necessary to provide shim functions for executing the requests accordingly with the underlying Javascript engine.
+Javascript engines, due to the lack of a common API for executing HTTP/HTTPS requests, is necessary to provide shim functions for executing the requests accordingly with the underlying Javascript engine.
 Right now, there is an implementation for the Nashorn engine and Node.js.
-Both shims provide the same functions:
+
+In the case of Nashorn, it uses a Java wrapper class to execute the requests to the Domain Registry API, the class *HTTPRequest* provided by the [Vertx Message Node](https://github.com/reTHINK-project/dev-msg-node-vertx). In node.js it uses the [request](https://github.com/request/request) library.
+
+Both shims provide the same methods:
 
  - **get** - make a GET request to the provided URL;
  - **put** - make a PUT request to the provided URL with the provided JSON data;
