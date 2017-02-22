@@ -236,8 +236,16 @@ chmod 444 intermediate/certs/domain.inesc.com.cert.pem
 ## Usage in Domain Registry
 
 ## Instructions
-### TODO
-
+The HAProxy load balancer requires server certificate/key and CA chain for mutual authentication.
+In the given example:
+ - **Server Key/Certificate**: `rethink-ca/intermediate/certs/domain.lb.pem`
+ - **CA Bundle**: `rethink-ca/intermediate/certs/ca-chain.cert.pem`
+ 
+ Is necessary to concatenate the certificates to create the `domain.lb.pem`:
+ ```
+ cat rethink-ca/intermediate/private/domain.inesc.com.key.pem rethink-ca/intermediate/certs/domain.inesc.com.cert.pem rethink-ca/intermediate/certs/ca-chain.cert.pem > domain.lb.pem
+ ```
+ 
 ## Usage in Registry Connector
 
 ### Node.js instructions
@@ -245,7 +253,7 @@ The request library used in node.js supports PEM files, so the generated files c
 In the given example:
  - **Key File**: `rethink-ca/intermediate/private/connector.key.pem`
  - **Client Certificate**: `rethink-ca/intermediate/certs/connector.cert.pem`
- - **CA Bundle**: `rethink-ca/intermediate/certs/ca-chain.cert.pem`
+ - **CA Chain**: `rethink-ca/intermediate/certs/ca-chain.cert.pem`
  
  
 ### Vertx/Java instructions
