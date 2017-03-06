@@ -48,7 +48,7 @@ public class Main {
 
             HypertyService hypertyService = new HypertyService();
             DataObjectService dataObjectService = new DataObjectService();
-            StatusService status = new StatusService(CASSANDRA, cassandraClient);
+            StatusService status = new StatusService(CASSANDRA, cassandraClient, hypertyService, dataObjectService);
             HypertyController controller = new HypertyController(status, hypertyService, cassandraClient, dataObjectService);
             new HeartBeatThread(hypertyService, dataObjectService, cassandraClient, time).start();
 
@@ -62,9 +62,9 @@ public class Main {
         if(storageType.equals("RAM")){
             log.info("RAM choosen. Requests will be saved in-memory");
             final Connection ramClient = new RamClient();
-            StatusService status = new StatusService(RAM, ramClient);
             HypertyService hypertyService = new HypertyService();
             DataObjectService dataObjectService = new DataObjectService();
+            StatusService status = new StatusService(RAM, ramClient, hypertyService, dataObjectService);
             HypertyController controller = new HypertyController(status, hypertyService, ramClient, dataObjectService);
             new HeartBeatThread(hypertyService, dataObjectService, ramClient, time).start();
         }

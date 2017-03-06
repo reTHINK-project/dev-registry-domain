@@ -1,0 +1,25 @@
+sudo: required
+
+language: ruby
+
+rvm:
+  - 2.2.2
+
+services:
+  - docker
+
+before_install:
+  - gem install rspec airborne
+  - docker build -t domain-registry server
+  - docker run -d -e STORAGE_TYPE=RAM -e EXPIRES=3600 -p 127.0.0.1:4568:4567 domain-registry
+  - docker ps -a
+  - sleep 5
+
+env:
+  - HOST=127.0.0.1:4568
+
+script:
+  - rspec server/specs/data_objects_keep_alive_spec.rb
+  - rspec server/specs/data_objects_spec.rb
+  - rspec server/specs/hyperties_spec.rb
+  - rspec server/specs/hyperty_keep_alive_spec.rb

@@ -28,30 +28,127 @@ import java.io.IOException;
 public class StatusService {
     static Logger log = Logger.getLogger(StatusService.class.getName());
 
-    private static final String TYPE = "Storage type";
+    private static final String TYPE = "Storage_type";
     private static final String DB_CONNECTION_STATUS = "Database connection";
     private static final String DB_SIZE = "Database cluster size";
     private static final String LIVE_NODES = "Database up nodes";
     private static final String UP = "up";
     private static final String STATUS = "status";
-    private static final String NUM_OBJECTS = "Hyperties stored";
+    private static final String NUM_OBJECTS = "Hyperties_stored";
     private static final String NUM_REQUESTS = "User requests performed on the cluster";
     private static final String CASSANDRA = "Cassandra";
     private static final String INMEMORY = "Ram";
     private static final String NUM_APP_SERVERS = "Number of app servers";
     private static final String UP_APP_SERVERS = "Number of live app servers";
+    private static String DOMAIN_URL;
 
     private String databaseType;
     private Connection connection;
+    private HypertyService hypertyService;
+    private DataObjectService dataObjectService;
 
     private Map<String, String> domainRegistryStats = new HashMap();
+    private Map<String, List<Object>> domainRegistryStatsHtml = new HashMap<String, List<Object>>();
+
 
     public StatusService(){
     }
 
-    public StatusService(String databaseType, Connection connection){
+    public StatusService(String databaseType, Connection connection, HypertyService hypertyService, DataObjectService dataObjectService){
         this.databaseType = databaseType;
         this.connection = connection;
+        this.hypertyService = hypertyService;
+        this.dataObjectService = dataObjectService;
+    }
+
+    public Map<String, List<Object>> getDomainRegistryStatsGlobal(String domainURL){
+        DOMAIN_URL=domainURL;
+        if(databaseType.equals(INMEMORY)){
+            populateRamStorageStatsHtml();
+            infoAboutUsersAndHypertiesRam();
+        }
+
+        else if(databaseType.equals(CASSANDRA)){
+            populateCassandraStatsHtml();
+            infoAboutUsersAndHypertiesCassandra();
+        }
+
+        return this.domainRegistryStatsHtml;
+    }
+
+    private void populateRamStorageStatsHtml(){
+        ArrayList<Object> list = new ArrayList<Object>();
+        StatusInfo info = new StatusInfo();
+        info.setDomainURL(DOMAIN_URL);
+        info.setStorageType(INMEMORY);
+        info.setNumHyperties(getNumHyperties());
+        info.setNumUsers(String.valueOf(((RamClient) this.connection).getNumUsersWithHyperties()));
+        list.add(info);
+        domainRegistryStatsHtml.put("Init", list);
+    }
+
+    private void populateCassandraStatsHtml(){
+        ArrayList<Object> list = new ArrayList<Object>();
+        StatusInfo info = new StatusInfo();
+        info.setDomainURL(DOMAIN_URL);
+        info.setStorageType(CASSANDRA);
+        info.setNumHyperties(getNumHyperties());
+        info.setNumUsers(String.valueOf(((CassandraClient) this.connection).getNumUsersWithHyperties()));
+        info.setClusterDBSize(getClusterDBSize());
+        info.setClusterLiveNodes(getClusterLiveNodes());
+        list.add(info);
+        domainRegistryStatsHtml.put("Init", list);
+    }
+
+    private void infoAboutUsersAndHypertiesRam(){
+        Map<String, String> usersByGuid = ((RamClient) this.connection).getMapUsersByGuid();
+        ArrayList<Object> users = new ArrayList<Object>();
+        for(String guid : usersByGuid.keySet()){
+            StatusInfo info = new StatusInfo();
+            info.setUserGuid(guid);
+            info.setUserURL(usersByGuid.get(guid));
+            Map<String, HypertyInstance> hyperties = this.hypertyService.getHypertiesForStatusPage(this.connection, guid);
+            checkhypertiesState(hyperties, info);
+            users.add(info);
+        }
+        domainRegistryStatsHtml.put("Users", users);
+    }
+
+    private void infoAboutUsersAndHypertiesCassandra(){
+        Map<String, String> usersByGuid = ((CassandraClient) this.connection).getMapUsersByGuid();
+        ArrayList<Object> users = new ArrayList<Object>();
+        for(String guid : usersByGuid.keySet()){
+            StatusInfo info = new StatusInfo();
+            info.setUserGuid(guid);
+            info.setUserURL(usersByGuid.get(guid));
+            Map<String, HypertyInstance> hyperties = this.hypertyService.getHypertiesForStatusPage(this.connection, guid);
+            checkhypertiesState(hyperties, info);
+            users.add(info);
+        }
+        domainRegistryStatsHtml.put("Users", users);
+    }
+
+    public void checkhypertiesState(Map<String,HypertyInstance> hyperties, StatusInfo info){
+        int totalHyperties = 0;
+        int liveHyperties = 0;
+        int deadHyperties = 0;
+        List<HypertyInstance> listHyperties =  new ArrayList();
+
+        for(HypertyInstance hyperty : hyperties.values()){
+            totalHyperties++;
+
+            if(hyperty.getStatus().equals("live"))
+                liveHyperties++;
+
+            else deadHyperties++;
+
+            listHyperties.add(hyperty);
+        }
+
+        info.setTotalHyperties(String.valueOf(totalHyperties));
+        info.setLiveHyperties(String.valueOf(liveHyperties));
+        info.setDeadHyperties(String.valueOf(deadHyperties));
+        info.setListHyperties(listHyperties);
     }
 
     public Map<String, String> getDomainRegistryStats(){
@@ -74,14 +171,11 @@ public class StatusService {
         domainRegistryStats.put(DB_CONNECTION_STATUS, UP);
         domainRegistryStats.put(NUM_OBJECTS, getNumHyperties());
         domainRegistryStats.put(LIVE_NODES, getClusterLiveNodes());
-        //domainRegistryStats.put(NUM_REQUESTS, getNumRequests());
-        //domainRegistryStats.put(NUM_APP_SERVERS, getNumAppServers());
-        //domainRegistryStats.put(UP_APP_SERVERS, getNumLiveServers());
     }
 
     private void populateRamStorageStats(){
-        domainRegistryStats.put(TYPE, INMEMORY);
-        domainRegistryStats.put(NUM_OBJECTS, getNumHyperties());
+      domainRegistryStats.put(TYPE, INMEMORY);
+      domainRegistryStats.put(NUM_OBJECTS, getNumHyperties());
     }
 
     private String getClusterDBSize(){

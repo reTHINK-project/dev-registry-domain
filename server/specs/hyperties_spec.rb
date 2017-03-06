@@ -247,9 +247,6 @@ describe 'get all hyperties' do
     expect(json_body[:hyperty1][:expires]).to eql(1200)
     expect(json_body[:hyperty2][:expires]).to eql(1200)
     expect(json_body[:hyperty6][:expires]).to eql(1200)
-    expect(json_body[:hyperty1][:startingTime]).to eql(json_body[:hyperty1][:lastModified])
-    expect(json_body[:hyperty2][:startingTime]).to eql(json_body[:hyperty2][:lastModified])
-    expect(json_body[:hyperty6][:startingTime]).to eql(json_body[:hyperty6][:lastModified])
     expect(json_body[:hyperty1][:resources]).to eql(["chat", "voice"])
     expect(json_body[:hyperty2][:resources]).to eql(["chat", "video"])
     expect(json_body[:hyperty6][:resources]).to eql(["chat", "video"])
@@ -356,8 +353,6 @@ end
       expect(json_body[:hyperty1][:expires]).to eql(1200)
       expect(json_body[:hyperty1][:descriptor]).to eql("descriptor3")
       expect(json_body[:hyperty2][:expires]).to eql(1200)
-      expect(json_body[:hyperty2][:startingTime]).to eql(json_body[:hyperty2][:lastModified])
-      expect(json_body[:hyperty1][:startingTime]).to be < (json_body[:hyperty1][:lastModified])
       expect(json_body[:hyperty1][:guid]).to eql("guid4")
       expect(json_body[:hyperty2][:guid]).to eql("guid4")
     end

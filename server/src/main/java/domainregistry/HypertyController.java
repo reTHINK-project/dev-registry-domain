@@ -22,6 +22,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
 
+import spark.ModelAndView;
+import spark.template.freemarker.*;
+import freemarker.cache.*; // template loaders live in this package
+import freemarker.template.*;
+
 public class HypertyController {
     static Logger log = Logger.getLogger(HypertyController.class.getName());
 
@@ -36,23 +41,80 @@ public class HypertyController {
     public static final int ALL_DO_PATH_SIZE = 7;
     public static final int SPECIFIC_DO_PATH_SIZE = 8;
 
+
+    private static final String KEYSTORE = "KEYSTORE";
+    private static final String KEYSTORE_PASSWORD = "KEYSTORE_PASSWORD";
+
+    private static final String DEVELOPMENT = "DEVELOPMENT";
+    private static final String DOMAIN_ENV = "DOMAIN_ENV";
+
+    private static final String LOAD_BALANCER_IP = "LOAD_BALANCER_IP";
+
+
     public HypertyController(StatusService status, final HypertyService hypertyService, final Connection connectionClient, final DataObjectService dataObjectService) {
+
+        String keystore = System.getenv(KEYSTORE);
+        String keystorePassword = System.getenv(KEYSTORE_PASSWORD);
+
+        if(keystore != null && keystorePassword != null){
+            secure("cert/" + keystore, keystorePassword, null, null);
+            log.info("HTTPS enabled...");
+        }
+
+        else log.info("You did not provide either a keystore or a keystore password. HTTP enabled...");
+
+        before((request, response) -> {
+            boolean authenticated;
+
+            String loadBalancerIp = System.getenv(LOAD_BALANCER_IP);
+
+            String originIp = request.ip().toString();
+
+            if (loadBalancerIp != null && !loadBalancerIp.equals(originIp)){
+                log.info("Unauthorized request...");
+                halt(401, "Unauthorized request");
+            }
+        });
 
         get("/", (req, res) -> {
             res.redirect("/live");
             return null;
         });
 
+        get("/error", (req, res) -> {
+            Gson gson = new Gson();
+            res.type("application/json");
+            res.status(401);
+            return gson.toJson(new Messages("Unauthorized."));
+        });
 
         // GET live page
         get("/live", (req, res) -> {
             Gson gson = new Gson();
             this.numReads++;
-            log.info("Live page requested. Statistics on the way...");
-            res.type("application/json");
-            Map<String, String> databaseStats = status.getDomainRegistryStats();
-            res.status(200);
-            return gson.toJson(databaseStats);
+            log.info("Live page requested. Status on the way...");
+            String accept = req.headers("Accept");
+
+            String domainEnv = System.getenv(DOMAIN_ENV);
+            String domainURL = req.host();
+
+            if (accept != null && accept.contains("text/html") && domainEnv != null && domainEnv.equals(DEVELOPMENT)) {
+                // produces HTML
+                res.type("text/html");
+                FreeMarkerEngine freeMarkerEngine = new FreeMarkerEngine();
+                Configuration freeMarkerConfiguration = new Configuration();
+                freeMarkerConfiguration.setTemplateLoader(new ClassTemplateLoader(HypertyController.class, "/"));
+                freeMarkerEngine.setConfiguration(freeMarkerConfiguration);
+                Map<String, List<Object>> attributes = status.getDomainRegistryStatsGlobal(req.host());
+                res.status(200);
+                return freeMarkerEngine.render(new ModelAndView(attributes, "status.ftl"));
+            } else {
+                // produces JSON
+                res.status(200);
+                res.type("application/json");
+                Map<String, String> databaseStats = status.getDomainRegistryStats();
+                return gson.toJson(databaseStats);
+            }
         });
 
         // GET hyperty per URL
@@ -72,7 +134,7 @@ public class HypertyController {
             res.status(200);
             return gson.toJson(hyperty);
         });
-        
+
         // GET hyperties per GUID
         get("/hyperty/guid/*", (req,res) -> {
             Gson gson = new Gson();
