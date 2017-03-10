@@ -64,7 +64,9 @@ describe 'domain registry api tests' do
       resources: ["resource3", "resource5"],
       dataSchemes: ["datascheme4", "datascheme3"],
       status: "created",
-      expires: 1000
+      expires: 1000,
+      runtime: "runtime",
+      p2pRequester: "requester"
     }
 
     @data_object_five_details = {
