@@ -81,6 +81,44 @@ describe 'domain registry api tests' do
   }
 
   describe 'create data object' do
+    it 'should return a 400 bad request code' do
+      # trying to register a data object without the runtime field
+
+      invalid_data_object = {
+        schema: "schema3",
+        name: "name3",
+        reporter: "reporter1",
+        resources: ["resource3", "resource5"],
+        dataSchemes: ["datascheme4", "datascheme3"],
+        status: "created",
+        expires: 1000,
+        p2pRequester: "requester"
+      }
+
+      put '/urltest', invalid_data_object
+      expect_status(400)
+    end
+
+    it 'should return a 400 bad request code' do
+      # trying to register a data object with invalid fields
+
+      invalid_data_object = {
+        schema: "schema3",
+        name: "name3",
+        reporter: "reporter1",
+        resources: ["resource3", "resource5"],
+        dataSchemes: ["datascheme4", "datascheme3"],
+        status: "created",
+        runtime: "runtime",
+        expires: 1000,
+        p2pRequester: "requester",
+        invalidField: "invalid"
+      }
+
+      put '/urltest', invalid_data_object
+      expect_status(400)
+    end
+
     it 'should create a new data object' do
       put '/url1', @data_object_details
       expect_status(200)
