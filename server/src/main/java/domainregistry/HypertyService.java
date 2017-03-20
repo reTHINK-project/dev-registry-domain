@@ -75,14 +75,12 @@ public class HypertyService{
     public Map<String, HypertyInstance> getHypertiesByEmail(Connection connectionClient, String email) {
         ArrayList<HypertyInstance> foundHyperties = connectionClient.getHypertiesByEmail(email);
 
-        if(foundHyperties.isEmpty())
-            throw new DataNotFoundException();
+        if(foundHyperties.isEmpty()) throw new DataNotFoundException();
 
         Map<String, HypertyInstance> hyperties = new HashMap<>();
 
-        for(HypertyInstance hyperty : foundHyperties){
+        for(HypertyInstance hyperty : foundHyperties)
             hyperties.put(hyperty.getHypertyID(), hyperty);
-        }
 
         return hyperties;
     }

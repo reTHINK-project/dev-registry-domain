@@ -38,25 +38,23 @@ public class RamClient implements Connection{
         else return new ArrayList();
     }
 
-    private boolean emailHasHyperty(String email, HypertyInstance hyperty){
-        return hypertiesByEmail.get(email).contains(hyperty);
-    }
-
     private boolean emailExists(String email){
         return hypertiesByEmail.containsKey(email);
     }
 
     private void associateHypertyWithEmail(String email, HypertyInstance hyperty){
-        if(emailExists(email)){
-            if(!emailHasHyperty(email, hyperty))
-                hypertiesByEmail.get(email).add(hyperty);
-        }
+        if(emailExists(email) && !emailHasHyperty(email, hyperty))
+            hypertiesByEmail.get(email).add(hyperty);
 
-        else {
+        if(!emailExists(email)) {
             ArrayList<HypertyInstance> hyperties = new ArrayList<HypertyInstance>();
             hyperties.add(hyperty);
             hypertiesByEmail.put(email, hyperties);
         }
+    }
+
+    private boolean emailHasHyperty(String email, HypertyInstance hyperty){
+        return hypertiesByEmail.get(email).contains(hyperty);
     }
 
     public Map<String,String> getMapUsersByGuid(){
