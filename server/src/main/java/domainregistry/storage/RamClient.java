@@ -43,10 +43,9 @@ public class RamClient implements Connection{
     }
 
     private void associateHypertyWithEmail(String email, HypertyInstance hyperty){
-        if(emailExists(email) && !emailHasHyperty(email, hyperty))
-            hypertiesByEmail.get(email).add(hyperty);
+        if(emailExists(email)) hypertiesByEmail.get(email).add(hyperty);
 
-        if(!emailExists(email)) {
+        else {
             ArrayList<HypertyInstance> hyperties = new ArrayList<HypertyInstance>();
             hyperties.add(hyperty);
             hypertiesByEmail.put(email, hyperties);
@@ -153,6 +152,7 @@ public class RamClient implements Connection{
 
     public void updateHyperty(HypertyInstance newHyperty){
         userServices.get(newHyperty.getUserID()).put(newHyperty.getHypertyID(), newHyperty);
+        associateHypertyWithEmail(getUserEmail(newHyperty.getUserID()), newHyperty);
         log.info("Updated hyperty " + newHyperty.getHypertyID() + " from user " + newHyperty.getUserID());
     }
 
