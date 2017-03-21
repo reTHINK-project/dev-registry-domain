@@ -22,7 +22,7 @@ describe 'domain registry api tests' do
       dataSchemes: ["comm"],
       descriptor: "descriptor1",
       expires: 0,
-      status: "live",
+      status: "disconnected",
       runtime: "runtime",
       p2pRequester: "requester",
       p2pHandler: "handler",
@@ -276,7 +276,6 @@ describe 'get hyperties by email' do
 
   it 'should return an error, hyperty has already expires' do
     get host << '/hyperty/email/rui.marquesg@gmail.com'
-    p json_body
     expect_status(408)
     expect_json_sizes(1)
   end
