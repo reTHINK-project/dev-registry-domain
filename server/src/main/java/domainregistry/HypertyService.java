@@ -77,12 +77,20 @@ public class HypertyService{
 
         if(foundHyperties.isEmpty()) throw new DataNotFoundException();
 
+        verifyExpiredHyperties(connectionClient, foundHyperties);
+
+        ArrayList<HypertyInstance> hypertiesWithStatusUpdated = connectionClient.getHypertiesByEmail(email);
+
         Map<String, HypertyInstance> hyperties = new HashMap<>();
 
-        for(HypertyInstance hyperty : foundHyperties)
+        // convert hyperties arraylist to map { :key => hyperty_id, :value => hyperty }
+        for(HypertyInstance hyperty : hypertiesWithStatusUpdated)
             hyperties.put(hyperty.getHypertyID(), hyperty);
 
-        return hyperties;
+        if(allHypertiesAreUnavailable(hyperties))
+            return hyperties;
+
+        else return liveHyperties(hyperties);
     }
 
     // Status page shows all hyperties independent of the their status
@@ -219,6 +227,18 @@ public class HypertyService{
             int expires = entry.getValue().getExpires();
             if(Dates.dateCompare(actualDate, lastModified) > expires){
                 connectionClient.deleteUserHyperty(entry.getKey());
+            }
+        }
+    }
+
+    protected void verifyExpiredHyperties(Connection connectionClient, ArrayList<HypertyInstance> hyperties){
+        String actualDate = Dates.getActualDate();
+
+        for (HypertyInstance hyperty : hyperties){
+            String lastModified = hyperty.getLastModified();
+            int expires = hyperty.getExpires();
+            if(Dates.dateCompare(actualDate, lastModified) > expires){
+                connectionClient.deleteUserHyperty(hyperty.getHypertyID());
             }
         }
     }

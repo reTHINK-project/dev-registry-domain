@@ -161,6 +161,12 @@ public class HypertyController {
             String[] encodedURL = req.url().split("/");
             String userEmail = decodeUrl(encodedURL[encodedURL.length - 1]);
             Map<String, HypertyInstance> hyperties = hypertyService.getHypertiesByEmail(connectionClient, userEmail);
+
+            if(hypertyService.allHypertiesAreUnavailable(hyperties)){
+                res.status(408);
+                return gson.toJson(hyperties);
+            }
+
             res.status(200);
             return gson.toJson(hyperties);
         });
