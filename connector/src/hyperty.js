@@ -41,7 +41,12 @@ var search = function(body, request, url, callback) {
 };
 
 var advancedSearch = function(body, request, url, callback) {
-  var endpoint = '/hyperty/user/' + encodeURIComponent(body.resource) + '/hyperty';
+
+  if(url.startsWith('/')) {
+    endpoint = '/hyperty/email/' + encodeURIComponent(url.split('/')[2]);
+  } else {
+    endpoint = '/hyperty/user/' + encodeURIComponent(body.resource) + '/hyperty';
+  }
 
   var resources = body.criteria.resources;
   var dataschemes = body.criteria.dataSchemes;
