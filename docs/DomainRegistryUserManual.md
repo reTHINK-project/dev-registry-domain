@@ -101,7 +101,7 @@ CREATE TABLE guid_by_user_id (
 
 CREATE TABLE hyperties_by_email (
     email text,
-    hyperties_ids list<text>,
+    hyperties_ids set<text>,
     PRIMARY KEY(email)
 );
 
