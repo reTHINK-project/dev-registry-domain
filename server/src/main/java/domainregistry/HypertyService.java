@@ -207,14 +207,44 @@ public class HypertyService{
 
         if(allUserHyperties.isEmpty()) throw new DataNotFoundException();
 
-        Map<String, HypertyInstance> foundHyperties = AdvancedSearch.getHyperties(parameters, allUserHyperties);
+        deleteExpiredHyperties(connectionClient, userID);
 
-        if(!foundHyperties.isEmpty())
+        Map<String, HypertyInstance> hypertiesWithStatusUpdated = connectionClient.getUserHyperties(userID);
+
+        Map<String, HypertyInstance> foundHyperties = AdvancedSearch.getHyperties(parameters, hypertiesWithStatusUpdated);
+
+        if(foundHyperties.isEmpty()) throw new HypertiesNotFoundException();
+
+        if(allHypertiesAreUnavailable(foundHyperties))
             return foundHyperties;
 
-        else throw new HypertiesNotFoundException();
+        else return liveHyperties(foundHyperties);
     }
 
+    public Map<String, HypertyInstance> getSpecificHypertiesByEmail(Connection connectionClient, String email, Map<String, String> parameters){
+        ArrayList<HypertyInstance> allUserHyperties = connectionClient.getHypertiesByEmail(email);
+
+        if(allUserHyperties.isEmpty()) throw new DataNotFoundException();
+
+        verifyExpiredHyperties(connectionClient, allUserHyperties);
+
+        ArrayList<HypertyInstance> hypertiesWithStatusUpdated = connectionClient.getHypertiesByEmail(email);
+
+        Map<String, HypertyInstance> hyperties = new HashMap<>();
+
+        // convert hyperties arraylist to map { :key => hyperty_id, :value => hyperty }
+        for(HypertyInstance hyperty : hypertiesWithStatusUpdated)
+            hyperties.put(hyperty.getHypertyID(), hyperty);
+
+        Map<String, HypertyInstance> foundHyperties = AdvancedSearch.getHyperties(parameters, hyperties);
+
+        if(foundHyperties.isEmpty()) throw new HypertiesNotFoundException();
+
+        if(allHypertiesAreUnavailable(foundHyperties))
+            return foundHyperties;
+
+        else return liveHyperties(foundHyperties);
+    }
 
     protected void deleteExpiredHyperties(Connection connectionClient, String userID){
         String actualDate = Dates.getActualDate();

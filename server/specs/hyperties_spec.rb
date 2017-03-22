@@ -53,6 +53,18 @@ describe 'domain registry api tests' do
       guid: "guid222"
     }
 
+    @hyperty_two_v2_details = {
+      resources: ["chatt"],
+      dataSchemes: ["comm"],
+      descriptor: "descriptor2",
+      expires: 1200,
+      status: "created",
+      runtime: "runtime",
+      p2pRequester: "requester",
+      p2pHandler: "handler",
+      guid: "guid222"
+    }
+
     @hyperty_three_details = {
       resources: ["chat", "voice", "video"],
       dataSchemes: ["comm", "fake"],
@@ -112,6 +124,12 @@ describe 'domain registry api tests' do
 
     it 'should add a new hyperty' do
       put host << '/hyperty/user/user%3A%2F%2Fgoogle.com%2Fbernardo.marquesg@gmail.com/hyperty7', @hyperty_two_details
+      expect_status(200)
+      expect_json(:message => "Hyperty created")
+    end
+
+    it 'should add a new hyperty' do
+      put host << '/hyperty/user/user%3A%2F%2Fgoogle.com%2Fbernardo.marquesg@gmail.com/hyperty81', @hyperty_two_v2_details
       expect_status(200)
       expect_json(:message => "Hyperty created")
     end
@@ -260,7 +278,7 @@ describe 'domain registry api tests' do
     it 'should return one hyperty' do
       get host << '/hyperty/email/bernardo.marquesg@gmail.com'
       expect_status(200)
-      expect_json_sizes(1)
+      expect_json_sizes(2)
       expect_json_keys("hyperty7", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler])
       expect(json_body[:hyperty7][:descriptor]).to eql("descriptor2")
       expect(json_body[:hyperty7][:expires]).to eql(1200)
@@ -279,6 +297,55 @@ describe 'domain registry api tests' do
       get host << '/hyperty/email/rui.marquesg@gmail.com'
       expect_status(408)
       expect_json_sizes(1)
+    end
+  end
+
+  describe 'get advanced search by email' do
+    it 'should return one hyperty' do
+      get host << '/hyperty/email/bernardo.marquesg@gmail.com/hyperty?resources=chat'
+      expect_status(200)
+      expect_json_sizes(1)
+      expect_json_keys("hyperty7", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler])
+      expect(json_body[:hyperty7][:descriptor]).to eql("descriptor2")
+      expect(json_body[:hyperty7][:expires]).to eql(1200)
+      expect(json_body[:hyperty7][:resources]).to eql(["chat", "voice", "video"])
+      expect(json_body[:hyperty7][:dataSchemes]).to eql(["comm"])
+      expect(json_body[:hyperty7][:status]).to eql("created")
+    end
+
+    it 'should return one hyperty' do
+      get host << '/hyperty/email/bernardo.marquesg@gmail.com/hyperty?resources=chat&dataSchemes=comm'
+      expect_status(200)
+      expect_json_sizes(1)
+      expect_json_keys("hyperty7", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler])
+      expect(json_body[:hyperty7][:descriptor]).to eql("descriptor2")
+      expect(json_body[:hyperty7][:expires]).to eql(1200)
+      expect(json_body[:hyperty7][:resources]).to eql(["chat", "voice", "video"])
+      expect(json_body[:hyperty7][:dataSchemes]).to eql(["comm"])
+      expect(json_body[:hyperty7][:status]).to eql("created")
+    end
+
+    it 'should return one hyperty' do
+      get host << '/hyperty/email/bernardo.marquesg@gmail.com/hyperty?dataSchemes=comm'
+      expect_status(200)
+      expect_json_sizes(2)
+      expect_json_keys("hyperty7", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler])
+      expect(json_body[:hyperty7][:descriptor]).to eql("descriptor2")
+      expect(json_body[:hyperty7][:expires]).to eql(1200)
+      expect(json_body[:hyperty7][:resources]).to eql(["chat", "voice", "video"])
+      expect(json_body[:hyperty7][:dataSchemes]).to eql(["comm"])
+      expect(json_body[:hyperty7][:status]).to eql("created")
+      expect_json_keys("hyperty81", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler])
+      expect(json_body[:hyperty81][:descriptor]).to eql("descriptor2")
+      expect(json_body[:hyperty81][:expires]).to eql(1200)
+      expect(json_body[:hyperty81][:resources]).to eql(["chatt"])
+      expect(json_body[:hyperty81][:dataSchemes]).to eql(["comm"])
+      expect(json_body[:hyperty81][:status]).to eql("created")
+    end
+
+    it 'should return one hyperty' do
+      get host << '/hyperty/email/bernardo.marquesg@gmail.com/hyperty?dataSchemes=bernardo'
+      expect_status(404)
     end
   end
 
