@@ -373,6 +373,10 @@ The Domain Registry is a REST server that allows to create, update and remove da
 Hyperties:
 
 * GET /hyperty/user/:user_id
+* GET /hyperty/email/:email
+* GET /hyperty/user/:email/hyperty?resources=R1,...,Rn&dataSchemes=DS1,...,DSn
+* GET /hyperty/user/:email/hyperty?dataSchemes=DS1,...,DSn
+* GET /hyperty/user/:email/hyperty?resources=R1,...,Rn
 * GET /hyperty/user/:user_id/hyperty?resources=R1,...,Rn&dataSchemes=DS1,...,DSn
 * GET /hyperty/user/:user_id/hyperty?dataSchemes=DS1,...,DSn
 * GET /hyperty/user/:user_id/hyperty?resources=R1,...,Rn
