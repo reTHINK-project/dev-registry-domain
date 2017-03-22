@@ -52,7 +52,13 @@ RegistryConnector.prototype.processMessage = function(msg, callback) {
 
 RegistryConnector.prototype.checkResourceType = function(url) {
 
-  var prefix = url.split('://')[0];
+  var prefix;
+
+  if(url.startsWith('/')) {
+    prefix = url.split('/')[1];
+  } else {
+    prefix = url.split('://')[0];
+  }
 
   if(prefix === 'user' || prefix === 'hyperty' || prefix === 'hyperty-runtime' || prefix === 'user-guid'){
     return 'hyperty';

@@ -42,6 +42,7 @@ public class CassandraClient implements Connection{
     public static final String REPORTERDATAOBJECTS = "data_objects_by_reporter";
     public static final String NAMEDATAOBJECTS = "data_objects_by_name";
     public static final String GUIDBYUSER = "guid_by_user_id";
+    public static final String EMAILBYUSER = "hyperties_by_email";
     public static final String DOWN = "DOWN";
 
     private Cluster cluster;
@@ -71,6 +72,46 @@ public class CassandraClient implements Connection{
         insertStatement(hyperty, USERHYPERTIES);
         insertStatement(hyperty, IDHYPERTIES);
         insertGuid(hyperty, GUIDBYUSER);
+        insertEmail(getUserEmail(hyperty.getUserID()), hyperty.getHypertyID(), EMAILBYUSER);
+    }
+
+    private String getUserEmail(String userID){
+        String[] userIdSplitted = userID.split("/");
+        return userIdSplitted[userIdSplitted.length - 1];
+    }
+
+    private void insertEmail(String email, String hypertyId, String table){
+        Statement statement;
+
+        if(emailExists(email)){
+            statement = QueryBuilder.update(KEYSPACE, table)
+                .with(QueryBuilder.add("hyperties_ids", hypertyId))
+                .where(QueryBuilder.eq("email", email));
+        }
+        else{
+            Set<String> hyperties_ids = new HashSet<String>();
+            hyperties_ids.add(hypertyId);
+
+            statement = QueryBuilder.insertInto(KEYSPACE, table)
+                .value("email", email)
+                .value("hyperties_ids", hyperties_ids);
+        }
+
+        if(getSession() != null){
+            getSession().execute(statement);
+            log.info("Associated hyperty " + hypertyId + " with email: " + email);
+        }
+
+        else log.error("Invalid cassandra session.");
+    }
+
+    private boolean emailExists(String email){
+        Statement select = QueryBuilder.select().all().from(KEYSPACE, EMAILBYUSER)
+            .where(QueryBuilder.eq("email", email));
+
+        ResultSet results = session.execute(select);
+        Row row = results.one();
+        return row != null;
     }
 
     private void insertGuid(HypertyInstance hyperty, String table){
@@ -137,6 +178,29 @@ public class CassandraClient implements Connection{
         else log.error("Invalid cassandra session.");
     }
 
+    public ArrayList<HypertyInstance> getHypertiesByEmail(String email){
+        Statement select = QueryBuilder.select().column("hyperties_ids").from(KEYSPACE, EMAILBYUSER)
+            .where(QueryBuilder.eq("email", email));
+
+        ResultSet results = session.execute(select);
+
+        Set<String> hypertiesUrls = new HashSet<String>();
+
+        for(Row row : results){
+            hypertiesUrls = row.getSet("hyperties_ids", String.class);
+        }
+
+        ArrayList<HypertyInstance> hyperties = new ArrayList<HypertyInstance>();
+
+        for(String hypertyId : hypertiesUrls){
+            HypertyInstance hyperty = getHyperty(hypertyId);
+            hyperty.setHypertyID(hypertyId);
+            hyperties.add(hyperty);
+        }
+
+        return hyperties;
+    }
+
     public int getNumberOfHyperties(){
         ArrayList<String> data = new ArrayList<String>();
 
@@ -194,11 +258,13 @@ public class CassandraClient implements Connection{
                                                       .where(QueryBuilder.eq("hypertyID", hypertyID));
         ResultSet results = session.execute(select);
         Row row = results.one();
-        return new HypertyInstance(row.getString("descriptor"), row.getString("startingTime"),
+        HypertyInstance newHyperty =  new HypertyInstance(row.getString("descriptor"), row.getString("startingTime"),
                 row.getString("user"), row.getList("resources", String.class), row.getList("dataSchemes", String.class),
                 row.getString("runtime"), row.getString("p2pRequester"), row.getString("p2pHandler"),
                 row.getString("lastModified"), row.getInt("expires"), row.getString("status"), row.getString("guid"));
 
+        newHyperty.setHypertyID(hypertyID);
+        return newHyperty;
     }
 
     public Map<String, HypertyInstance> getHypertiesByGuid(String guid){

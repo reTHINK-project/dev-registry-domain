@@ -153,6 +153,50 @@ public class HypertyController {
             return gson.toJson(hyperties);
         });
 
+        // GET hyperties by email
+        get("/hyperty/email/*", (req,res) -> {
+            Gson gson = new Gson();
+            this.numReads++;
+            res.type("application/json");
+            String[] encodedURL = req.url().split("/");
+
+            if(encodedURL.length == ALL_HYPERTIES_PATH_SIZE){
+                String userEmail = decodeUrl(encodedURL[encodedURL.length - 1]);
+                Map<String, HypertyInstance> hyperties = hypertyService.getHypertiesByEmail(connectionClient, userEmail);
+
+                if(hypertyService.allHypertiesAreUnavailable(hyperties)){
+                    res.status(408);
+                    return gson.toJson(hyperties);
+                }
+
+                res.status(200);
+                return gson.toJson(hyperties);
+            }
+
+            Set<String> queryParams = req.queryParams();
+
+            if(validatePathUrl(queryParams)){
+                res.status(404);
+                return gson.toJson(new Messages("Not Found"));
+            }
+
+            Map<String, String> allParameters = new HashMap();
+
+            for(String type : queryParams){
+                allParameters.put(type, req.queryParams(type));
+            }
+
+            String userEmail = decodeUrl(encodedURL[encodedURL.length - 2]);
+            Map<String, HypertyInstance> userHyperties = hypertyService.getSpecificHypertiesByEmail(connectionClient, userEmail, allParameters);
+
+            if(hypertyService.allHypertiesAreUnavailable(userHyperties)){
+                res.status(408);
+                return gson.toJson(userHyperties);
+            }
+
+            res.status(200);
+            return gson.toJson(userHyperties);
+        });
 
         // GET user hyperties
         get("/hyperty/user/*", (req,res) -> {
@@ -187,8 +231,14 @@ public class HypertyController {
                 allParameters.put(type, req.queryParams(type));
             }
 
-            String userID = decodeUrl(encodedURL[encodedURL.length - 2]);
-            Map<String, HypertyInstance> userHyperties = hypertyService.getSpecificHyperties(connectionClient, userID, allParameters);
+            String userId = decodeUrl(encodedURL[encodedURL.length - 2]);
+            Map<String, HypertyInstance> userHyperties = hypertyService.getSpecificHyperties(connectionClient, userId, allParameters);
+
+            if(hypertyService.allHypertiesAreUnavailable(userHyperties)){
+                res.status(408);
+                return gson.toJson(userHyperties);
+            }
+
             res.status(200);
             return gson.toJson(userHyperties);
         });

@@ -21,13 +21,51 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 public class RamClient implements Connection{
+
     static Logger log = Logger.getLogger(RamClient.class.getName());
     private static final String DEAD = "disconnected";
 
     private Map<String, Map<String, HypertyInstance>> userServices = new HashMap<>();
     private Map<String, DataObjectInstance> dataObjects = new HashMap<>();
 
+    private Map<String, ArrayList<HypertyInstance>> hypertiesByEmail = new HashMap<>();
+
     private Map<String, String> userByGuid = new HashMap<>();
+
+    public ArrayList<HypertyInstance> getHypertiesByEmail(String email){
+        if(emailExists(email)){
+            return hypertiesByEmail.get(email);
+        }
+
+        else return new ArrayList();
+    }
+
+    private boolean emailExists(String email){
+        return hypertiesByEmail.containsKey(email);
+    }
+
+    private void associateHypertyWithEmail(String email, HypertyInstance hyperty){
+        if(emailExists(email)){
+            ArrayList<HypertyInstance> hyperties = hypertiesByEmail.get(email);
+            for(HypertyInstance data : hyperties){
+                if(data.getHypertyID().equals(hyperty.getHypertyID())){
+                    hyperties.remove(data);
+                    break;
+                }
+            }
+            hyperties.add(hyperty);
+        }
+
+        else {
+            ArrayList<HypertyInstance> hyperties = new ArrayList<HypertyInstance>();
+            hyperties.add(hyperty);
+            hypertiesByEmail.put(email, hyperties);
+        }
+    }
+
+    private boolean emailHasHyperty(String email, HypertyInstance hyperty){
+        return hypertiesByEmail.get(email).contains(hyperty);
+    }
 
     public Map<String,String> getMapUsersByGuid(){
         return userByGuid;
@@ -100,23 +138,32 @@ public class RamClient implements Connection{
         return false;
     }
 
+    private String getUserEmail(String userID){
+        String[] userIdSplitted = userID.split("/");
+        return userIdSplitted[userIdSplitted.length - 1];
+    }
+
     public void insertHyperty(HypertyInstance hyperty){
         String user = hyperty.getUserID();
         if(userExists(user)){
             userServices.get(user).put(hyperty.getHypertyID(), hyperty);
             userByGuid.put(hyperty.getGuid(), hyperty.getUserID());
+            associateHypertyWithEmail(getUserEmail(user), hyperty);
             log.info("Inserted hyperty with ID " + hyperty.getHypertyID());
             return;
         }
+
         Map<String, HypertyInstance> services = new HashMap<>();
         services.put(hyperty.getHypertyID(), hyperty);
         userServices.put(user, services);
         userByGuid.put(hyperty.getGuid(), hyperty.getUserID());
+        associateHypertyWithEmail(getUserEmail(user), hyperty);
         log.info("Created user " + user + " and hyperty " + hyperty.getHypertyID());
     }
 
     public void updateHyperty(HypertyInstance newHyperty){
         userServices.get(newHyperty.getUserID()).put(newHyperty.getHypertyID(), newHyperty);
+        associateHypertyWithEmail(getUserEmail(newHyperty.getUserID()), newHyperty);
         log.info("Updated hyperty " + newHyperty.getHypertyID() + " from user " + newHyperty.getUserID());
     }
 
