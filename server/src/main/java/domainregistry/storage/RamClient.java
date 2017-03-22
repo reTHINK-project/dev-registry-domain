@@ -21,6 +21,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 public class RamClient implements Connection{
+
     static Logger log = Logger.getLogger(RamClient.class.getName());
     private static final String DEAD = "disconnected";
 
@@ -32,8 +33,9 @@ public class RamClient implements Connection{
     private Map<String, String> userByGuid = new HashMap<>();
 
     public ArrayList<HypertyInstance> getHypertiesByEmail(String email){
-        if(emailExists(email))
+        if(emailExists(email)){
             return hypertiesByEmail.get(email);
+        }
 
         else return new ArrayList();
     }
@@ -43,7 +45,16 @@ public class RamClient implements Connection{
     }
 
     private void associateHypertyWithEmail(String email, HypertyInstance hyperty){
-        if(emailExists(email)) hypertiesByEmail.get(email).add(hyperty);
+        if(emailExists(email)){
+            ArrayList<HypertyInstance> hyperties = hypertiesByEmail.get(email);
+            for(HypertyInstance data : hyperties){
+                if(data.getHypertyID().equals(hyperty.getHypertyID())){
+                    hyperties.remove(data);
+                    break;
+                }
+            }
+            hyperties.add(hyperty);
+        }
 
         else {
             ArrayList<HypertyInstance> hyperties = new ArrayList<HypertyInstance>();
