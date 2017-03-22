@@ -1,17 +1,29 @@
 var search = function(body, request, url, callback) {
 
   var endpoint;
-  var prefix = body.resource.split('://')[0];
+  var prefix;
+  var id;
 
-  if(prefix === 'user') {
-    endpoint = '/hyperty/user/';
-  } else if(prefix === 'user-guid') {
-    endpoint = '/hyperty/guid/';
+  if(body.resource.startsWith('/')) {
+    var urlComponents = body.resource.split('/');
+    prefix = urlComponents[1];
+    id = urlComponents[2];
   } else {
-    endpoint = '/hyperty/url/';
+    prefix = body.resource.split('://')[0];
   }
 
-  request.get(url + endpoint + encodeURIComponent(body.resource), function(err, response, statusCode) {
+
+  if(prefix === 'user') {
+    endpoint = '/hyperty/user/' + encodeURIComponent(body.resource);
+  } else if(prefix === 'user-guid') {
+    endpoint = '/hyperty/guid/' + encodeURIComponent(body.resource);
+  } else if(prefix === 'idp-identifier') {
+    endpoint = '/hyperty/email/' + encodeURIComponent(id);
+  } else {
+    endpoint = '/hyperty/url/' + encodeURIComponent(body.resource);
+  }
+
+  request.get(url + endpoint, function(err, response, statusCode) {
 
     if(err) {
       var body = {
