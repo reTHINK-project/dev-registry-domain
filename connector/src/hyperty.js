@@ -6,8 +6,8 @@ var search = function(body, request, url, callback) {
 
   if(body.resource.startsWith('/')) {
     var urlComponents = body.resource.split('/');
-    prefix = urlComponents[1];
-    id = urlComponents[2];
+    prefix = urlComponents[2];
+    id = urlComponents[3];
   } else {
     prefix = body.resource.split('://')[0];
   }

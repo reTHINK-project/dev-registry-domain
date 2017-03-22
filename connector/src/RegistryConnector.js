@@ -55,7 +55,7 @@ RegistryConnector.prototype.checkResourceType = function(url) {
   var prefix;
 
   if(url.startsWith('/')) {
-    prefix = url.split('/')[0];
+    prefix = url.split('/')[1];
   } else {
     prefix = url.split('://')[0];
   }
