@@ -124,6 +124,7 @@ public class HypertyController {
             res.type("application/json");
             String[] encodedURL = req.url().split("/");
             String hypertyUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
+            log.info("Received request for hypertyUrl: " + hypertyUrl);
             HypertyInstance hyperty = hypertyService.getHypertyByUrl(connectionClient, hypertyUrl);
 
             if(hyperty.getStatus().equals(DEAD)){
@@ -142,6 +143,7 @@ public class HypertyController {
             res.type("application/json");
             String[] encodedURL = req.url().split("/");
             String guid = decodeUrl(encodedURL[encodedURL.length - 1]);
+            log.info("Received request for guid " + guid + " hyperties");
             Map<String, HypertyInstance> hyperties = hypertyService.getHypertiesByGuid(connectionClient, guid);
 
             if(hypertyService.allHypertiesAreUnavailable(hyperties)){
@@ -162,6 +164,8 @@ public class HypertyController {
 
             if(encodedURL.length == ALL_HYPERTIES_PATH_SIZE){
                 String userEmail = decodeUrl(encodedURL[encodedURL.length - 1]);
+                log.info("Received request for email " + userEmail + " hyperties");
+
                 Map<String, HypertyInstance> hyperties = hypertyService.getHypertiesByEmail(connectionClient, userEmail);
 
                 if(hypertyService.allHypertiesAreUnavailable(hyperties)){
@@ -187,6 +191,10 @@ public class HypertyController {
             }
 
             String userEmail = decodeUrl(encodedURL[encodedURL.length - 2]);
+
+            log.info("Received advanced query per hyperties by email: " + userEmail + " with resources: "
+            + allParameters.get("resources") + " and dataSchemes: " + allParameters.get("dataSchemes"));
+
             Map<String, HypertyInstance> userHyperties = hypertyService.getSpecificHypertiesByEmail(connectionClient, userEmail, allParameters);
 
             if(hypertyService.allHypertiesAreUnavailable(userHyperties)){
@@ -207,6 +215,7 @@ public class HypertyController {
 
             if(encodedURL.length == ALL_HYPERTIES_PATH_SIZE){
                 String userID = decodeUrl(encodedURL[encodedURL.length - 1]);
+                log.info("Received request for " + userID + " hyperties");
                 Map<String, HypertyInstance> userHyperties = hypertyService.getAllHyperties(connectionClient, userID);
 
                 if(hypertyService.allHypertiesAreUnavailable(userHyperties)){
@@ -232,6 +241,10 @@ public class HypertyController {
             }
 
             String userId = decodeUrl(encodedURL[encodedURL.length - 2]);
+
+            log.info("Received advanced query per hyperties by user id: " + userId + " with resources: "
+            + allParameters.get("resources") + " and dataSchemes: " + allParameters.get("dataSchemes"));
+
             Map<String, HypertyInstance> userHyperties = hypertyService.getSpecificHyperties(connectionClient, userId, allParameters);
 
             if(hypertyService.allHypertiesAreUnavailable(userHyperties)){
@@ -253,13 +266,14 @@ public class HypertyController {
 
 
             if(body.equals("{}")){
+                log.info("keep alive with ID " + hypertyID);
                 hypertyService.keepAlive(connectionClient, hypertyID);
                 res.status(200);
                 return gson.toJson(new Messages("Keep alive"));
             }
 
             else{
-                log.info("RECEIVED BODY WITH UPDATE VALUES " + body);
+                log.info("Update hyperty with ID " + hypertyID + " and body " + body);
                 HypertyInstance hyperty = gson.fromJson(body, HypertyInstance.class);
                 hyperty.setHypertyID(hypertyID);
                 hypertyService.updateHypertyFields(connectionClient, hyperty);
@@ -277,6 +291,7 @@ public class HypertyController {
             String[] encodedURL = req.url().split("/");
             String userID = decodeUrl(encodedURL[encodedURL.length - 2]);
             String hypertyID = decodeUrl(encodedURL[encodedURL.length - 1]);
+            log.info("Inserted hyperty with ID " + hypertyID + ", user url " + userID + " and body " + body + "\n");
             HypertyInstance hyperty = gson.fromJson(body, HypertyInstance.class);
             hyperty.setUserID(userID);
             hyperty.setHypertyID(hypertyID);
@@ -304,9 +319,9 @@ public class HypertyController {
             this.numWrites++;
             res.type("application/json");
             String body = req.body();
-            log.info("CREATE DO: " + body);
             String[] encodedURL = req.url().split("/");
             String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
+            log.info("Create dataObject with " + body + " and url " + dataObjectUrl + "\n");
             DataObjectInstance dataObject = gson.fromJson(body, DataObjectInstance.class);
             dataObject.setUrl(dataObjectUrl);
             dataObjectService.createDataObject(connectionClient, dataObject);
@@ -319,19 +334,19 @@ public class HypertyController {
             Gson gson = new Gson();
             res.type("application/json");
             String body = req.body();
-            log.info("UPDATE DO: " + body);
             String[] encodedURL = req.url().split("/");
             String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
 
 
             if(body.equals("{}")){
+                log.info("Keep alive dataobject with url : " + dataObjectUrl);
                 dataObjectService.keepAlive(connectionClient, dataObjectUrl);
                 res.status(200);
                 return gson.toJson(new Messages("Keep alive"));
             }
 
             else{
-                log.info("RECEIVED DATA OBJECT BODY WITH UPDATE VALUES " + body);
+                log.info("Update dataobject with : " + body + " and url: " + dataObjectUrl);
                 DataObjectInstance dataObject = gson.fromJson(body, DataObjectInstance.class);
                 dataObject.setUrl(dataObjectUrl);
                 dataObjectService.updateDataObjectFields(connectionClient, dataObject);
@@ -349,6 +364,7 @@ public class HypertyController {
 
             if(encodedURL.length == ALL_DO_PATH_SIZE){
                 String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
+                log.info("Received advanced query per dataObject by url: " + dataObjectUrl);
                 DataObjectInstance dataObject = dataObjectService.getDataObject(connectionClient, dataObjectUrl);
                 res.status(200);
                 return gson.toJson(dataObject);
@@ -368,6 +384,10 @@ public class HypertyController {
             }
 
             String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 2]);
+
+            log.info("Received advanced query per dataObject by url: " + dataObjectUrl + " with resources: "
+            + allParameters.get("resources") + " and dataSchemes: " + allParameters.get("dataSchemes"));
+
             Map<String, DataObjectInstance> dataObjects = dataObjectService.getSpecificDataObjectsByUrl(connectionClient, dataObjectUrl, allParameters);
             res.status(200);
             return gson.toJson(dataObjects);
@@ -382,6 +402,7 @@ public class HypertyController {
 
             if(encodedURL.length == ALL_DO_PATH_SIZE){
                 String hypertyReporter = decodeUrl(encodedURL[encodedURL.length - 1]);
+                log.info("Received advanced query per dataObject by reporter: " + hypertyReporter);
                 Map<String, DataObjectInstance> dataObjects = dataObjectService.getDataObjectsByHyperty(connectionClient, hypertyReporter);
                 res.status(200);
                 return gson.toJson(dataObjects);
@@ -401,6 +422,10 @@ public class HypertyController {
             }
 
             String dataObjectReporter = decodeUrl(encodedURL[encodedURL.length - 2]);
+
+            log.info("Received advanced query per dataObject by reporter: " + dataObjectReporter + " with resources: "
+            + allParameters.get("resources") + " and dataSchemes: " + allParameters.get("dataSchemes"));
+
             Map<String, DataObjectInstance> dataObjects = dataObjectService.getSpecificDataObjectsByReporter(connectionClient, dataObjectReporter, allParameters);
             res.status(200);
             return gson.toJson(dataObjects);
@@ -415,6 +440,7 @@ public class HypertyController {
 
             if(encodedURL.length == ALL_DO_PATH_SIZE){
                 String dataObjectName = decodeUrl(encodedURL[encodedURL.length - 1]);
+                log.info("Received query per dataObject by name: " + dataObjectName);
                 Map<String, DataObjectInstance> dataObjects = dataObjectService.getDataObjectsByName(connectionClient, dataObjectName);
                 res.status(200);
                 return gson.toJson(dataObjects);
@@ -434,6 +460,10 @@ public class HypertyController {
             }
 
             String dataObjectName = decodeUrl(encodedURL[encodedURL.length - 2]);
+
+            log.info("Received advanced query per dataObject by name: " + dataObjectName + " with resources: "
+            + allParameters.get("resources") + " and dataSchemes: " + allParameters.get("dataSchemes"));
+
             Map<String, DataObjectInstance> dataObjects = dataObjectService.getSpecificDataObjectsByName(connectionClient, dataObjectName, allParameters);
             res.status(200);
             return gson.toJson(dataObjects);

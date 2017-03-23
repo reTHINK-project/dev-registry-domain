@@ -63,11 +63,7 @@ public class DataObjectService{
         String oldDataObjectJson = gson.toJson(oldDataObject);
         String updatedDataObjectJson = gson.toJson(updatedDataObject);
 
-        log.info("FIELDS DATA OBJECT TO PERFORM THE UPDATE " + updatedDataObjectJson);
-
         String resultJson = JsonHelper.mergeJsons(updatedDataObjectJson, oldDataObjectJson);
-
-        log.info("RESULT DATA OBJECT JSON: " + resultJson);
 
         updateDataObject(connectionClient, gson.fromJson(resultJson, DataObjectInstance.class));
     }

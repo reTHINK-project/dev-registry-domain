@@ -93,8 +93,6 @@ public class RamClient implements Connection{
     }
 
     public Map<String, HypertyInstance> getUserHyperties(String userID) {
-        log.info("Received request for " + userID + " hyperties");
-
         Map<String, HypertyInstance> hyperties = userServices.get(userID);
 
         if(hyperties == null) return Collections.emptyMap();
@@ -121,7 +119,6 @@ public class RamClient implements Connection{
                 userServices.get(userID).keySet().remove(hypertyID);
                 userServices.get(userID).put(hypertyID, hyperty);
 
-                log.info("Changed hyperty " + hypertyID + " status from " + oldStatus + " to " + newStatus);
             }
             if(userServices.get(userID).keySet().isEmpty()){
                 userServices.remove(userID);
@@ -149,7 +146,6 @@ public class RamClient implements Connection{
             userServices.get(user).put(hyperty.getHypertyID(), hyperty);
             userByGuid.put(hyperty.getGuid(), hyperty.getUserID());
             associateHypertyWithEmail(getUserEmail(user), hyperty);
-            log.info("Inserted hyperty with ID " + hyperty.getHypertyID());
             return;
         }
 
@@ -158,13 +154,11 @@ public class RamClient implements Connection{
         userServices.put(user, services);
         userByGuid.put(hyperty.getGuid(), hyperty.getUserID());
         associateHypertyWithEmail(getUserEmail(user), hyperty);
-        log.info("Created user " + user + " and hyperty " + hyperty.getHypertyID());
     }
 
     public void updateHyperty(HypertyInstance newHyperty){
         userServices.get(newHyperty.getUserID()).put(newHyperty.getHypertyID(), newHyperty);
         associateHypertyWithEmail(getUserEmail(newHyperty.getUserID()), newHyperty);
-        log.info("Updated hyperty " + newHyperty.getHypertyID() + " from user " + newHyperty.getUserID());
     }
 
     public ArrayList<String> getAllUsers(){

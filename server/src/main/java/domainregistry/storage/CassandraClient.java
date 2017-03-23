@@ -99,7 +99,6 @@ public class CassandraClient implements Connection{
 
         if(getSession() != null){
             getSession().execute(statement);
-            log.info("Associated hyperty " + hypertyId + " with email: " + email);
         }
 
         else log.error("Invalid cassandra session.");
@@ -121,7 +120,6 @@ public class CassandraClient implements Connection{
 
         if(getSession() != null){
             getSession().execute(statement);
-            log.info("Inserted in database guid: " + hyperty.getGuid() + " from user " + hyperty.getUserID());
         }
         else log.error("Invalid cassandra session.");
     }
@@ -144,7 +142,6 @@ public class CassandraClient implements Connection{
 
         if(getSession() != null){
             getSession().execute(statement);
-            log.info("Inserted in database hyperty with ID: " + hyperty.getHypertyID() + " from user " + hyperty.getUserID());
         }
         else log.error("Invalid cassandra session.");
     }
@@ -173,7 +170,6 @@ public class CassandraClient implements Connection{
 
         if(getSession() != null){
             getSession().execute(statement);
-            log.info("Inserted in table " + table + " data object with name: " + dataObjectName);
         }
         else log.error("Invalid cassandra session.");
     }
@@ -307,7 +303,6 @@ public class CassandraClient implements Connection{
     }
 
     public Map<String, String> getMapUsersByGuid(){
-        log.info("Requested info from table guid_by_user_id");
         Map<String, String> usersByGuid = new HashMap();
 
         Statement select = QueryBuilder.select().all().from(KEYSPACE, GUIDBYUSER);
@@ -378,7 +373,6 @@ public class CassandraClient implements Connection{
                                        .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()));
         if(getSession() != null){
             getSession().execute(update);
-            log.info("Updated in database hyperty with ID: " + hyperty.getHypertyID() + " from user " + hyperty.getUserID());
         }
         else log.error("Invalid cassandra session.");
     }
@@ -399,7 +393,6 @@ public class CassandraClient implements Connection{
                                        .and(QueryBuilder.eq("user", hyperty.getUserID()));
         if(getSession() != null){
             getSession().execute(update);
-            log.info("Updated in database hyperty with ID: " + hyperty.getHypertyID() + " from user " + hyperty.getUserID());
         }
         else log.error("Invalid cassandra session.");
     }
@@ -423,7 +416,6 @@ public class CassandraClient implements Connection{
     }
 
     public Map<String, HypertyInstance> getUserHyperties(String userID){
-        log.info("Requested hyperties from user: " + userID);
         Map<String, HypertyInstance> allUserHyperties = new HashMap();
 
         Statement select = QueryBuilder.select().all().from(KEYSPACE, USERHYPERTIES)
@@ -452,7 +444,6 @@ public class CassandraClient implements Connection{
     }
 
     public Map<String, DataObjectInstance> getDataObjectsByHyperty(String hypertyReporter){
-        log.info("Requested data objects from hyperty: " + hypertyReporter);
         Map<String, DataObjectInstance> allHypertyDataObjects = new HashMap();
 
         Statement select = QueryBuilder.select().all().from(KEYSPACE, REPORTERDATAOBJECTS)
@@ -471,7 +462,6 @@ public class CassandraClient implements Connection{
     }
 
     public Map<String, DataObjectInstance> getDataObjectsByName(String dataObjectName){
-        log.info("Requested data objects from with name: " + dataObjectName);
         Map<String, DataObjectInstance> foundDataObjects = new HashMap();
 
         Statement select = QueryBuilder.select().all().from(KEYSPACE, NAMEDATAOBJECTS)
@@ -499,8 +489,6 @@ public class CassandraClient implements Connection{
 
         updateHyperty(hyperty);
 
-        log.info("Changed hyperty " + hypertyID + " status from " + oldStatus + " to " + newStatus);
-
         // log.info("Deleted from database hyperty with ID: " + hypertyID);
 
         // Statement deleteFromID = QueryBuilder.delete().from(KEYSPACE, IDHYPERTIES)
@@ -524,8 +512,7 @@ public class CassandraClient implements Connection{
         String newStatus = dataObject.getStatus();
 
         insertDataObject(dataObject);
-        log.info("Changed dataObject " + dataObjectUrl + " status from " + oldStatus + " to " + newStatus);
-
+        
         // Statement deleteFromUrls = QueryBuilder.delete().from(KEYSPACE, URLDATAOBJECTS)
         //                                         .where(QueryBuilder.eq("url", dataObjectUrl));
         //
