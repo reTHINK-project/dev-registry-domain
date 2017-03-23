@@ -304,6 +304,7 @@ public class HypertyController {
             this.numWrites++;
             res.type("application/json");
             String body = req.body();
+            log.info("CREATE DO: " + body);
             String[] encodedURL = req.url().split("/");
             String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
             DataObjectInstance dataObject = gson.fromJson(body, DataObjectInstance.class);
@@ -318,6 +319,7 @@ public class HypertyController {
             Gson gson = new Gson();
             res.type("application/json");
             String body = req.body();
+            log.info("UPDATE DO: " + body);
             String[] encodedURL = req.url().split("/");
             String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
 
