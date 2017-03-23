@@ -285,6 +285,12 @@ describe 'domain registry api tests' do
       expect(json_body[:hyperty7][:resources]).to eql(["chat", "voice", "video"])
       expect(json_body[:hyperty7][:dataSchemes]).to eql(["comm"])
       expect(json_body[:hyperty7][:status]).to eql("created")
+      expect_json_keys("hyperty81", [:descriptor, :startingTime, :lastModified, :expires, :resources, :dataSchemes, :status, :runtime, :p2pRequester, :p2pHandler])
+      expect(json_body[:hyperty81][:descriptor]).to eql("descriptor2")
+      expect(json_body[:hyperty81][:expires]).to eql(1200)
+      expect(json_body[:hyperty81][:resources]).to eql(["chatt"])
+      expect(json_body[:hyperty81][:dataSchemes]).to eql(["comm"])
+      expect(json_body[:hyperty81][:status]).to eql("created")
     end
 
     it 'should return an error, email not found' do
@@ -325,7 +331,7 @@ describe 'domain registry api tests' do
       expect(json_body[:hyperty7][:status]).to eql("created")
     end
 
-    it 'should return one hyperty' do
+    it 'should return two hyperties' do
       get host << '/hyperty/email/bernardo.marquesg@gmail.com/hyperty?dataSchemes=comm'
       expect_status(200)
       expect_json_sizes(2)
@@ -346,6 +352,76 @@ describe 'domain registry api tests' do
     it 'should return one hyperty' do
       get host << '/hyperty/email/bernardo.marquesg@gmail.com/hyperty?dataSchemes=bernardo'
       expect_status(404)
+    end
+
+    describe 'live and disconnected hyperties' do
+      before(:all) do
+        @disconnected_1 = {
+          resources: ["chat", "voice"],
+          dataSchemes: ["comm"],
+          descriptor: "descriptor1",
+          expires: 1200,
+          status: "disconnected",
+          runtime: "runtime",
+          p2pRequester: "requester",
+          p2pHandler: "handler",
+          guid: "guid44"
+        }
+
+        @disconnected_2 = {
+          resources: ["chat", "voice"],
+          dataSchemes: ["comm"],
+          descriptor: "descriptor12",
+          expires: 1200,
+          status: "disconnected",
+          runtime: "runtime",
+          p2pRequester: "requester",
+          p2pHandler: "handler",
+          guid: "guid44"
+        }
+
+        @live_1 = {
+          resources: ["chat", "voice"],
+          dataSchemes: ["comm"],
+          descriptor: "descriptor12",
+          expires: 1200,
+          status: "live",
+          runtime: "runtime",
+          p2pRequester: "requester",
+          p2pHandler: "handler",
+          guid: "guid44"
+        }
+
+        put host << '/hyperty/user/user%3A%2F%2Fgoogle.com%2Frui.jose@gmail.com/disconnected1', @disconnected_1
+        put host << '/hyperty/user/user%3A%2F%2Fgoogle.com%2Frui.jose@gmail.com/disconnected2', @disconnected_2
+      end
+
+      it 'should return two disconnected hyperties' do
+        get host << '/hyperty/email/rui.jose@gmail.com'
+        expect_status(408);
+        expect_json_sizes(2)
+      end
+
+      it 'should return one live hyperty, the other two are disconnected' do
+        put host << '/hyperty/user/user%3A%2F%2Fgoogle.com%2Frui.jose@gmail.com/live_1', @live_1
+        get host << '/hyperty/email/rui.jose@gmail.com'
+        expect_status(200);
+        expect_json_sizes(1)
+      end
+
+      it 'should return two live hyperty, after on of the disconnected comes back alive' do
+        put host << '/hyperty/url/disconnected1', {}
+        get host << '/hyperty/email/rui.jose@gmail.com'
+        expect_status(200);
+        expect_json_sizes(2)
+      end
+
+      it 'should return three live hyperty, after the remaining disconnected comes back alive' do
+        put host << '/hyperty/url/disconnected2', {}
+        get host << '/hyperty/email/rui.jose@gmail.com'
+        expect_status(200);
+        expect_json_sizes(3)
+      end
     end
   end
 
