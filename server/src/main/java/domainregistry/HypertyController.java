@@ -288,6 +288,7 @@ public class HypertyController {
                     halt(400);
                 }
 
+                log.info("Update hyperty with ID " + hypertyID + " and body " + body);
                 HypertyInstance hyperty = gson.fromJson(body, HypertyInstance.class);
                 hyperty.setHypertyID(hypertyID);
                 boolean statusChanged = hypertyService.updateHypertyFields(connectionClient, hyperty);
@@ -389,6 +390,8 @@ public class HypertyController {
                     log.info("Bad data object update request. Invalid params: " + getDataObjectInvalidParams(body));
                     halt(400);
                 }
+
+                log.info("Update dataobject with : " + body + " and url: " + dataObjectUrl);
 
                 DataObjectInstance dataObject = gson.fromJson(body, DataObjectInstance.class);
                 dataObject.setUrl(dataObjectUrl);
