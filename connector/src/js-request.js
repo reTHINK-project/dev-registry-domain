@@ -20,67 +20,83 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-var http = require('http');
-var querystring = require('querystring');
-var url = require('url');
-var requestify = require('requestify');
 
-var JSRequest = {
+var request = require('request');
+var fs = require('fs');
+var path = require('path');
 
-  get: function(url, callback) {
-    requestify.request(url, {
-      method: 'GET'
-    })
-    .then(function(response) {
-      callback(null, response.getBody(), response.getCode());
-    })
-    .fail(function(error) {
-      if(error.getCode() != 404 && error.getCode() != 408) {
-        console.log("[REGISTRY-CONNECTOR] Error code: " + error.getCode() + " Error: " + error.getBody());
-        callback(error);
-      }else {
-        callback(null, error.getBody(), error.getCode());
-      }
-    });
-  },
+var JSRequest = function(sslConfig) {
+  if(sslConfig.enabled) {
+    var dir = path.dirname(require.main.filename);
+    var certFile = path.resolve(dir, sslConfig.ca);
+    var keyFile = path.resolve(dir, sslConfig.key);
+    var caFile = path.resolve(dir, sslConfig.keyCert);
 
-  put: function(url, message, callback) {
-    requestify.request(url, {
-      method: 'PUT',
-      body: message,
-      headers: {'content-type': 'application/json'},
-      dataType: 'json'
-    })
-    .then(function(response) {
-      callback(null, response.getBody(), response.getCode());
-    })
-    .fail(function(error) {
-      if(error.getCode() != 404 && error.getCode() != 408) {
-        console.log("[REGISTRY-CONNECTOR] Error code: " + error.getCode() + " Error: " + error.getBody());
-        callback(error);
-      }else {
-        callback(null, error.getBody(), error.getCode());
-      }
-    });
-  },
-
-  del: function(url, callback) {
-    requestify.request(url, {
-      method: 'DELETE'
-    })
-    .then(function(response) {
-      callback(null, response.getBody(), response.getCode());
-    })
-    .fail(function(e) {
-      if(error.getcode() != 404 && error.getCode() != 408) {
-        console.log("[REGISTRY-CONNECTOR] Error code: " + error.getCode() + " Error: " + error.getBody());
-        callback(error);
-      }else {
-        callback(null, error.getbody(), error.getcode());
-      }
-    });
+    this._defaultOptions = {
+      cert: fs.readFileSync(certFile),
+      key: fs.readFileSync(keyFile),
+      keyPassphrase: sslConfig.keyPassphrase,
+      ca: fs.readFileSync(caFile)
+    };
+  } else {
+    this._defaultOptions = {};
   }
+};
 
+JSRequest.prototype.get = function(url, callback) {
+  request.get(url, this._defaultOptions, function(err, response, body) {
+    if(!err) {
+      return callback(null, body, response.statusCode)
+    } else if(err.statusCode !== 404 && err.statusCode !== 408) {
+      console.log("[REGISTRY-CONNECTOR] Error: " + err);
+      return callback(err);
+    } else {
+      return callback(null, err.body, err.statusCode);
+    }
+  });
+};
+
+JSRequest.prototype.put = function(url, message, callback) {
+
+  var putOptions = {
+    url: url,
+    method: 'PUT',
+    json: message
+  };
+
+  var options = Object.assign({}, this._defaultOptions, putOptions);
+
+  request(options, function(err, response, body) {
+    if(!err) {
+      return callback(null, body, response.statusCode)
+    } else if(err.statusCode !== 404 && err.statusCode !== 408) {
+      console.log("[REGISTRY-CONNECTOR] Error: " + err);
+      return callback(err);
+    } else {
+      return callback(null, err.body, err.statusCode);
+    }
+  });
+};
+
+JSRequest.prototype.del = function(url, callback) {
+
+  var deleteOptions = {
+    url: url,
+    method: 'DELETE'
+  };
+
+  var options = Object.assign({}, this._defaultOptions, deleteOptions);
+
+  request(options, function(err, response, body) {
+    if(!err) {
+      return callback(null, body, response.statusCode)
+    } else if(err.statusCode !== 404 && err.statusCode !== 408) {
+      console.log("[REGISTRY-CONNECTOR] Error: " + err);
+      return callback(err);
+    } else {
+      return callback(null, err.body, err.statusCode);
+    }
+  });
 };
 
 module.exports = JSRequest;

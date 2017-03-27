@@ -1,6 +1,6 @@
 {
   "name": "dev-registry-domain",
-  "version": "0.7.0",
+  "version": "0.8.1",
   "description": "Domain Registry Connector",
   "main": "./connector/index.js",
   "repository": {
@@ -17,7 +17,7 @@
   "license": "APSL-2.0",
   "dependencies": {
     "async": "^2.0.1",
-    "requestify": "^0.1.17"
+    "request": "^2.79.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",

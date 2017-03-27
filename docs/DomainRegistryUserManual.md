@@ -25,15 +25,22 @@ A Dockerfile is provided, so it is possible to run the Domain Registry through a
 2. Storing requests in a multi-host Cassandra database cluster.
 3. Storing requests in a single Cassandra node;
 
+Regarding security, the possibilities on how to run the Domain Registry include:
+
+1. HTTPS connections
+2. Mutual authentication between the Domain Registry and the Registry Connector (using a load balancer)
+3. Blocking connections from untrusted sources
+4. A combination of 1), 2) and 3)
+
 #### Requests saved in-memory
 
 Requests may be saved in-memory. It is the simplest way to deploy the server. However, when the server is shutdown, all information stored there is lost. The commands are the following:
 
 ```
 $ docker build -t domain-registry .
-$ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -p 4568:4567 domain-registry
+$ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -e DOMAIN_ENV=DEVELOPMENT -p 4568:4567 domain-registry
 ```
-Expires global variable defines the maximum amount of time (in seconds) a Hyperty stays in the server (see [soft state issue](https://github.com/reTHINK-project/dev-registry-domain/issues/7)). Note that the published port 4568 may be changed to another port that better suits your needs. Running the server with this configuration will work exactly as the last version (R0.1.0).
+Expires global variable defines the maximum amount of time (in seconds) a Hyperty stays in the server (see [soft state issue](https://github.com/reTHINK-project/dev-registry-domain/issues/7)). Note that the published port 4568 may be changed to another port that better suits your needs. Running the server with this configuration will work exactly as the last release. The global variable 'DOMAIN_END' can be set to 'DEVELOPMENT' to enable a customized Domain Registry status page.
 
 #### Requests saved in a multi-host Cassandra cluster
 
@@ -88,6 +95,7 @@ use rethinkeyspace;
 CREATE TABLE guid_by_user_id (
     user text,
     guid text,
+    emails list<text>,
     PRIMARY KEY(guid)
 );
 
@@ -95,6 +103,11 @@ CREATE TABLE hyperties_subscriptions (
     hypertyid text,
     runtimes set<text>,
     PRIMARY KEY(hypertyid)
+
+CREATE TABLE hyperties_by_email (
+    email text,
+    hyperties_ids set<text>,
+    PRIMARY KEY(email)
 );
 
 CREATE TABLE hyperties_by_id (
@@ -247,8 +260,117 @@ Next, follow the same steps as before. Establish a connection to the cluster wit
 
 ```
 $ docker build -t domain-registry .
-$ docker run -e STORAGE_TYPE=CASSANDRA -e CONTACT_POINTS_IPS=ip -e EXPIRES=3600 -p 4568:4567 domain-registry
+$ docker run -e STORAGE_TYPE=CASSANDRA -e CONTACT_POINTS_IPS=<ip> -e EXPIRES=3600 -p 4568:4567 domain-registry
 ```
+
+#### With HTTPS connections
+
+In order to use HTTPS connections a keystore file ([more info](https://www.sslshopper.com/article-how-to-create-a-self-signed-certificate-using-java-keytool.html)) and its password are required. Create a keystore.jks inside server/cert, change the ENV variables as needed and run the following commands:
+
+```
+$ docker build -t domain-registry .
+$ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -e KEYSTORE_PASSWORD=<password> -e KEYSTORE=keystore.jks -e DOMAIN_ENV=DEVELOPMENT -p 4568:4567 domain-registry
+```
+
+#### Mutual authentication between the Domain Registry and the Connector
+
+As discussed [here](https://github.com/reTHINK-project/dev-registry-domain/issues/20), the Domain Registry should be configured with:
+
+1) Mutual authentication between the domain's Message Node and Domain Registry.
+Writes will only be permited through this connection.
+
+2) The REST API open for read access from everyone (at least for the time being).
+
+As such, and since the framework ([Spark Java Framework](http://sparkjava.com/)) used to develop the Domain Registry does not support mutual authentication, this was configured in a [Haproxy](http://www.haproxy.org/) load balancer that resides in front of the Domain Registry.
+As can be seen from [Haproxy configuration file](https://github.com/reTHINK-project/dev-registry-domain/blob/develop/server/load-balancer/haproxy.cfg#L14), this was achieved by using certificates. As a consequence, a certificate authority must exist in order to sign and verify client certificates.
+Provide Haproxy with a server certificate and a CA file (tutorial [here](https://github.com/reTHINK-project/dev-registry-domain/blob/develop/docs/CertificationManual.md)) and use further configuration options as needed.
+The provided Haproxy configuration assumes that these certificates are created inside /server/load-balancer folder.
+Our configuration starts with only one backend server (much more can be added) and connections only reached it if they came from an authenticated client or if its a HTTP GET request.
+Basically we are blocking non authenticated HTTP PUT requests.
+
+The following sections explain how to run the Domain Registry with a load balancer.
+
+#### Blocking requests from untrusted sources
+
+The mutual authenticated scenario includes a Load Balancer that performs authorization and authentication mechanisms to restrict which requests from which clients are served by the Domain Registry. This use case only makes sense if the Domain Registry application servers only accept requests coming from the Load Balancer itself. As such, this can be configured by using the ENV variable 'LOAD_BALANCER_IP'.
+
+Example:
+
+```
+$ docker build -t domain-registry .
+$ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -e DOMAIN_ENV=DEVELOPMENT -e LOAD_BALANCER_IP=<ip> -p 4568:4567 domain-registry
+```
+
+### High availability deployment
+
+The previously tutorial assumed that only one Domain Registry application server was running.
+Although, in order to increase both capacity (concurrent users) and application’s reliability, a Load Balancer can be added to distribute network traffic across several Domain Registry servers.
+Moreover, load balancers offer content-aware distribution, redundancy and health checking to ensure that the servers are indeed running and accepting requests.
+If a server is found to be down, the load balancer removes it from rotation and stops sending it requests.
+
+This process of load balancing Internet traffic is entirely related to scalability.
+As servers become overloaded, system administrators are generally faced with two possibilities: vertically or horizontal scalability.
+The first is performed by adding more resources to a single server, typically by adding more RAM or CPUs.
+However, a single server could only scale so far.
+At some point, it is impossible to add more resources since the hardware platform has its limits.
+Also, the server needs to be taken down in order for this upgrade to be concluded.
+On the other hand, horizontal scalability is the ability to add more nodes to the system.
+This usually requires one of several load balancing techniques, topic that will be explored further on - but first, DNS-based load balancing will be summarized since it is also a process to distribute traffic across multiple servers.
+
+DNS-based load balancing, also known as DNS round robin, is a function of DNS that allows one hostname to be associated with one or more IP addresses.
+Although very easy to deploy, round robin DNS has a few drawbacks, such as if a server corresponding to one of the IP addresses is down, DNS will continue to deliver that IP address and clients will attempt to connect to a service that has failed.
+
+Load balancing can be accomplished at various layers of OSI. Here we make an overview of the two most used load balancing options: layer 4 and layer 7 load balancing.
+
+1) Layer 4 load balancing operates at the transport layer, which redirects requests no matter the type of the request or its contents.
+It is simplest method of balancing traffic across servers.
+This simplicity means fastness balancing with minimal hardware.
+However, limitations are present.
+Since the load balancer can not see the contents of the request, it can not make routing decisions based on that.
+That is, it can not decide what is the best server to deal with a specific request.
+
+2) Layer 7 load balancing operates at a high level application layer, which deals, and can make decisions based on the actual content of each message.
+This kind of load balancers differ form layer 4 load balancers because the servers do not need to serve the exact same content.
+Instead, each of the servers can specifically and efficiently serve specific content such as, video or images.
+So now a request for an image or video can be routed to specific servers that store and are optimized to serve multimedia content.
+
+Between Layer 7 and layer 4 load balancers, we end up configuring a layer 7 load balancer because layer 4 load balancers treat connections as just a stream of information, rather than using its functions to evaluate and interpret the HTTP requests.
+This would mean that we would be forced to configure traffic encryption on the application servers.
+
+### How to deploy the Domain Registry with a load balancer
+
+Inside the folder /server/load-balancer is included a basic [Haproxy](http://www.haproxy.org/) 1.7 Load Balancer configuration.
+These settings are meant to be enhanced as needed.
+Inside **haproxy.cfg** we have four sections: global, defaults, frontend and backend.
+Parameters inside 'global' section are process-wide and often OS-specific.
+They are set once and generally do not change.
+The section 'defaults' set all default configuration for all sections, 'frontend' specifies how to deal with incoming connections and 'backend' contains the set of servers that are ready to accept requests.
+Change the 'backend' section by adding one or more Domain Registry IP addresses.
+Haproxy can be heavily configurated. Take a look [here](https://cbonte.github.io/haproxy-dconv/1.8/configuration.html#1).
+
+#### How to run the base configuration
+
+```
+$ docker build -t my-haproxy .
+```
+
+Check the validatity of all settings using:
+
+```
+$ docker run -it --rm --name haproxy-syntax-check my-haproxy haproxy -c -f /usr/local/etc/haproxy/haproxy.cfg
+```
+
+Run Haproxy:
+
+```
+$ docker run -d --name domain-haproxy -p 4569:443 my-haproxy
+```
+
+**After the load balancer is running, start the Domain Registry with one, or a combination of all, configuration possibilities explained above.**
+
+**By using a load balancer in front of Domain Registry application servers we achieve two goals: high availability and mutual authentication between the Domain Registry and the Connector.**
+
+
 ## Rest API definition and available endpoints
 
 The Domain Registry is a REST server that allows to create, update and remove data (Hyperty Instances and Data Objects). Next, are described, the available Data Objects and Hyperties API endpoints.
@@ -256,11 +378,14 @@ The Domain Registry is a REST server that allows to create, update and remove da
 Hyperties:
 
 * GET /hyperty/user/:user_id
+* GET /hyperty/email/:email
+* GET /hyperty/user/:email/hyperty?resources=R1,...,Rn&dataSchemes=DS1,...,DSn
+* GET /hyperty/user/:email/hyperty?dataSchemes=DS1,...,DSn
+* GET /hyperty/user/:email/hyperty?resources=R1,...,Rn
 * GET /hyperty/user/:user_id/hyperty?resources=R1,...,Rn&dataSchemes=DS1,...,DSn
 * GET /hyperty/user/:user_id/hyperty?dataSchemes=DS1,...,DSn
 * GET /hyperty/user/:user_id/hyperty?resources=R1,...,Rn
 * PUT /hyperty/user/:user_id/:hyperty_instance_id
-* DELETE /hyperty/user/:user_id/:hyperty_instance_id
 
 Data Objects:
 
@@ -276,7 +401,6 @@ Data Objects:
 * GET /hyperty/dataobject/url/:data_object_url/do?resources=R1,...,Rn&dataSchemes=DS1,...,DSn
 * GET /hyperty/dataobject/url/:data_object_url/do?dataSchemes=DS1,...,DSn
 * GET /hyperty/dataobject/url/:data_object_url/do?resources=R1,...,Rn
-* DELETE /hyperty/dataobject/url/:data_object_url
 * PUT /hyperty/dataobject/:data_object_url
 
 
@@ -304,19 +428,6 @@ GET /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose
 
 ```
 {
-  "hyperty://inesc-id.pt/b7b3rs4-3245-42gn-4327-238jhdq83d8": {
-    "resources" : [
-      "chat",
-      "voice"
-    ],
-    "dataSchemes" : [
-      "comm"
-    ],
-    "descriptor": "hyperty-catalogue://localhost/HelloHyperty",
-    "startingTime": "2016-02-08T13:40:26Z",
-    "lastModified": "2016-02-08T13:41:27Z,
-    "expires" : 3600
-  }
   "hyperty://inesc-id.pt/b7b3rs4-3245-42gn-4127-238jhdq83d8": {
     "resources" : [
       "video",
@@ -326,8 +437,35 @@ GET /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose
     ]
     "descriptor": "hyperty-catalogue://localhost/HelloHyperty",
     "startingTime": "2016-02-08T13:42:00Z",
+    "hypertyID": "hyperty://localhost/075932a5-7ef3-40dd-bcc4-34094ab907e7",
+    "userID": "user://inesc-id.pt/rui",
     "lastModified": "2016-02-08T13:42:53Z",
-    "expires" : 30
+    "status": "live",
+    "expires": 1211,
+    "guid": "guid",
+    "runtime": "runtime",
+    "p2pRequester": "p2pRequester",
+    "p2pHandler": "p2pHandler"
+  },
+
+  "hyperty://inesc-id.pt/b7b123123213rs4-3245-42gn-4127-238jhdq83d8": {
+    "resources" : [
+      "video",
+    ],
+    "dataSchemes" : [
+      "comm"
+    ]
+    "descriptor": "hyperty-catalogue://localhost/HelloHyperty",
+    "startingTime": "2015-02-08T13:42:00Z",
+    "hypertyID": "hyperty://localhost/075932a5-7ef3-40dd-bcc4-34094ab907e7",
+    "userID": "user://inesc-id.pt/nuno",
+    "lastModified": "2017-02-08T13:42:53Z",
+    "status": "live",
+    "expires": 50,
+    "guid": "guid",
+    "runtime": "runtime",
+    "p2pRequester": "p2pRequester",
+    "p2pHandler": "p2pHandler"
   }
 }
 ```
@@ -389,7 +527,12 @@ PUT /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose/hyperty%3A%2F%2Fua.pt%2F428
     "resources" : ["chat", "voice"],
     "dataSchemes" : ["comm"],
     "descriptor": "hyperty-catalogue://localhost/HelloHyperty",
-    "expires" : 3600
+    "expires" : 3600,
+    "status": "live",
+    "runtime": "runtime",
+    "p2pRequester": "p2pRequester",
+    "p2pHandler": "p2phandler",
+    "guid": "guid"
 }
 ```
 
@@ -402,32 +545,6 @@ PUT /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose/hyperty%3A%2F%2Fua.pt%2F428
 ```
 
 Note that the requested URL’s are encoded.
-
-### DELETE /hyperty/user/:user_id/:hyperty_instance_id
-
-Deletes a Hyperty Instance from a user indicated by the user_id parameter.
-
-#### Parameters
-
-**user_id**: The owner of the Hyperty.
-
-**Example_value**: user://inesc-id.pt/ruijose
-
-**hyperty_id**: The ID of the Hyperty to be deleted.
-
-**Example_value**: hyperty://ua.pt/428bee1b-887a8ee8cb32
-
-#### Example request
-
-DELETE /hyperty/user/user%3A%2F%2Finesc-id.pt%2Fruijose/hyperty%3A%2F%2Fua.pt%2F428bee1b-887a8ee8cb32
-
-#### Example result
-
-```
-{
-  “message” : “hyperty deleted”
-}
-```
 
 ### GET /hyperty/dataobject/name/:data_object_name
 
@@ -444,6 +561,8 @@ GET /hyperty/dataobject/name/mychat
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "status": "live",
+    "expires" : 120,
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -470,6 +589,8 @@ GET /hyperty/dataobject/url/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5b
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "expires" : 120,
+    "status": "live",
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -497,6 +618,8 @@ GET /hyperty/dataobject/reporter/hyperty%3A%2F%2Fhybroker.rethink.ptinovacao.pt%
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "status": "live",
+    "expires" : 120,
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -524,6 +647,8 @@ GET /hyperty/dataobject/reporter/hyperty%3A%2F%2Fhybroker.rethink.ptinovacao.pt%
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "status": "live",
+    "expires" : 120,
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -552,6 +677,8 @@ GET /hyperty/dataobject/reporter/hyperty%3A%2F%2Fhybroker.rethink.ptinovacao.pt%
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "status": "live",
+    "expires" : 120,
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -580,6 +707,8 @@ GET /hyperty/dataobject/reporter/hyperty%3A%2F%2Fhybroker.rethink.ptinovacao.pt%
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "status": "live",
+    "expires" : 120,
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -608,6 +737,8 @@ GET /hyperty/dataobject/name/mychat/do?resources=chat&dataSchemes=comm
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "status": "live",
+    "expires" : 120,
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -635,6 +766,8 @@ GET /hyperty/dataobject/name/mychat/do?resources=chat
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "status": "live",
+    "expires" : 120,
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -663,6 +796,8 @@ GET /hyperty/dataobject/name/mychat/do?dataSchemes=comm
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "expires" : 120,
+    "status": "live",
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -691,6 +826,8 @@ GET /hyperty/dataobject/url/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5b
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "status": "live",
+    "expires" : 120,
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -719,6 +856,8 @@ GET /hyperty/dataobject/url/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5b
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "status": "live",
+    "expires" : 120,
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -747,6 +886,8 @@ GET /hyperty/dataobject/url/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5b
     "url": "comm://hybroker.rethink.ptinovacao.pt/aa2f5bec-e3f7-471f-8ace-44c64edb8a6d",
     "reporter": "hyperty://hybroker.rethink.ptinovacao.pt/24a0724a-68ff-4f0d-ba2b-1e71911a7213",
     "name": "mychat",
+    "status": "live",
+    "expires" : 120,
     "startingTime": "2016-07-26T12:54:37Z",
     "resources": [
       "chat"
@@ -772,6 +913,8 @@ PUT /hyperty/dataobject/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5bec-e
   "resources" : ["chat"],
   "dataSchemes" : ["comm"],
   "name" : "myChat",
+  "status" : "live",
+  "expires" : 120,
   "reporter" : "hyperty://localhost/893c256e-c65c-4aaf-966c-8c89d061d6cf"
 }
 
@@ -785,26 +928,3 @@ PUT /hyperty/dataobject/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5bec-e
 }
 
 ```
-
-### DELETE /hyperty/dataobject/url/:data_object_url
-
-#### Example request
-
-DELETE /hyperty/dataobject/url/comm%3A%2F%2Fhybroker.rethink.ptinovacao.pt%2Faa2f5bec-e3f7-471f-8ace-44c64edb8a6d
-
-#### Example result
-
-```
-{
-  "message" : "Data object deleted"
-}
-
-```
-
-Note that the requested URL’s are encoded.
-
-## Future functionalities
-
-The current version is missing any authentication mechanisms. Currently, it is assumed that the Message Node is the only one capable of interacting with the Local Registry, with the former being trusted by the latter to verify the user’s authorization to perform the requests. This model will have to be replaced with a secure mechanism where either the identity of the Message Node or of the user is verified.
-
-A load balancer will also be added to distribute network traffic across the Domain Registry servers. Thereby, we hope to increase capacity (concurrent users) and application’s reliability. Another feature yet to be documented is advanced monitoring with [ riemann](http://riemann.io/).

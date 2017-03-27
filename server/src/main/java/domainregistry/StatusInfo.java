@@ -17,10 +17,14 @@
 package domainregistry;
 
 import java.util.*;
+import org.apache.log4j.Logger;
+
 
 
 public class StatusInfo {
 
+    static Logger log = Logger.getLogger(HypertyController.class.getName());
+    private String domainURL;
     private String userGuid;
     private String userURL;
     private String storageType;
@@ -35,6 +39,14 @@ public class StatusInfo {
 
     public void StatusInfo () {
 
+    }
+
+    public void setDomainURL(String domainURL){
+        this.domainURL = "http://" + domainURL;
+    }
+
+    public String getDomainURL(){
+        return this.domainURL;
     }
 
     public void setUserGuid(String guid){

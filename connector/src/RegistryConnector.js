@@ -24,10 +24,10 @@ var dataObject = require('./dataObject');
 var hyperty = require('./hyperty');
 var Request = require('./request');
 
-var RegistryConnector = function(url, retries) {
+var RegistryConnector = function(config) {
 
-  this._request = new Request(retries);
-  this._registryURL = url;
+  this._request = new Request(config.ssl, config.retries);
+  this._registryURL = config.url;
 };
 
 RegistryConnector.prototype.processMessage = function(msg, callback) {
@@ -52,7 +52,13 @@ RegistryConnector.prototype.processMessage = function(msg, callback) {
 
 RegistryConnector.prototype.checkResourceType = function(url) {
 
-  var prefix = url.split('://')[0];
+  var prefix;
+
+  if(url.startsWith('/')) {
+    prefix = url.split('/')[1];
+  } else {
+    prefix = url.split('://')[0];
+  }
 
   if(prefix === 'user' || prefix === 'hyperty' || prefix === 'hyperty-runtime' || prefix === 'user-guid'){
     return 'hyperty';
@@ -62,7 +68,7 @@ RegistryConnector.prototype.checkResourceType = function(url) {
 };
 
 RegistryConnector.prototype.readOperation = function(msg, callback) {
-  if('criteria' in msg.body) {
+  if('criteria' in msg.body && Object.keys(msg.body.criteria).length !== 0) {
     if(this.checkResourceType(msg.body.resource) === 'hyperty') {
       hyperty.read(msg.body, this._request, this._registryURL, true, callback);
     }else {

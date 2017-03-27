@@ -34,7 +34,18 @@ var search = function(body, request, url, callback) {
 };
 
 var advancedSearch = function(body, request, url, callback) {
-  var endpoint = '/hyperty/dataobject/name/' + encodeURIComponent(body.resource) + '/do';
+
+  var endpoint;
+
+  if('reporter' in body.criteria) {
+    if('resources' in body.criteria || 'dataSchemes' in body.criteria) {
+      endpoint = '/hyperty/dataobject/reporter/' + encodeURIComponent(body.criteria.reporter) + '/do';
+    } else {
+      endpoint = '/hyperty/dataobject/reporter/' + encodeURIComponent(body.criteria.reporter);
+    }
+  } else {
+    endpoint = '/hyperty/dataobject/name/' + encodeURIComponent(body.resource) + '/do';
+  }
 
   var resources = body.criteria.resources;
   var dataschemes = body.criteria.dataSchemes;

@@ -35,6 +35,8 @@ interface Connection{
     public void createSubscription(String hypertyUrl, String runtimeUrl);
     public void clearSubscriptions(String hypertyUrl);
     public HashSet<String> getRuntimes(String hypertyUrl);
+    public ArrayList<HypertyInstance> getHypertiesByEmail(String email);
+
     //dataobjects
     public void insertDataObject(DataObjectInstance dataObject);
     public boolean dataObjectExists(String dataObjectName);

@@ -15,58 +15,49 @@
 *
 */
 
-var client = vertx.createHttpClient({});
+var HttpRequest = Java.type('eu.rethink.mn.util.HttpRequest');
 
-var JavaRequest = {
-
-  get: function(url, callback) {
-    client.getAbs(url, function (response) {
-      response.bodyHandler(function(totalBuffer) {
-        var body = totalBuffer.toString("UTF-8");
-        callback(null, JSON.parse(body), response.statusCode());
-      });
-    })
-    .exceptionHandler(function(e) {
-      print("[REGISTRY-CONNECTOR] Error: " + e);
-      callback(e, null, null);
-    })
-    .end();
-  },
-
-  put: function(url, data, callback) {
-    var finalData = JSON.stringify(data);
-
-    client.putAbs(url)
-    .putHeader("content-type", "application/json")
-    .putHeader("content-length", "" + finalData.length())
-    .handler(function(response) {
-      response.bodyHandler(function(totalBuffer) {
-        var body = totalBuffer.toString("UTF-8");
-        callback(null, JSON.parse(body), response.statusCode());
-      });
-    })
-    .exceptionHandler(function(e) {
-      print("[REGISTRY-CONNECTOR] Error: " + e);
-      callback(e, null, null);
-    })
-    .write(finalData)
-    .end();
-  },
-
-  del: function(url, callback) {
-    client.deleteAbs(url, function(response) {
-      response.bodyHandler(function(totalBuffer) {
-        var body = totalBuffer.toString("UTF-8");
-        callback(null, JSON.parse(body), response.statusCode());
-      });
-    })
-    .exceptionHandler(function(e) {
-      print("[REGISTRY-CONNECTOR] Error: " + e);
-      callback(e, null, null);
-    })
-    .end();
+var JavaRequest =  function(sslConfig) {
+  if(sslConfig.enabled) {
+    this._client = new HttpRequest(sslConfig.trustStore, sslConfig.trustStorePass,
+          sslConfig.keyStore, sslConfig.keyStorePass, sslConfig.keyPassphrase);
+  } else {
+    this._client = new HttpRequest();
   }
+};
 
+JavaRequest.prototype.get = function(url, callback) {
+  try {
+    var response = this._client.get(url);
+    var parsedResponse = JSON.parse(response);
+
+    callback(null, JSON.parse(parsedResponse.data), parsedResponse.code);
+  } catch(e) {
+    e.printStackTrace();
+  }
+};
+
+JavaRequest.prototype.put = function(url, data, callback) {
+  try {
+    var finalData = JSON.stringify(data);
+    var response = this._client.put(url, finalData);
+    var parsedResponse = JSON.parse(response);
+
+    callback(null, JSON.parse(parsedResponse.data), parsedResponse.code);
+  } catch(e) {
+    e.printStackTrace();
+  }
+};
+
+JavaRequest.prototype.del = function(url, callback) {
+  try {
+    var response = this._client.del(url);
+    var parsedResponse = JSON.parse(response);
+
+    callback(null, JSON.parse(parsedResponse.data), parsedResponse.code);
+  } catch(e) {
+    e.printStackTrace();
+  }
 };
 
 module.exports = JavaRequest;
