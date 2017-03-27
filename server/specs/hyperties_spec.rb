@@ -204,7 +204,7 @@ describe 'domain registry api tests' do
         p2pHandler: "handler",
       }
 
-      put '/bernardo@inesc-id.pt/hyperty12', invalid_hyperty
+      put host << '/hyperty/user/bernardo@inesc-id.pt/hyperty121', invalid_hyperty
       expect_status(400)
     end
 
@@ -224,7 +224,7 @@ describe 'domain registry api tests' do
         invalidField: "invalid fied"
       }
 
-      put '/bernardo@inesc-id.pt/hyperty12', invalid_hyperty
+      put host << '/hyperty/user/bernardo@inesc-id.pt/hyperty121', invalid_hyperty
       expect_status(400)
     end
 
