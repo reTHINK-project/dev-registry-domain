@@ -72,6 +72,27 @@ describe 'domain registry api tests' do
       expect_json(:message => "data object updated")
     end
 
+    it 'should return a 400 bad request code' do
+
+      new_fields = {
+        schema: "new_schema",
+        bad_field: "test"
+      }
+
+      put '/dataobject/url/url_test', new_fields
+      expect_status(400)
+    end
+
+    it 'should return a 400 bad request code' do
+
+      new_fields = {
+        bad_field: "test"
+      }
+
+      put '/dataobject/url/url_test', new_fields
+      expect_status(400)
+    end
+
     it 'should get data objects fields' do
       get '/hyperty/dataobject/url/url_test'
       expect_status(200)
