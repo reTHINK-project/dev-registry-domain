@@ -56,6 +56,7 @@ public class RamClient implements Connection{
             return runtimes;
 
         else return new HashSet<String>();
+    }
 
     public ArrayList<HypertyInstance> getHypertiesByEmail(String email){
         if(emailExists(email)){
@@ -117,7 +118,7 @@ public class RamClient implements Connection{
         return userByGuid.containsKey(guid);
     }
 
-    public Map<String, HypertyInstance> getUserHyperties(String userID) {
+    public Map<String, HypertyInstance> getUserHyperties(String userID){
         Map<String, HypertyInstance> hyperties = userServices.get(userID);
 
         if(hyperties == null) return Collections.emptyMap();

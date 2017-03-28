@@ -243,6 +243,7 @@ public class HypertyService{
             connectionClient.clearSubscriptions(hypertyUrl);
 
         else throw new HypertiesNotFoundException();
+    }
 
     public Map<String, HypertyInstance> getSpecificHypertiesByEmail(Connection connectionClient, String email, Map<String, String> parameters){
         ArrayList<HypertyInstance> allUserHyperties = connectionClient.getHypertiesByEmail(email);

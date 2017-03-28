@@ -119,19 +119,19 @@ describe 'domain registry api tests' do
     it 'should add a new hyperty' do #non-existent user creates non-existent hyperty
       put host << '/hyperty/user/ruijose@inesc-id.pt/hyperty1', @hyperty_details
       expect_status(200)
-      expect_json(:message => "Hyperty created")
+      expect_json_types('runtimes': :array)
     end
 
     it 'should add a new hyperty' do
       put host << '/hyperty/user/user%3A%2F%2Fgoogle.com%2Fbernardo.marquesg@gmail.com/hyperty7', @hyperty_two_details
       expect_status(200)
-      expect_json(:message => "Hyperty created")
+      expect_json_types('runtimes': :array)
     end
 
     it 'should add a new hyperty' do
       put host << '/hyperty/user/user%3A%2F%2Fgoogle.com%2Fbernardo.marquesg@gmail.com/hyperty81', @hyperty_two_v2_details
       expect_status(200)
-      expect_json(:message => "Hyperty created")
+      expect_json_types('runtimes': :array)
     end
 
     it 'should add a new hyperty with expires being zero' do
