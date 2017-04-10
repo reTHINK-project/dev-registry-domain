@@ -23,6 +23,8 @@ var search = function(body, request, url, callback) {
     endpoint = '/hyperty/url/' + encodeURIComponent(body.resource);
   }
 
+  console.log("ENDPOINT: " + url + endpoint);
+
   request.get(url + endpoint, function(err, response, statusCode) {
 
     if(err) {
@@ -54,8 +56,8 @@ var search = function(body, request, url, callback) {
 
 var advancedSearch = function(body, request, url, callback) {
 
-  if(url.startsWith('/')) {
-    endpoint = '/hyperty/email/' + encodeURIComponent(url.split('/')[2]);
+  if(body.resource.startsWith('/')) {
+    endpoint = '/hyperty/email/' + encodeURIComponent(body.resource.split('/')[3]);
   } else {
     endpoint = '/hyperty/user/' + encodeURIComponent(body.resource) + '/hyperty';
   }
@@ -82,6 +84,8 @@ var advancedSearch = function(body, request, url, callback) {
   }else if(qsDataschemes != "") {
     var querystring = '?' + qsDataschemes;
   }
+
+  console.log("ENDPOINT: " + url + endpoint + querystring);
 
   request.get(url + endpoint + querystring, function(err, response, statusCode) {
     if(err) {
