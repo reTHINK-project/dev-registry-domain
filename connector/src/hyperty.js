@@ -23,8 +23,6 @@ var search = function(body, request, url, callback) {
     endpoint = '/hyperty/url/' + encodeURIComponent(body.resource);
   }
 
-  console.log("ENDPOINT: " + url + endpoint);
-
   request.get(url + endpoint, function(err, response, statusCode) {
 
     if(err) {
@@ -84,8 +82,6 @@ var advancedSearch = function(body, request, url, callback) {
   }else if(qsDataschemes != "") {
     var querystring = '?' + qsDataschemes;
   }
-
-  console.log("ENDPOINT: " + url + endpoint + querystring);
 
   request.get(url + endpoint + querystring, function(err, response, statusCode) {
     if(err) {
