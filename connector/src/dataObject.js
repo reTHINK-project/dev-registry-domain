@@ -1,6 +1,13 @@
+var notification = require('./notification');
+
 var DataObject = function(request, url, notificationCallback) {
   this._request = request;
   this._url = url
+  this._notificationsEnabled = (arguments.length === 3) ? true : false;
+
+  if(this._notificationsEnabled) {
+    this._notificationCallback = notificationCallback;
+  }
 };
 
 DataObject.prototype.search = function(body, callback) {
@@ -172,8 +179,13 @@ DataObject.prototype.update = function(body, callback) {
       };
     }
 
+    //check if notify
+    if(notification.checkNotification(statusCode, data, this._notificationsEnabled)) {
+      this._notificationCallback(null, { 'status': data.status });
+    }
+
     callback(body);
-  });
+  }.bind(this));
 };
 
 DataObject.prototype.del = function(body, callback) {

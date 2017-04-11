@@ -1,6 +1,13 @@
+var notification = require('./notification');
+
 var Hyperty = function(request, url, notificationCallback) {
   this._request = request;
   this._url = url
+  this._notificationsEnabled = (arguments.length === 3) ? true : false;
+
+  if(this._notificationsEnabled) {
+    this._notificationCallback = notificationCallback;
+  }
 };
 
 Hyperty.prototype.search = function(body, callback) {
@@ -190,8 +197,15 @@ Hyperty.prototype.update = function(body, callback) {
       };
     }
 
+    //check if notify
+    if(notification.checkNotification(statusCode, data, this._notificationsEnabled)) {
+      this._notificationCallback(null, {
+        'status': data.status
+      });
+    }
+
     callback(body);
-  });
+  }.bind(this));
 };
 
 Hyperty.prototype.del = function(body, callback) {
