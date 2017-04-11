@@ -3,7 +3,7 @@ var notification = require('./notification');
 var Hyperty = function(request, url, notificationCallback) {
   this._request = request;
   this._url = url
-  this._notificationsEnabled = (arguments.length === 3) ? true : false;
+  this._notificationsEnabled = typeof notificationCallback !== 'undefined';
 
   if(this._notificationsEnabled) {
     this._notificationCallback = notificationCallback;
