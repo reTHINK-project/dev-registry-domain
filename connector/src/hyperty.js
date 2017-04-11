@@ -1,4 +1,9 @@
-var search = function(body, request, url, callback) {
+var Hyperty = function(request, url, notificationCallback) {
+  this._request = request;
+  this._url = url
+};
+
+Hyperty.prototype.search = function(body, callback) {
 
   var endpoint;
   var prefix;
@@ -23,7 +28,7 @@ var search = function(body, request, url, callback) {
     endpoint = '/hyperty/url/' + encodeURIComponent(body.resource);
   }
 
-  request.get(url + endpoint, function(err, response, statusCode) {
+  this._request.get(this._url + endpoint, function(err, response, statusCode) {
 
     if(err) {
       var body = {
@@ -52,7 +57,7 @@ var search = function(body, request, url, callback) {
   });
 };
 
-var advancedSearch = function(body, request, url, callback) {
+Hyperty.prototype.advancedSearch = function(body, callback) {
 
   if(body.resource.startsWith('/')) {
     endpoint = '/hyperty/email/' + encodeURIComponent(body.resource.split('/')[3]);
@@ -83,7 +88,7 @@ var advancedSearch = function(body, request, url, callback) {
     var querystring = '?' + qsDataschemes;
   }
 
-  request.get(url + endpoint + querystring, function(err, response, statusCode) {
+  this._request.get(this._url + endpoint + querystring, function(err, response, statusCode) {
     if(err) {
       var body = {
         'code': 504,
@@ -112,19 +117,53 @@ var advancedSearch = function(body, request, url, callback) {
 
 };
 
-var hyperty = {
-  read: function(body, request, url, isAdvanced, callback) {
-    if(isAdvanced) {
-      advancedSearch(body, request, url, callback);
+Hyperty.prototype.read = function(body, isAdvanced, callback) {
+  if(isAdvanced) {
+    this.advancedSearch(body, callback);
+  }else {
+    this.search(body, callback);
+  }
+};
+
+Hyperty.prototype.create = function(body, callback) {
+  var endpoint = '/hyperty/user/' + encodeURIComponent(body.value.user) + '/' + encodeURIComponent(body.value.url);
+
+  var data = {
+    'descriptor': body.value.descriptor,
+    'expires': body.value.expires,
+    'resources': body.value.resources,
+    'dataSchemes': body.value.dataSchemes,
+    'status': body.value.status,
+    'runtime': body.value.runtime,
+    'p2pRequester': body.value.p2pRequester,
+    'p2pHandler': body.value.p2pHandler,
+    'guid': body.value.guid
+  };
+
+  this._request.put(this._url + endpoint, data, function(err, response, statusCode) {
+
+    if(err) {
+      var body = {
+        'code': 504,
+        'description': 'Error contacting the domain registry.'
+      };
     }else {
-      search(body, request, url, callback);
+      var body = {
+        'code': statusCode
+      };
     }
-  },
 
-  create: function(body, request, url, callback) {
-    var endpoint = '/hyperty/user/' + encodeURIComponent(body.value.user) + '/' + encodeURIComponent(body.value.url);
+    callback(body);
+  });
+};
 
-    var data = {
+Hyperty.prototype.update = function(body, callback) {
+
+  var endpoint = '/hyperty/url/' + encodeURIComponent(body.resource);
+  var data;
+
+  if(typeof body.value != "undefined" && body.value != null) {
+    data = {
       'descriptor': body.value.descriptor,
       'expires': body.value.expires,
       'resources': body.value.resources,
@@ -132,86 +171,48 @@ var hyperty = {
       'status': body.value.status,
       'runtime': body.value.runtime,
       'p2pRequester': body.value.p2pRequester,
-      'p2pHandler': body.value.p2pHandler,
-      'guid': body.value.guid
+      'p2pHandler': body.value.p2pHandler
     };
+  } else {
+    data = {};
+  }
 
-    request.put(url + endpoint, data, function(err, response, statusCode) {
+  this._request.put(this._url + endpoint, data, function(err, response, statusCode) {
 
-      if(err) {
-        var body = {
-          'code': 504,
-          'description': 'Error contacting the domain registry.'
-        };
-      }else {
-        var body = {
-          'code': statusCode
-        };
-      }
-
-      callback(body);
-    });
-
-  },
-
-  update: function(body, request, url, callback) {
-
-    var endpoint = '/hyperty/url/' + encodeURIComponent(body.resource);
-    var data;
-
-    if(typeof body.value != "undefined" && body.value != null) {
-      data = {
-        'descriptor': body.value.descriptor,
-        'expires': body.value.expires,
-        'resources': body.value.resources,
-        'dataSchemes': body.value.dataSchemes,
-        'status': body.value.status,
-        'runtime': body.value.runtime,
-        'p2pRequester': body.value.p2pRequester,
-        'p2pHandler': body.value.p2pHandler
+    if(err) {
+      var body = {
+        'code': 504,
+        'description': 'Error contacting the domain registry.'
       };
-    } else {
-      data = {};
+    }else {
+      var body = {
+        'code': statusCode
+      };
     }
 
-    request.put(url + endpoint, data, function(err, response, statusCode) {
-
-      if(err) {
-        var body = {
-          'code': 504,
-          'description': 'Error contacting the domain registry.'
-        };
-      }else {
-        var body = {
-          'code': statusCode
-        };
-      }
-
-      callback(body);
-    });
-
-  },
-
-  del: function(body, request, url, callback) {
-    var endpoint = '/hyperty/user/' + encodeURIComponent(body.value.user) + '/' + encodeURIComponent(body.value.url);
-
-    request.del(url + endpoint, function(err, response, statusCode) {
-
-      if(err) {
-        var body = {
-          'code': 504,
-          'description': 'Error contacting the domain registry.'
-        };
-      }else {
-        var body = {
-          'code': statusCode
-        };
-      }
-
-      callback(body);
-    });
-
-  },
+    callback(body);
+  });
 };
 
-module.exports = hyperty;
+Hyperty.prototype.del = function(body, callback) {
+  var endpoint = '/hyperty/user/' + encodeURIComponent(body.value.user) + '/' + encodeURIComponent(body.value.url);
+
+  this._request.del(this._url + endpoint, function(err, response, statusCode) {
+
+    if(err) {
+      var body = {
+        'code': 504,
+        'description': 'Error contacting the domain registry.'
+      };
+    }else {
+      var body = {
+        'code': statusCode
+      };
+    }
+
+    callback(body);
+  });
+
+};
+
+module.exports = Hyperty;
