@@ -55,7 +55,7 @@ var search = function(body, request, url, callback) {
 var advancedSearch = function(body, request, url, callback) {
 
   if(body.resource.startsWith('/')) {
-    endpoint = '/hyperty/email/' + encodeURIComponent(body.resource.split('/')[3]);
+    endpoint = '/hyperty/email/' + encodeURIComponent(body.resource.split('/')[3]) + '/hyperty';
   } else {
     endpoint = '/hyperty/user/' + encodeURIComponent(body.resource) + '/hyperty';
   }
