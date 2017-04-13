@@ -67,7 +67,7 @@ Hyperty.prototype.search = function(body, callback) {
 Hyperty.prototype.advancedSearch = function(body, callback) {
 
   if(body.resource.startsWith('/')) {
-    endpoint = '/hyperty/email/' + encodeURIComponent(body.resource.split('/')[3]);
+    endpoint = '/hyperty/email/' + encodeURIComponent(body.resource.split('/')[3]) + '/hyperty';
   } else {
     endpoint = '/hyperty/user/' + encodeURIComponent(body.resource) + '/hyperty';
   }
