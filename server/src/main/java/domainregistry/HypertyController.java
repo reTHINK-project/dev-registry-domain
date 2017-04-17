@@ -364,7 +364,7 @@ public class HypertyController {
 
             if(encodedURL.length == ALL_DO_PATH_SIZE){
                 String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
-                log.info("Received advanced query per dataObject by url: " + dataObjectUrl);
+                log.info("Received query per dataObject by url: " + dataObjectUrl);
                 DataObjectInstance dataObject = dataObjectService.getDataObject(connectionClient, dataObjectUrl);
                 res.status(200);
                 return gson.toJson(dataObject);
@@ -402,7 +402,7 @@ public class HypertyController {
 
             if(encodedURL.length == ALL_DO_PATH_SIZE){
                 String hypertyReporter = decodeUrl(encodedURL[encodedURL.length - 1]);
-                log.info("Received advanced query per dataObject by reporter: " + hypertyReporter);
+                log.info("Received query per dataObject by reporter: " + hypertyReporter);
                 Map<String, DataObjectInstance> dataObjects = dataObjectService.getDataObjectsByHyperty(connectionClient, hypertyReporter);
                 res.status(200);
                 return gson.toJson(dataObjects);
