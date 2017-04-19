@@ -95,7 +95,6 @@ public class CassandraClient implements Connection{
     }
 
     public void clearUpdatedHypertiesMap() {
-        //Map<String, HypertyInstance> hyperties = getUpdatedHypertiesMap()
         Statement select = QueryBuilder.truncate(KEYSPACE, UPDATEDHYPERTIES);
         ResultSet results = session.execute(select);
     }
