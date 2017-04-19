@@ -181,7 +181,10 @@ DataObject.prototype.update = function(body, callback) {
 
     //check if notify
     if(notification.checkNotification(statusCode, data, this._notificationsEnabled)) {
-      this._notificationCallback(null, { 'status': data.status });
+      this._notificationCallback(null, {
+        'object': body.resource,
+        'status': data.status
+      });
     }
 
     callback(body);
