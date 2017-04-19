@@ -397,6 +397,7 @@ Hyperties:
 * GET /hyperty/user/:user_id/hyperty?resources=R1,...,Rn&dataSchemes=DS1,...,DSn
 * GET /hyperty/user/:user_id/hyperty?dataSchemes=DS1,...,DSn
 * GET /hyperty/user/:user_id/hyperty?resources=R1,...,Rn
+* GET /hyperty/update
 * PUT /hyperty/user/:user_id/:hyperty_instance_id
 
 Data Objects:
