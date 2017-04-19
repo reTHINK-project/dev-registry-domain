@@ -102,25 +102,25 @@ public class CassandraClient implements Connection{
     public void updateTableUpdatedHyperties(HypertyInstance hyperty, String table){
         if(updatedHypertyExists(hyperty, table)){
             HypertyInstance updatedhyperty = getUpdatedHyperty(hyperty, table);
-            if(hyperty.getStatus().equals("live")){
-                Statement deleteFromNames = QueryBuilder.delete().from(KEYSPACE, table)
-                                                 .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()));
-                session.execute(deleteFromNames);
-            } else {
-                Statement update = QueryBuilder.update(KEYSPACE, table)
-                                       .with(QueryBuilder.set("descriptor", hyperty.getDescriptor()))
-                                       .and(QueryBuilder.set("lastModified", hyperty.getLastModified()))
-                                       .and(QueryBuilder.set("resources", hyperty.getResources()))
-                                       .and(QueryBuilder.set("dataSchemes", hyperty.getDataSchemes()))
-                                       .and(QueryBuilder.set("expires", hyperty.getExpires()))
-                                       .and(QueryBuilder.set("runtime", hyperty.getRuntime()))
-                                       .and(QueryBuilder.set("p2pRequester", hyperty.getRequester()))
-                                       .and(QueryBuilder.set("p2pHandler", hyperty.getHandler()))
-                                       .and(QueryBuilder.set("status", hyperty.getStatus()))
-                                       .and(QueryBuilder.set("guid", hyperty.getGuid()))
-                                       .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()));
-                session.execute(update);
-            }
+            //if(hyperty.getStatus().equals("live")){
+            Statement deleteFromNames = QueryBuilder.delete().from(KEYSPACE, table)
+                                             .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()));
+            session.execute(deleteFromNames);
+            // } else {
+            //     Statement update = QueryBuilder.update(KEYSPACE, table)
+            //                            .with(QueryBuilder.set("descriptor", hyperty.getDescriptor()))
+            //                            .and(QueryBuilder.set("lastModified", hyperty.getLastModified()))
+            //                            .and(QueryBuilder.set("resources", hyperty.getResources()))
+            //                            .and(QueryBuilder.set("dataSchemes", hyperty.getDataSchemes()))
+            //                            .and(QueryBuilder.set("expires", hyperty.getExpires()))
+            //                            .and(QueryBuilder.set("runtime", hyperty.getRuntime()))
+            //                            .and(QueryBuilder.set("p2pRequester", hyperty.getRequester()))
+            //                            .and(QueryBuilder.set("p2pHandler", hyperty.getHandler()))
+            //                            .and(QueryBuilder.set("status", hyperty.getStatus()))
+            //                            .and(QueryBuilder.set("guid", hyperty.getGuid()))
+            //                            .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()));
+            //     session.execute(update);
+            // }
         } else {
             if(hyperty.getStatus().equals("disconnected")){
                 Statement statement = QueryBuilder.insertInto(KEYSPACE, table)
