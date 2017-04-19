@@ -1,4 +1,4 @@
-const notification = {
+var notification = {
 
   checkNotification: function(statusCode, data, notificationsEnabled) {
     return (
