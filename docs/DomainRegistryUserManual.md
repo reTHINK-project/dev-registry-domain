@@ -99,6 +99,23 @@ CREATE TABLE guid_by_user_id (
     PRIMARY KEY(guid)
 );
 
+CREATE TABLE updated_hyperties (
+    hypertyid text,
+    user text,
+    descriptor text,
+    startingTime text,
+    guid text,
+    status text,
+    lastModified text,
+    expires int,
+    runtime text,
+    p2pRequester text,
+    p2pHandler text,
+    resources list<text>,
+    dataSchemes list<text>,
+    PRIMARY KEY(hypertyid)
+);
+
 CREATE TABLE hyperties_by_email (
     email text,
     hyperties_ids set<text>,
