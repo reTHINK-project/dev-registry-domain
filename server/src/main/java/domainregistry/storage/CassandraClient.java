@@ -43,6 +43,7 @@ public class CassandraClient implements Connection{
     public static final String NAMEDATAOBJECTS = "data_objects_by_name";
     public static final String GUIDBYUSER = "guid_by_user_id";
     public static final String EMAILBYUSER = "hyperties_by_email";
+    public static final String UPDATEDHYPERTIES = "updated_hyperties";
     public static final String DOWN = "DOWN";
 
     private Cluster cluster;
@@ -69,12 +70,101 @@ public class CassandraClient implements Connection{
     }
 
     public Map<String, HypertyInstance> getUpdatedHypertiesMap(){
-        //return updatedHyperties;
-        return Collections.emptyMap();
+        Map<String, HypertyInstance> hyperties = new HashMap();
+        Statement select = QueryBuilder.select().all().from(KEYSPACE, UPDATEDHYPERTIES);
+        ResultSet results = session.execute(select);
+        if(results == null) return Collections.emptyMap();
+
+        for(Row row : results){
+             HypertyInstance hyperty = new HypertyInstance(row.getString("descriptor"),
+                                                         row.getList("resources", String.class),
+                                                         row.getList("dataSchemes", String.class),
+                                                         row.getString("startingTime"),
+                                                         row.getString("lastModified"),
+                                                         row.getInt("expires"),
+                                                         row.getString("status"),
+                                                         row.getString("p2pRequester"),
+                                                         row.getString("p2pHandler"),
+                                                         row.getString("runtime"),
+                                                         row.getString("guid"));
+             hyperty.setHypertyID(row.getString("hypertyID"));
+             hyperties.put(row.getString("hypertyID"), hyperty);
+         }
+
+         return hyperties;
     }
 
     public void clearUpdatedHypertiesMap() {
-        //updatedHyperties.emptyMap();
+        //Map<String, HypertyInstance> hyperties = getUpdatedHypertiesMap()
+        Statement select = QueryBuilder.truncate(KEYSPACE, UPDATEDHYPERTIES);
+        ResultSet results = session.execute(select);
+    }
+
+    public void updateTableUpdatedHyperties(HypertyInstance hyperty, String table){
+        if(updatedHypertyExists(hyperty, table)){
+            HypertyInstance updatedhyperty = getUpdatedHyperty(hyperty, table);
+            if(hyperty.getStatus().equals("live")){
+                Statement deleteFromNames = QueryBuilder.delete().from(KEYSPACE, table)
+                                                 .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()));
+                session.execute(deleteFromNames);
+            } else {
+                Statement update = QueryBuilder.update(KEYSPACE, table)
+                                       .with(QueryBuilder.set("descriptor", hyperty.getDescriptor()))
+                                       .and(QueryBuilder.set("lastModified", hyperty.getLastModified()))
+                                       .and(QueryBuilder.set("resources", hyperty.getResources()))
+                                       .and(QueryBuilder.set("dataSchemes", hyperty.getDataSchemes()))
+                                       .and(QueryBuilder.set("expires", hyperty.getExpires()))
+                                       .and(QueryBuilder.set("runtime", hyperty.getRuntime()))
+                                       .and(QueryBuilder.set("p2pRequester", hyperty.getRequester()))
+                                       .and(QueryBuilder.set("p2pHandler", hyperty.getHandler()))
+                                       .and(QueryBuilder.set("status", hyperty.getStatus()))
+                                       .and(QueryBuilder.set("guid", hyperty.getGuid()))
+                                       .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()));
+                session.execute(update);
+            }
+        } else {
+            if(hyperty.getStatus().equals("disconnected")){
+                Statement statement = QueryBuilder.insertInto(KEYSPACE, table)
+                                        .value("hypertyID", hyperty.getHypertyID())
+                                        .value("user", hyperty.getUserID())
+                                        .value("guid", hyperty.getGuid())
+                                        .value("descriptor", hyperty.getDescriptor())
+                                        .value("resources", hyperty.getResources())
+                                        .value("dataSchemes", hyperty.getDataSchemes())
+                                        .value("startingTime", hyperty.getStartingTime())
+                                        .value("lastModified", hyperty.getLastModified())
+                                        .value("runtime", hyperty.getRuntime())
+                                        .value("p2pRequester", hyperty.getRequester())
+                                        .value("p2pHandler", hyperty.getHandler())
+                                        .value("expires", hyperty.getExpires())
+                                        .value("status", hyperty.getStatus());
+                session.execute(statement);
+            }
+        }
+    }
+
+    public HypertyInstance getUpdatedHyperty(HypertyInstance hyperty, String table){
+        Statement select = QueryBuilder.select().all().from(KEYSPACE, table)
+                                                      .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()));
+
+        ResultSet results = session.execute(select);
+        Row row = results.one();
+        HypertyInstance newHyperty =  new HypertyInstance(row.getString("descriptor"), row.getString("startingTime"),
+                  row.getString("user"), row.getList("resources", String.class), row.getList("dataSchemes", String.class),
+                  row.getString("runtime"), row.getString("p2pRequester"), row.getString("p2pHandler"),
+                  row.getString("lastModified"), row.getInt("expires"), row.getString("status"), row.getString("guid"));
+
+        newHyperty.setHypertyID(hyperty.getHypertyID());
+        return newHyperty;
+    }
+
+    private boolean updatedHypertyExists(HypertyInstance hyperty, String table){
+        Statement select = QueryBuilder.select().all().from(KEYSPACE, table)
+            .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()));
+
+        ResultSet results = session.execute(select);
+        Row row = results.one();
+        return row != null;
     }
 
     public void insertHyperty(HypertyInstance hyperty){
@@ -365,6 +455,7 @@ public class CassandraClient implements Connection{
     public void updateHyperty(HypertyInstance hyperty){
         updateTableIDs(hyperty, IDHYPERTIES);
         updateTableUsers(hyperty, USERHYPERTIES);
+        updateTableUpdatedHyperties(hyperty, UPDATEDHYPERTIES);
     }
 
     private void updateTableIDs(HypertyInstance hyperty, String table){
