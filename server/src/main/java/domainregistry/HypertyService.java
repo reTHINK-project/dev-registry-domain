@@ -31,6 +31,15 @@ public class HypertyService{
     private static final String DEAD = "disconnected";
     private static final String LIVE = "live";
 
+
+    public Map<String, HypertyInstance> getUpdatedHyperties(Connection connectionClient){
+        Map<String, HypertyInstance> updatedHyperties = connectionClient.getUpdatedHypertiesMap();
+
+        connectionClient.clearUpdatedHypertiesMap();
+
+        return updatedHyperties;
+    }
+
     public Map<String, HypertyInstance> getAllHyperties(Connection connectionClient, String userID) {
         Map<String, HypertyInstance> allUserHyperties = connectionClient.getUserHyperties(userID);
 

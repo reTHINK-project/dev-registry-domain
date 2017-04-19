@@ -68,6 +68,15 @@ public class CassandraClient implements Connection{
         }
     }
 
+    public Map<String, HypertyInstance> getUpdatedHypertiesMap(){
+        //return updatedHyperties;
+        return Collections.emptyMap();
+    }
+
+    public void clearUpdatedHypertiesMap() {
+        //updatedHyperties.emptyMap();
+    }
+
     public void insertHyperty(HypertyInstance hyperty){
         insertStatement(hyperty, USERHYPERTIES);
         insertStatement(hyperty, IDHYPERTIES);
@@ -512,7 +521,7 @@ public class CassandraClient implements Connection{
         String newStatus = dataObject.getStatus();
 
         insertDataObject(dataObject);
-        
+
         // Statement deleteFromUrls = QueryBuilder.delete().from(KEYSPACE, URLDATAOBJECTS)
         //                                         .where(QueryBuilder.eq("url", dataObjectUrl));
         //
