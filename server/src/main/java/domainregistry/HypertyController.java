@@ -475,7 +475,7 @@ public class HypertyController {
             this.numReads++;
             res.type("application/json");
 
-            log.info("Received request for hyperties changed by HeartBeatThread");
+            log.info("Received request for changed hyperties");
 
             Map<String, HypertyInstance> userHyperties = hypertyService.getUpdatedHyperties(connectionClient);
 
