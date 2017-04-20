@@ -23,6 +23,7 @@
 var DataObject = require('./dataObject');
 var Hyperty = require('./hyperty');
 var Request = require('./request');
+var notification = require('./notification');
 
 var RegistryConnector = function(config, notificationCallback) {
 
@@ -31,6 +32,15 @@ var RegistryConnector = function(config, notificationCallback) {
 
   this.hyperty = new Hyperty(this._request, this._registryURL, notificationCallback);
   this.dataObject = new DataObject(this._request, this._registryURL, notificationCallback);
+
+  var notificationsEnabled = typeof notificationCallback !== 'undefined';
+
+  if(notificationsEnabled) {
+    setInterval(function() {
+      console.log("[REGISTRY CONNECTOR] Fetching updated hyperties.");
+      notification.fetchUpdated(this._registryURL, this._request, notificationCallback);
+    }.bind(this), 5000);
+  }
 };
 
 RegistryConnector.prototype.processMessage = function(msg, callback) {

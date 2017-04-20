@@ -8,6 +8,20 @@ var notification = {
 
   isStatusUpdate: function(data) {
     return 'status' in data;
+  },
+
+  fetchUpdated: function(url, request, notificationCallback) {
+    request.get(url + '/hyperty/update', function(err, response, statusCode) {
+      if(err) {
+        return console.error("[Updated hyperties] Error fetching from domain registry");
+      }else if(statusCode == 200) {
+        var body = {
+          'updated': response
+        };
+      }
+
+      notificationCallback(null, body);
+    });
   }
 };
 

@@ -51,7 +51,7 @@ JSRequest.prototype.get = function(url, callback) {
       console.log("[REGISTRY-CONNECTOR] Error: " + err);
       return callback(err);
     } else {
-      return callback(null, err.body, err.statusCode);
+      return callback(null, body, err.statusCode);
     }
   });
 };
@@ -73,7 +73,7 @@ JSRequest.prototype.put = function(url, message, callback) {
       console.log("[REGISTRY-CONNECTOR] Error: " + err);
       return callback(err);
     } else {
-      return callback(null, err.body, err.statusCode);
+      return callback(null, body, err.statusCode);
     }
   });
 };
@@ -94,7 +94,7 @@ JSRequest.prototype.del = function(url, callback) {
       console.log("[REGISTRY-CONNECTOR] Error: " + err);
       return callback(err);
     } else {
-      return callback(null, err.body, err.statusCode);
+      return callback(null, body, err.statusCode);
     }
   });
 };

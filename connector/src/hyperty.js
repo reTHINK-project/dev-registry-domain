@@ -54,9 +54,10 @@ Hyperty.prototype.search = function(body, callback) {
         'value': response
       };
     }else {
+      console.log(response, statusCode);
       var body = {
         'code': statusCode,
-        'description': response.message
+        'description': JSON.parse(response).message
       }
     }
 
