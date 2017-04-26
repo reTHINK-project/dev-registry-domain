@@ -8,7 +8,7 @@
     "url": "git+ssh://git@github.com:reTHINK-project/dev-registry-domain.git"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec"
+    "test": "./node_modules/.bin/mocha --recursive --reporter spec ./connector/test/"
   },
   "keywords": [
     "reThink"
@@ -22,6 +22,7 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "mocha": "^2.4.5",
+    "nock": "^9.0.13",
     "sinon": "^1.17.3"
   }
 }
