@@ -199,7 +199,7 @@ Hyperty.prototype.update = function(body, callback) {
 
     //check if notify
     if(notification.checkNotification(statusCode, data, this._notificationsEnabled)) {
-      const notificationBody = {
+      var notificationBody = {
         'updated': {}
       };
 
