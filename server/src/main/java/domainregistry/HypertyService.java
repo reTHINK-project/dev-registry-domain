@@ -72,6 +72,27 @@ public class HypertyService{
         return liveHyperties(hypertiesWithStatusUpdated);
     }
 
+    public Map<String, HypertyInstance> getHypertiesByEmail(Connection connectionClient, String email) {
+        ArrayList<HypertyInstance> foundHyperties = connectionClient.getHypertiesByEmail(email);
+
+        if(foundHyperties.isEmpty()) throw new DataNotFoundException();
+
+        verifyExpiredHyperties(connectionClient, foundHyperties);
+
+        ArrayList<HypertyInstance> hypertiesWithStatusUpdated = connectionClient.getHypertiesByEmail(email);
+
+        Map<String, HypertyInstance> hyperties = new HashMap<>();
+
+        // convert hyperties arraylist to map { :key => hyperty_id, :value => hyperty }
+        for(HypertyInstance hyperty : hypertiesWithStatusUpdated)
+            hyperties.put(hyperty.getHypertyID(), hyperty);
+
+        if(allHypertiesAreUnavailable(hyperties))
+            return hyperties;
+
+        else return liveHyperties(hyperties);
+    }
+
     // Status page shows all hyperties independent of the their status
     public Map<String, HypertyInstance> getHypertiesForStatusPage(Connection connectionClient, String guid){
         String userID = connectionClient.getUserByGuid(guid);
@@ -123,11 +144,7 @@ public class HypertyService{
         String oldHypertyJson = gson.toJson(oldHyperty);
         String updatedHypertyJson = gson.toJson(updatedHyperty);
 
-        log.info("FIELDS TO PERFORM THE UPDATE " + updatedHypertyJson);
-
         String resultJson = JsonHelper.mergeJsons(updatedHypertyJson, oldHypertyJson);
-
-        log.info("RESULT JSON: " + resultJson);
 
         updateHyperty(connectionClient, gson.fromJson(resultJson, HypertyInstance.class));
     }
@@ -157,8 +174,6 @@ public class HypertyService{
         if(!connectionClient.hypertyExists(hypertyID))
             throw new DataNotFoundException();
 
-        log.info("Keep alive hyperty: " + hypertyID);
-
         HypertyInstance hyperty = connectionClient.getHyperty(hypertyID);
         hyperty.setLastModified(Dates.getActualDate());
         hyperty.setHypertyID(hypertyID);
@@ -186,14 +201,44 @@ public class HypertyService{
 
         if(allUserHyperties.isEmpty()) throw new DataNotFoundException();
 
-        Map<String, HypertyInstance> foundHyperties = AdvancedSearch.getHyperties(parameters, allUserHyperties);
+        deleteExpiredHyperties(connectionClient, userID);
 
-        if(!foundHyperties.isEmpty())
+        Map<String, HypertyInstance> hypertiesWithStatusUpdated = connectionClient.getUserHyperties(userID);
+
+        Map<String, HypertyInstance> foundHyperties = AdvancedSearch.getHyperties(parameters, hypertiesWithStatusUpdated);
+
+        if(foundHyperties.isEmpty()) throw new HypertiesNotFoundException();
+
+        if(allHypertiesAreUnavailable(foundHyperties))
             return foundHyperties;
 
-        else throw new HypertiesNotFoundException();
+        else return liveHyperties(foundHyperties);
     }
 
+    public Map<String, HypertyInstance> getSpecificHypertiesByEmail(Connection connectionClient, String email, Map<String, String> parameters){
+        ArrayList<HypertyInstance> allUserHyperties = connectionClient.getHypertiesByEmail(email);
+
+        if(allUserHyperties.isEmpty()) throw new DataNotFoundException();
+
+        verifyExpiredHyperties(connectionClient, allUserHyperties);
+
+        ArrayList<HypertyInstance> hypertiesWithStatusUpdated = connectionClient.getHypertiesByEmail(email);
+
+        Map<String, HypertyInstance> hyperties = new HashMap<>();
+
+        // convert hyperties arraylist to map { :key => hyperty_id, :value => hyperty }
+        for(HypertyInstance hyperty : hypertiesWithStatusUpdated)
+            hyperties.put(hyperty.getHypertyID(), hyperty);
+
+        Map<String, HypertyInstance> foundHyperties = AdvancedSearch.getHyperties(parameters, hyperties);
+
+        if(foundHyperties.isEmpty()) throw new HypertiesNotFoundException();
+
+        if(allHypertiesAreUnavailable(foundHyperties))
+            return foundHyperties;
+
+        else return liveHyperties(foundHyperties);
+    }
 
     protected void deleteExpiredHyperties(Connection connectionClient, String userID){
         String actualDate = Dates.getActualDate();
@@ -206,6 +251,18 @@ public class HypertyService{
             int expires = entry.getValue().getExpires();
             if(Dates.dateCompare(actualDate, lastModified) > expires){
                 connectionClient.deleteUserHyperty(entry.getKey());
+            }
+        }
+    }
+
+    protected void verifyExpiredHyperties(Connection connectionClient, ArrayList<HypertyInstance> hyperties){
+        String actualDate = Dates.getActualDate();
+
+        for (HypertyInstance hyperty : hyperties){
+            String lastModified = hyperty.getLastModified();
+            int expires = hyperty.getExpires();
+            if(Dates.dateCompare(actualDate, lastModified) > expires){
+                connectionClient.deleteUserHyperty(hyperty.getHypertyID());
             }
         }
     }
