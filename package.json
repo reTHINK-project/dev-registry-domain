@@ -1,6 +1,6 @@
 {
   "name": "dev-registry-domain",
-  "version": "0.8.1",
+  "version": "0.9",
   "description": "Domain Registry Connector",
   "main": "./connector/index.js",
   "repository": {
