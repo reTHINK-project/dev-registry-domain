@@ -31,6 +31,7 @@ public class HypertyController {
     static Logger log = Logger.getLogger(HypertyController.class.getName());
 
     private static final String DEAD = "disconnected";
+    private static final String RUNTIMES = "runtimes";
 
     private int numReads = 0;
     private int numWrites = 0;
@@ -268,8 +269,9 @@ public class HypertyController {
             if(body.equals("{}")){
                 log.info("keep alive with ID " + hypertyID);
                 hypertyService.keepAlive(connectionClient, hypertyID);
+                Map<String, ArrayList<String>> subscribedRuntimes = hypertyService.getSubscribedRuntimes(connectionClient, hypertyID);
                 res.status(200);
-                return gson.toJson(new Messages("Keep alive"));
+                return gson.toJson(subscribedRuntimes);
             }
 
             else{
@@ -277,8 +279,9 @@ public class HypertyController {
                 HypertyInstance hyperty = gson.fromJson(body, HypertyInstance.class);
                 hyperty.setHypertyID(hypertyID);
                 hypertyService.updateHypertyFields(connectionClient, hyperty);
+                Map<String, ArrayList<String>> subscribedRuntimes = hypertyService.getSubscribedRuntimes(connectionClient, hypertyID);
                 res.status(200);
-                return gson.toJson(new Messages("Hyperty updated"));
+                return gson.toJson(subscribedRuntimes);
             }
         });
 
@@ -296,8 +299,9 @@ public class HypertyController {
             hyperty.setUserID(userID);
             hyperty.setHypertyID(hypertyID);
             hypertyService.createUserHyperty(connectionClient, hyperty);
+            Map<String, ArrayList<String>> subscribedRuntimes = hypertyService.getSubscribedRuntimes(connectionClient, hypertyID);
             res.status(200);
-            return gson.toJson(new Messages("Hyperty created"));
+            return gson.toJson(subscribedRuntimes);
         });
 
 
@@ -469,16 +473,30 @@ public class HypertyController {
             return gson.toJson(dataObjects);
         });
 
-        // // DELETE data object by its URL
-        // delete("/hyperty/dataobject/url#<{(|", (req, res) -> {
-        //     Gson gson = new Gson();
-        //     res.type("application/json");
-        //     String[] encodedURL = req.url().split("/");
-        //     String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
-        //     dataObjectService.deleteDataObject(connectionClient, dataObjectUrl);
-        //     res.status(200);
-        //     return gson.toJson(new Messages("Data object deleted"));
-        // });
+        // Subscribe to notifications
+        put("subscribe/hyperty/*", (req, res) -> {
+            Gson gson = new Gson();
+            res.type("application/json");
+            String body = req.body();
+            String[] encodedURL = req.url().split("/");
+
+            String hypertyUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
+
+            Map<String, String> map = new HashMap<String, String>();
+            map = (Map<String, String>) gson.fromJson(body, map.getClass());
+
+            if(map.containsKey("runtimeURL")){
+                String runtimeUrl = map.get("runtimeURL");
+                hypertyService.addHypertySubscription(connectionClient, hypertyUrl, runtimeUrl);
+                res.status(200);
+                return gson.toJson(new Messages("Hyperty was successfully subscribed"));
+            }
+            else {
+                res.status(400);
+                log.info("Key runtimeURL not present");
+                return gson.toJson(new Messages("Key runtimeURL not present"));
+            }
+        });
 
         get("/throwexception", (request, response) -> {
             throw new TemporaryUnavailableException();

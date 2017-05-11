@@ -119,31 +119,31 @@ describe 'domain registry api tests' do
     it 'should add a new hyperty' do #non-existent user creates non-existent hyperty
       put host << '/hyperty/user/ruijose@inesc-id.pt/hyperty1', @hyperty_details
       expect_status(200)
-      expect_json(:message => "Hyperty created")
+      expect_json_types('runtimes': :array)
     end
 
     it 'should add a new hyperty' do
       put host << '/hyperty/user/user%3A%2F%2Fgoogle.com%2Fbernardo.marquesg@gmail.com/hyperty7', @hyperty_two_details
       expect_status(200)
-      expect_json(:message => "Hyperty created")
+      expect_json_types('runtimes': :array)
     end
 
     it 'should add a new hyperty' do
       put host << '/hyperty/user/user%3A%2F%2Fgoogle.com%2Fbernardo.marquesg@gmail.com/hyperty81', @hyperty_two_v2_details
       expect_status(200)
-      expect_json(:message => "Hyperty created")
+      expect_json_types('runtimes': :array)
     end
 
     it 'should add a new hyperty with expires being zero' do
       put host << '/hyperty/user/user%3A%2F%2Fgoogle.com%2Frui.marquesg@gmail.com/hyperty77', @hyperty_zero_details
       expect_status(200)
-      expect_json(:message => "Hyperty created")
+      expect_json_types('runtimes': :array)
     end
 
     it 'should add a new hyperty' do
       put host << '/hyperty/user/ruigil@inesc-id.pt/hyperty11', @hyperty_five_details
       expect_status(200)
-      expect_json(:message => "Hyperty created")
+      expect_json_types('runtimes': :array)
     end
 
     it 'should add a new hyperty' do #hyperty already exists and belongs to user: ruijose
@@ -155,13 +155,13 @@ describe 'domain registry api tests' do
     it 'should add a new hyperty' do #existent user creates non-existent hyperty
       put host << '/hyperty/user/ruijose@inesc-id.pt/hyperty2', @hyperty_four_details
       expect_status(200)
-      expect_json(:message => "Hyperty created")
+      expect_json_types('runtimes': :array)
     end
 
     it 'should add a new hyperty' do #existent user creates non-existent hyperty
       put host << '/hyperty/user/ruigarcia@inesc-id.pt/hyperty3', @hyperty_ten_details
       expect_status(200)
-      expect_json(:message => "Hyperty created")
+      expect_json_types('runtimes': :array)
     end
 
     it 'should add a new hyperty' do #existent user tries to create or update another user's hyperty
@@ -173,7 +173,7 @@ describe 'domain registry api tests' do
     it 'should add a new hyperty' do ##existent user creates non-existent hyperty
       put host << '/hyperty/user/ruijose@inesc-id.pt/hyperty6', @hyperty_four_details
       expect_status(200)
-      expect_json(:message => "Hyperty created")
+      expect_json_types('runtimes': :array)
     end
   end
 
@@ -494,7 +494,7 @@ describe 'domain registry api tests' do
       sleep(1)
       put host << '/hyperty/user/ruijose@inesc-id.pt/hyperty1', @hyperty_three_details
       expect_status(200)
-      expect_json(:message => "Hyperty created")
+      expect_json_types('runtimes': :array)
     end
 
     it 'should get all updated hyperties' do

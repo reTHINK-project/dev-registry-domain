@@ -27,10 +27,36 @@ public class RamClient implements Connection{
 
     private Map<String, Map<String, HypertyInstance>> userServices = new HashMap<>();
     private Map<String, DataObjectInstance> dataObjects = new HashMap<>();
+    private Map<String, HashSet<String>> subscriptions = new HashMap<String, HashSet<String>>();
 
     private Map<String, ArrayList<HypertyInstance>> hypertiesByEmail = new HashMap<>();
 
     private Map<String, String> userByGuid = new HashMap<>();
+
+    public void createSubscription(String hypertyUrl, String runtimeUrl){
+        if(subscriptions.containsKey(hypertyUrl))
+            subscriptions.get(hypertyUrl).add(runtimeUrl);
+
+        else {
+            HashSet<String> runtimes = new HashSet<String>();
+            runtimes.add(runtimeUrl);
+            subscriptions.put(hypertyUrl, runtimes);
+        }
+    }
+
+    public void clearSubscriptions(String hypertyUrl){
+        if(subscriptions.containsKey(hypertyUrl))
+            subscriptions.put(hypertyUrl, new HashSet<String>());
+    }
+
+    public HashSet<String> getRuntimes(String hypertyUrl){
+        HashSet<String> runtimes = subscriptions.get(hypertyUrl);
+
+        if(subscriptions.containsKey(hypertyUrl) && runtimes != null)
+            return runtimes;
+
+        else return new HashSet<String>();
+    }
 
     public ArrayList<HypertyInstance> getHypertiesByEmail(String email){
         if(emailExists(email)){
@@ -92,7 +118,7 @@ public class RamClient implements Connection{
         return userByGuid.containsKey(guid);
     }
 
-    public Map<String, HypertyInstance> getUserHyperties(String userID) {
+    public Map<String, HypertyInstance> getUserHyperties(String userID){
         Map<String, HypertyInstance> hyperties = userServices.get(userID);
 
         if(hyperties == null) return Collections.emptyMap();

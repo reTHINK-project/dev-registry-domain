@@ -99,6 +99,11 @@ CREATE TABLE guid_by_user_id (
     PRIMARY KEY(guid)
 );
 
+CREATE TABLE hyperties_subscriptions (
+    hypertyid text,
+    runtimes set<text>,
+    PRIMARY KEY(hypertyid)
+
 CREATE TABLE hyperties_by_email (
     email text,
     hyperties_ids set<text>,

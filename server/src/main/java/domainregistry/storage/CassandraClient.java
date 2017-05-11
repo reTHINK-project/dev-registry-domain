@@ -38,6 +38,7 @@ public class CassandraClient implements Connection{
     public static final String KEYSPACE  = "rethinkeyspace";
     public static final String IDHYPERTIES = "hyperties_by_id";
     public static final String USERHYPERTIES = "hyperties_by_user";
+    public static final String HYPERTYSUBSCRIPTIONS = "hyperties_subscriptions";
     public static final String URLDATAOBJECTS = "data_objects_by_url";
     public static final String REPORTERDATAOBJECTS = "data_objects_by_reporter";
     public static final String NAMEDATAOBJECTS = "data_objects_by_name";
@@ -529,6 +530,71 @@ public class CassandraClient implements Connection{
         // getSession().execute(deleteFromUrls);
         // getSession().execute(deleteFromNames);
         // log.info("Deleted from database dataobject with name: " + dataObjectUrl);
+    }
+
+    public void createSubscription(String hypertyUrl, String runtimeUrl){
+        Statement statement;
+
+        if(subscriptionExists(hypertyUrl)){
+            statement = QueryBuilder.update(KEYSPACE, HYPERTYSUBSCRIPTIONS)
+                                    .with(QueryBuilder.add("runtimes", runtimeUrl))
+                                    .where(QueryBuilder.eq("hypertyid", hypertyUrl));
+        }
+        else{
+            Set<String> runtimes = new HashSet<String>();
+            runtimes.add(runtimeUrl);
+
+            statement = QueryBuilder.insertInto(KEYSPACE, HYPERTYSUBSCRIPTIONS)
+                                    .value("hypertyid", hypertyUrl)
+                                    .value("runtimes", runtimes);
+        }
+
+        if(getSession() != null){
+            getSession().execute(statement);
+            log.info("Added subscription for hyperty " + hypertyUrl + " runtime: " + runtimeUrl);
+        }
+
+        else log.error("Invalid cassandra session.");
+    }
+
+    public void clearSubscriptions(String hypertyUrl) {
+        if(subscriptionExists(hypertyUrl)){
+            Set<String> runtimes = new HashSet<String>();
+
+            Statement statement = QueryBuilder.insertInto(KEYSPACE, HYPERTYSUBSCRIPTIONS)
+                                              .value("hypertyid", hypertyUrl)
+                                              .value("runtimes", runtimes);
+
+            if(getSession() != null){
+                getSession().execute(statement);
+                log.info("Cleared subscriptions for hyperty " + hypertyUrl);
+            }
+
+            else log.error("Invalid cassandra session.");
+        }
+    }
+
+    public HashSet<String> getRuntimes(String hypertyUrl){
+        Statement select = QueryBuilder.select().column("runtimes").from(KEYSPACE, HYPERTYSUBSCRIPTIONS)
+                                                      .where(QueryBuilder.eq("hypertyid", hypertyUrl));
+        ResultSet results = session.execute(select);
+
+        Set<String> runtimes = new HashSet<String>();
+
+        for(Row row : results){
+            runtimes = row.getSet("runtimes", String.class);
+        }
+
+        return (HashSet<String>) runtimes;
+    }
+
+    private boolean subscriptionExists(String hypertyUrl){
+        Statement select = QueryBuilder.select().all().from(KEYSPACE, HYPERTYSUBSCRIPTIONS)
+            .where(QueryBuilder.eq("hypertyid", hypertyUrl));
+
+        ResultSet results = session.execute(select);
+        Row row = results.one();
+        return row != null;
     }
 
     public Session getSession(){
