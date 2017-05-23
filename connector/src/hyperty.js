@@ -187,12 +187,12 @@ Hyperty.prototype.update = function(body, callback) {
   this._request.put(this._url + endpoint, data, function(err, response, statusCode) {
 
     if(err) {
-      var body = {
+      var responseBody = {
         'code': 504,
         'description': 'Error contacting the domain registry.'
       };
     }else {
-      var body = {
+      var responseBody = {
         'code': statusCode
       };
     }
@@ -210,7 +210,7 @@ Hyperty.prototype.update = function(body, callback) {
       this._notificationCallback(null, notificationBody);
     }
 
-    callback(body);
+    callback(responseBody);
   }.bind(this));
 };
 
