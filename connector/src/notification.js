@@ -11,7 +11,7 @@ var notification = {
   },
 
   fetchUpdated: function(url, request, notificationCallback) {
-    request.get(url + '/hyperty/updated', function(err, response, statusCode) {
+    request.get(url + '/registry/updated', function(err, response, statusCode) {
       if(err) {
         return console.error("[Updated hyperties] Error fetching from domain registry");
       }else if(statusCode == 200) {
