@@ -470,7 +470,7 @@ public class HypertyController {
         });
 
         // Subscribe to notifications
-        get("hyperty/updated", (req, res) -> {
+        get("registry/updated", (req, res) -> {
             Gson gson = new Gson();
             this.numReads++;
             res.type("application/json");
@@ -478,9 +478,14 @@ public class HypertyController {
             log.info("Received request for changed hyperties");
 
             Map<String, HypertyInstance> userHyperties = hypertyService.getUpdatedHyperties(connectionClient);
+            Map<String, DataObjectInstance> userDataObject = dataObjectService.getUpdatedDataObjects(connectionClient);
+
+            Map<String, Object> notificationObjects = new HashMap<>();
+            notificationObjects.putAll(userHyperties);
+            notificationObjects.putAll(userDataObject);
 
             res.status(200);
-            return gson.toJson(userHyperties);
+            return gson.toJson(notificationObjects);
         });
 
         // // DELETE data object by its URL

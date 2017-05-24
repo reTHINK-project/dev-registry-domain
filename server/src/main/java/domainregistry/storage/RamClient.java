@@ -29,6 +29,7 @@ public class RamClient implements Connection{
     private Map<String, ArrayList<HypertyInstance>> hypertiesByEmail = new HashMap<>();
     private Map<String, String> userByGuid = new HashMap<>();
     private Map<String, HypertyInstance> updatedHyperties = new HashMap<>();
+    private Map<String, DataObjectInstance> updatedDataObjects = new HashMap<>();
 
     public Map<String, HypertyInstance> getUpdatedHypertiesMap(){
         if(updatedHyperties == null) return Collections.emptyMap();
@@ -36,8 +37,16 @@ public class RamClient implements Connection{
         return updatedHyperties;
     }
 
+    public Map<String, DataObjectInstance> getUpdatedDataObjectsMap(){
+        return updatedDataObjects;
+    }
+
     public void clearUpdatedHypertiesMap(){
         updatedHyperties = new HashMap<>();
+    }
+
+    public void clearUpdatedDataObjectsMap(){
+        updatedDataObjects = new HashMap<>();
     }
 
     public ArrayList<HypertyInstance> getHypertiesByEmail(String email){
@@ -177,6 +186,11 @@ public class RamClient implements Connection{
             updatedHyperties.remove(hyperty.getHypertyID());
     }
 
+    public void checkUpdatedDataObjects(DataObjectInstance dataObject){
+        if(updatedDataObjects.containsKey(dataObject.getUrl()))
+            updatedDataObjects.remove(dataObject.getUrl());
+    }
+
     public ArrayList<String> getAllUsers(){
         return new ArrayList<String>(userServices.keySet());
     }
@@ -202,6 +216,7 @@ public class RamClient implements Connection{
     public void insertDataObject(DataObjectInstance dataObject){
         String dataObjectUrl = dataObject.getUrl();
         dataObjects.put(dataObjectUrl, dataObject);
+        checkUpdatedDataObjects(dataObject);
     }
 
     public boolean dataObjectExists(String dataObjectUrl){
@@ -246,7 +261,14 @@ public class RamClient implements Connection{
         DataObjectInstance dataObject = dataObjects.get(dataObjectUrl);
 
         dataObjects.remove(dataObjectUrl);
+
+        String oldStatus = dataObject.getStatus();
+
+        if(!oldStatus.equals(DEAD))
+          updatedDataObjects.put(dataObject.getUrl(), dataObject);
+
         dataObject.setStatus(DEAD);
+
         dataObjects.put(dataObjectUrl, dataObject);
     }
 

@@ -32,6 +32,14 @@ public class DataObjectService{
 
     private Map<String, DataObjectInstance> dataObjects = new HashMap<>();
 
+    public Map<String, DataObjectInstance> getUpdatedDataObjects(Connection connectionClient) {
+      Map<String, DataObjectInstance> updatedDataObjects = connectionClient.getUpdatedDataObjectsMap();
+
+      connectionClient.clearUpdatedDataObjectsMap();
+
+      return updatedDataObjects;
+    }
+
     public void createDataObject(Connection client, DataObjectInstance dataObject){
         String dataObjectUrl = dataObject.getUrl();
         long expiresLimit = Long.valueOf(System.getenv(EXPIRES)).longValue();
