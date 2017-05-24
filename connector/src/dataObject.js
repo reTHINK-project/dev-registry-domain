@@ -169,25 +169,30 @@ DataObject.prototype.update = function(body, callback) {
   this._request.put(this._url + endpoint, data, function(err, response, statusCode) {
 
     if(err) {
-      var body = {
+      var responseBody = {
         'code': 504,
         'description': 'Error contacting the domain registry.'
       };
     } else {
-      var body = {
+      var responseBody = {
         'code': statusCode
       };
     }
 
     //check if notify
     if(notification.checkNotification(statusCode, data, this._notificationsEnabled)) {
-      this._notificationCallback(null, {
-        'object': body.resource,
+      var notificationBody = {
+        'updated': {}
+      };
+
+      notificationBody.updated[body.resource] = {
         'status': data.status
-      });
+      };
+
+      this._notificationCallback(null, notificationBody);
     }
 
-    callback(body);
+    callback(responseBody);
   }.bind(this));
 };
 
