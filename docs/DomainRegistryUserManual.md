@@ -116,6 +116,22 @@ CREATE TABLE updated_hyperties (
     PRIMARY KEY(hypertyid)
 );
 
+CREATE TABLE updated_data_objects (
+    name text,
+    schem text,
+    startingTime text,
+    lastModified text,
+    status text,
+    runtime text,
+    p2pRequester text,
+    expires int,
+    reporter text,
+    url text,
+    resources list<text>,
+    dataSchemes list<text>,
+    PRIMARY KEY(url)
+);
+
 CREATE TABLE hyperties_by_email (
     email text,
     hyperties_ids set<text>,
