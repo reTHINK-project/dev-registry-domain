@@ -585,7 +585,7 @@ describe 'domain registry api tests' do
 
   describe 'get updated hyperties for notifications' do
     it 'should return an empty Map' do
-      get host << '/hyperty/updated'
+      get host << '/registry/updated'
       expect_status(200)
     end
 
@@ -603,13 +603,13 @@ describe 'domain registry api tests' do
     end
 
     it 'should return an updated hyperty' do
-      get host << '/hyperty/updated'
+      get host << '/registry/updated'
       expect_status(200)
       expect_json_sizes(1)
     end
 
     it 'should return an empty Map' do
-      get host << '/hyperty/updated'
+      get host << '/registry/updated'
       expect_status(200)
       expect_json_sizes(0)
     end

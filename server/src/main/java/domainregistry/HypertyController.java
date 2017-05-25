@@ -475,7 +475,7 @@ public class HypertyController {
             this.numReads++;
             res.type("application/json");
 
-            log.info("Received request for changed hyperties");
+            log.info("Received request for changed registry objects");
 
             Map<String, HypertyInstance> userHyperties = hypertyService.getUpdatedHyperties(connectionClient);
             Map<String, DataObjectInstance> userDataObject = dataObjectService.getUpdatedDataObjects(connectionClient);
