@@ -469,6 +469,25 @@ public class HypertyController {
             return gson.toJson(dataObjects);
         });
 
+        // Subscribe to notifications
+        get("registry/updated", (req, res) -> {
+            Gson gson = new Gson();
+            this.numReads++;
+            res.type("application/json");
+
+            log.info("Received request for changed registry objects");
+
+            Map<String, HypertyInstance> userHyperties = hypertyService.getUpdatedHyperties(connectionClient);
+            Map<String, DataObjectInstance> userDataObject = dataObjectService.getUpdatedDataObjects(connectionClient);
+
+            Map<String, Object> notificationObjects = new HashMap<>();
+            notificationObjects.putAll(userHyperties);
+            notificationObjects.putAll(userDataObject);
+
+            res.status(200);
+            return gson.toJson(notificationObjects);
+        });
+
         // // DELETE data object by its URL
         // delete("/hyperty/dataobject/url#<{(|", (req, res) -> {
         //     Gson gson = new Gson();

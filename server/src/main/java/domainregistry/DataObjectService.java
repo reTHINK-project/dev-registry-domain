@@ -32,6 +32,14 @@ public class DataObjectService{
 
     private Map<String, DataObjectInstance> dataObjects = new HashMap<>();
 
+    public Map<String, DataObjectInstance> getUpdatedDataObjects(Connection connectionClient) {
+      Map<String, DataObjectInstance> updatedDataObjects = connectionClient.getUpdatedDataObjectsMap();
+
+      connectionClient.clearUpdatedDataObjectsMap();
+
+      return updatedDataObjects;
+    }
+
     public void createDataObject(Connection client, DataObjectInstance dataObject){
         String dataObjectUrl = dataObject.getUrl();
         long expiresLimit = Long.valueOf(System.getenv(EXPIRES)).longValue();
@@ -79,9 +87,11 @@ public class DataObjectService{
     }
 
     public DataObjectInstance getDataObject(Connection client, String dataObjectUrl){
-        if(client.dataObjectExists(dataObjectUrl))
+        if(client.dataObjectExists(dataObjectUrl)) {
+            DataObjectInstance dataObject = client.getDataObjectByUrl(dataObjectUrl);
+            checkAndDeleteExpired(client, dataObject);
             return client.getDataObjectByUrl(dataObjectUrl);
-
+        }
         else throw new DataNotFoundException();
     }
 
@@ -91,7 +101,11 @@ public class DataObjectService{
         if(dObjects.isEmpty())
             throw new DataNotFoundException();
 
-        else return dObjects;
+        else {
+            for(DataObjectInstance dataObj : dObjects.values())
+                checkAndDeleteExpired(client, dataObj);
+            return dObjects;
+        }
     }
 
     public Map<String, DataObjectInstance> getDataObjectsByName(Connection client, String dataObjectName){
@@ -100,7 +114,11 @@ public class DataObjectService{
         if(dObjects.isEmpty())
             throw new DataNotFoundException();
 
-        else return dObjects;
+        else {
+            for(DataObjectInstance dataObj : dObjects.values())
+                checkAndDeleteExpired(client, dataObj);
+            return dObjects;
+        }
     }
 
     public Map<String, DataObjectInstance> getSpecificDataObjectsByUrl(Connection client, String dataObjectUrl, Map<String, String> parameters){
@@ -111,8 +129,11 @@ public class DataObjectService{
 
         Map<String, DataObjectInstance> foundDataObjects = AdvancedSearch.getDataObjects(parameters, dataObjects);
 
-        if(!foundDataObjects.isEmpty())
+        if(!foundDataObjects.isEmpty()) {
+            for(DataObjectInstance dataObj : foundDataObjects.values())
+                checkAndDeleteExpired(client, dataObj);
             return foundDataObjects;
+        }
 
         else throw new DataObjectNotFoundException();
     }
@@ -121,6 +142,9 @@ public class DataObjectService{
         Map<String, DataObjectInstance> dObjects = client.getDataObjectsByHyperty(dataObjectReporter);
 
         if(dObjects.isEmpty()) throw new DataNotFoundException();
+
+        for(DataObjectInstance dataObj : dObjects.values())
+            checkAndDeleteExpired(client, dataObj);
 
         Map<String, DataObjectInstance> foundDataObjects = AdvancedSearch.getDataObjects(parameters, dObjects);
 
@@ -134,6 +158,9 @@ public class DataObjectService{
         Map<String, DataObjectInstance> dObjects = client.getDataObjectsByName(dataObjectName);
 
         if(dObjects.isEmpty()) throw new DataNotFoundException();
+
+        for(DataObjectInstance dataObj : dObjects.values())
+            checkAndDeleteExpired(client, dataObj);
 
         Map<String, DataObjectInstance> foundDataObjects = AdvancedSearch.getDataObjects(parameters, dObjects);
 
@@ -170,5 +197,14 @@ public class DataObjectService{
         newDataObject.setLastModified(Dates.getActualDate());
         newDataObject.setStartingTime(oldDataObject.getStartingTime());
         client.insertDataObject(newDataObject);
+    }
+
+    private void checkAndDeleteExpired(Connection client, DataObjectInstance dataObject) {
+        String actualDate = Dates.getActualDate();
+        String lastModified = dataObject.getLastModified();
+        int expires = dataObject.getExpires();
+        if(Dates.dateCompare(actualDate, lastModified) > expires){
+            client.deleteDataObject(dataObject.getUrl());
+        }
     }
 }

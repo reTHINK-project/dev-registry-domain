@@ -66,6 +66,16 @@ describe 'domain registry api tests' do
       status: "created",
       expires: 1000
     }
+
+    @data_object_five_details = {
+      schema: "schema5",
+      name: "name4",
+      reporter: "reporter2",
+      resources: ["resource4", "resource6"],
+      dataSchemes: ["datascheme4", "datascheme4"],
+      status: "live",
+      expires: 1
+    }
   }
 
   describe 'create data object' do
@@ -92,6 +102,12 @@ describe 'domain registry api tests' do
       expect_status(200)
       expect_json(:message => "Data object created")
     end
+
+    it 'should create a new data object' do
+      put '/url5', @data_object_five_details
+      expect_status(200)
+      expect_json(:message => "Data object created")
+    end
   end
 
   describe 'get data object' do
@@ -112,6 +128,13 @@ describe 'domain registry api tests' do
       expect_status(404)
       expect_json(:message => "Not Found")
     end
+
+    it 'should return a disconnected data object' do
+      sleep(2)
+      get '/url/url5'
+      expect_status(200)
+      expect(json_body[:status]).to eql("disconnected")
+    end
   end
 
   describe 'get data object by hypertyReporter' do
@@ -124,7 +147,7 @@ describe 'domain registry api tests' do
     it 'should return a data object' do
       get '/reporter/reporter2'
       expect_status(200)
-      expect_json_sizes(1)
+      expect_json_sizes(2)
     end
 
     it 'should return an URL malformed error.' do
@@ -143,6 +166,12 @@ describe 'domain registry api tests' do
       get '/reporter/reporter12'
       expect_status(404)
       expect_json(:message => "Not Found")
+    end
+
+    it 'should return a disconnected data object' do
+      get '/reporter/reporter2'
+      expect_status(200)
+      expect(json_body[:url5][:status]).to eql("disconnected")
     end
   end
 
@@ -169,6 +198,13 @@ describe 'domain registry api tests' do
       get '/name/name12'
       expect_status(404)
       expect_json(:message => "Not Found")
+    end
+
+    it 'should return a disconnected data object' do
+      sleep(2)
+      get '/name/name4'
+      expect_status(200)
+      expect(json_body[:url5][:status]).to eql("disconnected")
     end
   end
 

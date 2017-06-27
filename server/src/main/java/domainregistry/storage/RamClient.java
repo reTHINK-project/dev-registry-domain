@@ -24,13 +24,30 @@ public class RamClient implements Connection{
 
     static Logger log = Logger.getLogger(RamClient.class.getName());
     private static final String DEAD = "disconnected";
-
     private Map<String, Map<String, HypertyInstance>> userServices = new HashMap<>();
     private Map<String, DataObjectInstance> dataObjects = new HashMap<>();
-
     private Map<String, ArrayList<HypertyInstance>> hypertiesByEmail = new HashMap<>();
-
     private Map<String, String> userByGuid = new HashMap<>();
+    private Map<String, HypertyInstance> updatedHyperties = new HashMap<>();
+    private Map<String, DataObjectInstance> updatedDataObjects = new HashMap<>();
+
+    public Map<String, HypertyInstance> getUpdatedHypertiesMap(){
+        if(updatedHyperties == null) return Collections.emptyMap();
+
+        return updatedHyperties;
+    }
+
+    public Map<String, DataObjectInstance> getUpdatedDataObjectsMap(){
+        return updatedDataObjects;
+    }
+
+    public void clearUpdatedHypertiesMap(){
+        updatedHyperties = new HashMap<>();
+    }
+
+    public void clearUpdatedDataObjectsMap(){
+        updatedDataObjects = new HashMap<>();
+    }
 
     public ArrayList<HypertyInstance> getHypertiesByEmail(String email){
         if(emailExists(email)){
@@ -113,12 +130,14 @@ public class RamClient implements Connection{
                 HypertyInstance hyperty = userServices.get(userID).get(hypertyID);
 
                 String oldStatus = hyperty.getStatus();
+                if(!oldStatus.equals(DEAD))
+                    updatedHyperties.put(hyperty.getHypertyID(), hyperty);
+
                 hyperty.setStatus(DEAD);
                 String newStatus = hyperty.getStatus();
 
                 userServices.get(userID).keySet().remove(hypertyID);
                 userServices.get(userID).put(hypertyID, hyperty);
-
             }
             if(userServices.get(userID).keySet().isEmpty()){
                 userServices.remove(userID);
@@ -159,6 +178,17 @@ public class RamClient implements Connection{
     public void updateHyperty(HypertyInstance newHyperty){
         userServices.get(newHyperty.getUserID()).put(newHyperty.getHypertyID(), newHyperty);
         associateHypertyWithEmail(getUserEmail(newHyperty.getUserID()), newHyperty);
+        checkUpdatedHyperties(newHyperty);
+    }
+
+    public void checkUpdatedHyperties(HypertyInstance hyperty){
+        if(updatedHyperties.containsKey(hyperty.getHypertyID()))
+            updatedHyperties.remove(hyperty.getHypertyID());
+    }
+
+    public void checkUpdatedDataObjects(DataObjectInstance dataObject){
+        if(updatedDataObjects.containsKey(dataObject.getUrl()))
+            updatedDataObjects.remove(dataObject.getUrl());
     }
 
     public ArrayList<String> getAllUsers(){
@@ -186,6 +216,7 @@ public class RamClient implements Connection{
     public void insertDataObject(DataObjectInstance dataObject){
         String dataObjectUrl = dataObject.getUrl();
         dataObjects.put(dataObjectUrl, dataObject);
+        checkUpdatedDataObjects(dataObject);
     }
 
     public boolean dataObjectExists(String dataObjectUrl){
@@ -230,7 +261,14 @@ public class RamClient implements Connection{
         DataObjectInstance dataObject = dataObjects.get(dataObjectUrl);
 
         dataObjects.remove(dataObjectUrl);
+
+        String oldStatus = dataObject.getStatus();
+
+        if(!oldStatus.equals(DEAD))
+          updatedDataObjects.put(dataObject.getUrl(), dataObject);
+
         dataObject.setStatus(DEAD);
+
         dataObjects.put(dataObjectUrl, dataObject);
     }
 
