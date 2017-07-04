@@ -1,13 +1,14 @@
 var notification = {
 
-  checkNotification: function(statusCode, data, notificationsEnabled) {
+  checkNotification: function(statusCode, response, notificationsEnabled) {
     return (
-      statusCode === 200 && notification.isStatusUpdate(data) && notificationsEnabled
+      statusCode === 200 && notification.isStatusUpdate(response) && notificationsEnabled
     );
   },
 
-  isStatusUpdate: function(data) {
-    return 'status' in data;
+  isStatusUpdate: function(response) {
+    var data = JSON.parse(response);
+    return data.statusChanged === "true";
   },
 
   fetchUpdated: function(url, request, notificationCallback) {
