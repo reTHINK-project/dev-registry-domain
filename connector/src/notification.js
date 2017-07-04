@@ -7,8 +7,7 @@ var notification = {
   },
 
   isStatusUpdate: function(response) {
-    var data = JSON.parse(response);
-    return data.statusChanged === "true";
+    return response.statusChanged === "true";
   },
 
   fetchUpdated: function(url, request, notificationCallback) {
