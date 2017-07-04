@@ -27,7 +27,7 @@ describe 'domain registry api tests' do
       name: "name",
       schema: "schema",
       reporter: "reporter",
-      status: "created",
+      status: "live",
       expires: 1000,
       runtime: "runtime",
       p2pRequester: "requester"
@@ -55,7 +55,7 @@ describe 'domain registry api tests' do
       expect(json_body[:reporter]).to eql("reporter")
       expect(json_body[:url]).to eql("url_test")
       expect(json_body[:schema]).to eql("schema")
-      expect(json_body[:status]).to eql("created")
+      expect(json_body[:status]).to eql("live")
       expect(json_body[:expires]).to eql(1000)
       expect(json_body[:runtime]).to eql("runtime")
       expect(json_body[:p2pRequester]).to eql("requester")
@@ -82,7 +82,7 @@ describe 'domain registry api tests' do
       expect(json_body[:reporter]).to eql("reporter")
       expect(json_body[:url]).to eql("url_test")
       expect(json_body[:schema]).to eql("new_schema")
-      expect(json_body[:status]).to eql("created")
+      expect(json_body[:status]).to eql("live")
       expect(json_body[:expires]).to eql(1000)
       expect(json_body[:runtime]).to eql("runtime")
       expect(json_body[:p2pRequester]).to eql("requester")
@@ -107,7 +107,7 @@ describe 'domain registry api tests' do
       expect(json_body[:reporter]).to eql("reporter")
       expect(json_body[:url]).to eql("url_test")
       expect(json_body[:schema]).to eql("new_schema")
-      expect(json_body[:status]).to eql("created")
+      expect(json_body[:status]).to eql("live")
       expect(json_body[:expires]).to eql(1000)
       expect(json_body[:runtime]).to eql("runtime")
       expect(json_body[:p2pRequester]).to eql("requester")

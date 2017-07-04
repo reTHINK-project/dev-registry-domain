@@ -29,6 +29,8 @@ import org.json.JSONObject;
 public class DataObjectService{
     static Logger log = Logger.getLogger(DataObjectService.class.getName());
     private static final String EXPIRES = "EXPIRES";
+    private static final String DEAD = "disconnected";
+    private static final String LIVE = "live";
 
     private Map<String, DataObjectInstance> dataObjects = new HashMap<>();
 
@@ -59,7 +61,7 @@ public class DataObjectService{
         return expires > limit;
     }
 
-    public void updateDataObjectFields(Connection connectionClient, DataObjectInstance updatedDataObject){
+    public boolean updateDataObjectFields(Connection connectionClient, DataObjectInstance updatedDataObject){
         Gson gson = new Gson();
         String dataObjectUrl = updatedDataObject.getUrl();
 
@@ -74,13 +76,28 @@ public class DataObjectService{
         String resultJson = JsonHelper.mergeJsons(updatedDataObjectJson, oldDataObjectJson);
 
         updateDataObject(connectionClient, gson.fromJson(resultJson, DataObjectInstance.class));
+
+        if(updatedDataObject.getStatus() != null) {
+            if(!oldDataObject.getStatus().equals(updatedDataObject.getStatus()))
+                return true;
+            else
+                return false;
+        }
+        return false;
     }
 
-    public void keepAlive(Connection client, String dataObjectUrl){
+    public boolean keepAlive(Connection client, String dataObjectUrl){
         if(client.dataObjectExists(dataObjectUrl)){
             DataObjectInstance dataObject = client.getDataObjectByUrl(dataObjectUrl);
+            String oldStatus = dataObject.getStatus();
             dataObject.setLastModified(Dates.getActualDate());
+            dataObject.setStatus(LIVE);
             client.insertDataObject(dataObject);
+
+            if(!oldStatus.equals(dataObject.getStatus()))
+                return true;
+
+            return false;
         }
 
         else throw new DataNotFoundException();
