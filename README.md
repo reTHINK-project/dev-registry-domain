@@ -27,11 +27,11 @@ $ docker run -e HOST=my.domain.server:port domain-specs
 ### Connector installation
 Install the Registry Connector module by adding the following dependency to the corresponding *package.json* file:
 ```
- "dev-registry-domain": "rethink-project/dev-registry-domain#R0.8.0"
+ "dev-registry-domain": "rethink-project/dev-registry-domain#R1.0.0"
 ```
 or by executing the following command:
 ```
-npm install rethink-project/dev-registry-domain#R0.8.0 --save
+npm install rethink-project/dev-registry-domain#R1.0.0 --save
 ```
 
 Then is possible to require it in the code. Example:
@@ -87,4 +87,20 @@ const config = {
 };
 
 const registry = new RegistryConnector(config);
+```
+
+**Notifications** 
+
+In order to receive hyperty/data objects notifications from Domain Registry, is necessary to pass an additional callback.
+```
+const notify = (err, msg) => {
+
+  Object.keys(msg.updated).forEach(function (key) {
+    // Process notification here
+    console.log(`${msg.updated[key]} changed to status -> ${msg.updated[key].status}`)
+  });
+
+};
+
+var registry = new RegistryConnector(config, notify);
 ```
