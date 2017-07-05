@@ -267,18 +267,26 @@ public class HypertyController {
 
             if(body.equals("{}")){
                 log.info("keep alive with ID " + hypertyID);
-                hypertyService.keepAlive(connectionClient, hypertyID);
+                boolean statusChanged = hypertyService.keepAlive(connectionClient, hypertyID);
+                Map<String, String> response = new HashMap();
+                response.put("statusChanged", String.valueOf(statusChanged));
+                Messages message = new Messages("Keep alive");
+                response.put("message", message.getMessage());
                 res.status(200);
-                return gson.toJson(new Messages("Keep alive"));
+                return gson.toJson(response);
             }
 
             else{
                 log.info("Update hyperty with ID " + hypertyID + " and body " + body);
                 HypertyInstance hyperty = gson.fromJson(body, HypertyInstance.class);
                 hyperty.setHypertyID(hypertyID);
-                hypertyService.updateHypertyFields(connectionClient, hyperty);
+                boolean statusChanged = hypertyService.updateHypertyFields(connectionClient, hyperty);
+                Map<String, String> response = new HashMap();
+                response.put("statusChanged", String.valueOf(statusChanged));
+                Messages message = new Messages("Hyperty updated");
+                response.put("message", message.getMessage());
                 res.status(200);
-                return gson.toJson(new Messages("Hyperty updated"));
+                return gson.toJson(response);
             }
         });
 
@@ -340,7 +348,8 @@ public class HypertyController {
 
             if(body.equals("{}")){
                 log.info("Keep alive dataobject with url : " + dataObjectUrl);
-                dataObjectService.keepAlive(connectionClient, dataObjectUrl);
+                boolean statusChanged = dataObjectService.keepAlive(connectionClient, dataObjectUrl);
+
                 res.status(200);
                 return gson.toJson(new Messages("Keep alive"));
             }
@@ -349,7 +358,8 @@ public class HypertyController {
                 log.info("Update dataobject with : " + body + " and url: " + dataObjectUrl);
                 DataObjectInstance dataObject = gson.fromJson(body, DataObjectInstance.class);
                 dataObject.setUrl(dataObjectUrl);
-                dataObjectService.updateDataObjectFields(connectionClient, dataObject);
+                boolean statusChanged = dataObjectService.updateDataObjectFields(connectionClient, dataObject);
+
                 res.status(200);
                 return gson.toJson(new Messages("data object updated"));
             }

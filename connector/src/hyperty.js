@@ -198,7 +198,7 @@ Hyperty.prototype.update = function(body, callback) {
     }
 
     //check if notify
-    if(notification.checkNotification(statusCode, data, this._notificationsEnabled)) {
+    if(notification.checkNotification(statusCode, response, this._notificationsEnabled)) {
       var notificationBody = {
         'updated': {}
       };
