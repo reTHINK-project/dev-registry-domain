@@ -35,6 +35,7 @@ interface Connection{
     public ArrayList<HypertyInstance> getHypertiesByEmail(String email);
     public Map<String, HypertyInstance> getUpdatedHypertiesMap();
     public void clearUpdatedHypertiesMap();
+
     //dataobjects
     public Map<String, DataObjectInstance> getUpdatedDataObjectsMap();
     public void insertDataObject(DataObjectInstance dataObject);

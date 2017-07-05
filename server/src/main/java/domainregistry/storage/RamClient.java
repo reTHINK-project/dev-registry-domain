@@ -27,6 +27,7 @@ public class RamClient implements Connection{
     private Map<String, Map<String, HypertyInstance>> userServices = new HashMap<>();
     private Map<String, DataObjectInstance> dataObjects = new HashMap<>();
     private Map<String, ArrayList<HypertyInstance>> hypertiesByEmail = new HashMap<>();
+
     private Map<String, String> userByGuid = new HashMap<>();
     private Map<String, HypertyInstance> updatedHyperties = new HashMap<>();
     private Map<String, DataObjectInstance> updatedDataObjects = new HashMap<>();
@@ -47,6 +48,41 @@ public class RamClient implements Connection{
 
     public void clearUpdatedDataObjectsMap(){
         updatedDataObjects = new HashMap<>();
+    }
+
+    public ArrayList<HypertyInstance> getHypertiesByEmail(String email){
+        if(emailExists(email)){
+            return hypertiesByEmail.get(email);
+        }
+
+        else return new ArrayList();
+    }
+
+    private boolean emailExists(String email){
+        return hypertiesByEmail.containsKey(email);
+    }
+
+    private void associateHypertyWithEmail(String email, HypertyInstance hyperty){
+        if(emailExists(email)){
+            ArrayList<HypertyInstance> hyperties = hypertiesByEmail.get(email);
+            for(HypertyInstance data : hyperties){
+                if(data.getHypertyID().equals(hyperty.getHypertyID())){
+                    hyperties.remove(data);
+                    break;
+                }
+            }
+            hyperties.add(hyperty);
+        }
+
+        else {
+            ArrayList<HypertyInstance> hyperties = new ArrayList<HypertyInstance>();
+            hyperties.add(hyperty);
+            hypertiesByEmail.put(email, hyperties);
+        }
+    }
+
+    private boolean emailHasHyperty(String email, HypertyInstance hyperty){
+        return hypertiesByEmail.get(email).contains(hyperty);
     }
 
     public ArrayList<HypertyInstance> getHypertiesByEmail(String email){

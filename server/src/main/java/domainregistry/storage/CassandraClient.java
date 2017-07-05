@@ -732,6 +732,7 @@ public class CassandraClient implements Connection{
                     session.execute(statement);
             }
         }
+
         // Statement deleteFromUrls = QueryBuilder.delete().from(KEYSPACE, URLDATAOBJECTS)
         //                                         .where(QueryBuilder.eq("url", dataObjectUrl));
         //

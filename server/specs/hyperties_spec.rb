@@ -619,3 +619,7 @@ end
 def host
   ENV['HOST'].dup
 end
+
+def host
+  ENV['HOST'].dup
+end

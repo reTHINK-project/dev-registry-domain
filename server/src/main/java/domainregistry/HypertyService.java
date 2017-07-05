@@ -230,6 +230,7 @@ public class HypertyService{
 
         Map<String, HypertyInstance> foundHyperties = AdvancedSearch.getHyperties(parameters, hypertiesWithStatusUpdated);
 
+
         if(foundHyperties.isEmpty()) throw new HypertiesNotFoundException();
 
         if(allHypertiesAreUnavailable(foundHyperties))
