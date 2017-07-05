@@ -33,7 +33,11 @@ interface Connection{
     public String getUserByGuid(String guid);
     public boolean guidExists(String guid);
     public ArrayList<HypertyInstance> getHypertiesByEmail(String email);
+    public Map<String, HypertyInstance> getUpdatedHypertiesMap();
+    public void clearUpdatedHypertiesMap();
+
     //dataobjects
+    public Map<String, DataObjectInstance> getUpdatedDataObjectsMap();
     public void insertDataObject(DataObjectInstance dataObject);
     public boolean dataObjectExists(String dataObjectName);
     public void deleteDataObject(String dataObjectName);
@@ -42,4 +46,5 @@ interface Connection{
     public Map<String, DataObjectInstance> getDataObjectsByName(String dataObjectName);
     public Map<String, DataObjectInstance> getDataObjects();
     public ArrayList<String> getAllDataObjects();
+    public void clearUpdatedDataObjectsMap();
 }

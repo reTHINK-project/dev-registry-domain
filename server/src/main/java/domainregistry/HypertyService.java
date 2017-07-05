@@ -31,6 +31,15 @@ public class HypertyService{
     private static final String DEAD = "disconnected";
     private static final String LIVE = "live";
 
+
+    public Map<String, HypertyInstance> getUpdatedHyperties(Connection connectionClient){
+        Map<String, HypertyInstance> updatedHyperties = connectionClient.getUpdatedHypertiesMap();
+
+        connectionClient.clearUpdatedHypertiesMap();
+
+        return updatedHyperties;
+    }
+
     public Map<String, HypertyInstance> getAllHyperties(Connection connectionClient, String userID) {
         Map<String, HypertyInstance> allUserHyperties = connectionClient.getUserHyperties(userID);
 
@@ -132,7 +141,7 @@ public class HypertyService{
         return hypertiesToBeReturned;
     }
 
-    public void updateHypertyFields(Connection connectionClient, HypertyInstance updatedHyperty){
+    public boolean updateHypertyFields(Connection connectionClient, HypertyInstance updatedHyperty){
         Gson gson = new Gson();
         String hypertyID = updatedHyperty.getHypertyID();
 
@@ -147,6 +156,14 @@ public class HypertyService{
         String resultJson = JsonHelper.mergeJsons(updatedHypertyJson, oldHypertyJson);
 
         updateHyperty(connectionClient, gson.fromJson(resultJson, HypertyInstance.class));
+
+        if(updatedHyperty.getStatus() != null) {
+            if(!oldHyperty.getStatus().equals(updatedHyperty.getStatus()))
+                return true;
+            else
+                return false;
+        }
+        return false;
     }
 
     public void createUserHyperty(Connection connectionClient, HypertyInstance newHyperty){
@@ -170,15 +187,21 @@ public class HypertyService{
         else newHyperty(connectionClient, newHyperty);
     }
 
-    public void keepAlive(Connection connectionClient, String hypertyID){
+    public boolean keepAlive(Connection connectionClient, String hypertyID){
         if(!connectionClient.hypertyExists(hypertyID))
             throw new DataNotFoundException();
 
         HypertyInstance hyperty = connectionClient.getHyperty(hypertyID);
         hyperty.setLastModified(Dates.getActualDate());
+        String oldStatus = hyperty.getStatus();
         hyperty.setHypertyID(hypertyID);
         hyperty.setStatus(LIVE);
         connectionClient.updateHyperty(hyperty);
+
+        if(!oldStatus.equals(hyperty.getStatus()))
+            return true;
+
+        return false;
     }
 
     public void deleteUserHyperty(Connection connectionClient, String userID, String hypertyID){
@@ -206,6 +229,7 @@ public class HypertyService{
         Map<String, HypertyInstance> hypertiesWithStatusUpdated = connectionClient.getUserHyperties(userID);
 
         Map<String, HypertyInstance> foundHyperties = AdvancedSearch.getHyperties(parameters, hypertiesWithStatusUpdated);
+
 
         if(foundHyperties.isEmpty()) throw new HypertiesNotFoundException();
 

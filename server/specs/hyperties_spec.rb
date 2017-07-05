@@ -112,6 +112,18 @@ describe 'domain registry api tests' do
       p2pHandler: "handler",
       guid: "guid_5"
     }
+
+    @hyperty_eleven_details = {
+      resources: ["chat", "video"],
+      dataSchemes: ["comm"],
+      descriptor: "descriptor4",
+      expires: 1,
+      status: "live",
+      runtime: "runtime",
+      p2pRequester: "requester",
+      p2pHandler: "handler",
+      guid: "notification"
+    }
   }
 
   describe 'create user hyperty' do
@@ -570,6 +582,42 @@ describe 'domain registry api tests' do
       expect_json(:message => "Not Found") #all this user's hyperties were removed
     end
   end
+
+  describe 'get updated hyperties for notifications' do
+    it 'should return an empty Map' do
+      get host << '/registry/updated'
+      expect_status(200)
+    end
+
+    it 'should add a new hyperty' do ##non-existent user creates non-existent hyperty
+      put host << '/hyperty/user/notifications@gmail.com/hypertyNotifications', @hyperty_eleven_details
+      expect_status(200)
+      expect_json(:message => "Hyperty created")
+    end
+
+    it 'should return an hyperty' do
+      sleep(2)
+      get host << '/hyperty/url/hypertyNotifications'
+      expect_status(408)
+      expect_json_sizes(13)
+    end
+
+    it 'should return an updated hyperty' do
+      get host << '/registry/updated'
+      expect_status(200)
+      expect_json_sizes(1)
+    end
+
+    it 'should return an empty Map' do
+      get host << '/registry/updated'
+      expect_status(200)
+      expect_json_sizes(0)
+    end
+  end
+end
+
+def host
+  ENV['HOST'].dup
 end
 
 def host

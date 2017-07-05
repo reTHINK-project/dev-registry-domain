@@ -20,14 +20,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-var dataObject = require('./dataObject');
-var hyperty = require('./hyperty');
+var DataObject = require('./dataObject');
+var Hyperty = require('./hyperty');
 var Request = require('./request');
+var notification = require('./notification');
 
-var RegistryConnector = function(config) {
+var RegistryConnector = function(config, notificationCallback) {
 
   this._request = new Request(config.ssl, config.retries);
   this._registryURL = config.url;
+
+  this.hyperty = new Hyperty(this._request, this._registryURL, notificationCallback);
+  this.dataObject = new DataObject(this._request, this._registryURL, notificationCallback);
+
+  var notificationsEnabled = typeof notificationCallback !== 'undefined';
+
+  if(notificationsEnabled) {
+    setInterval(function() {
+      console.log("[REGISTRY CONNECTOR] Fetching updated hyperties.");
+      notification.fetchUpdated(this._registryURL, this._request, notificationCallback);
+    }.bind(this), 5000);
+  }
 };
 
 RegistryConnector.prototype.processMessage = function(msg, callback) {
@@ -70,40 +83,40 @@ RegistryConnector.prototype.checkResourceType = function(url) {
 RegistryConnector.prototype.readOperation = function(msg, callback) {
   if('criteria' in msg.body && Object.keys(msg.body.criteria).length !== 0) {
     if(this.checkResourceType(msg.body.resource) === 'hyperty') {
-      hyperty.read(msg.body, this._request, this._registryURL, true, callback);
+      this.hyperty.read(msg.body, true, callback);
     }else {
-      dataObject.read(msg.body, this._request, this._registryURL, true, callback);
+      this.dataObject.read(msg.body, true, callback);
     }
   }else {
     if(this.checkResourceType(msg.body.resource) === 'hyperty') {
-      hyperty.read(msg.body, this._request, this._registryURL, false, callback);
+      this.hyperty.read(msg.body, false, callback);
     }else {
-      dataObject.read(msg.body, this._request, this._registryURL, false, callback);
+      this.dataObject.read(msg.body, false, callback);
     }
   }
 };
 
 RegistryConnector.prototype.createOperation = function(msg, callback) {
   if(this.checkResourceType(msg.body.value.url) === 'hyperty') {
-    hyperty.create(msg.body, this._request, this._registryURL, callback);
+    this.hyperty.create(msg.body, callback);
   }else {
-    dataObject.create(msg.body, this._request, this._registryURL, callback);
+    this.dataObject.create(msg.body, callback);
   }
 };
 
 RegistryConnector.prototype.updateOperation = function(msg, callback) {
   if(this.checkResourceType(msg.body.resource) === 'hyperty') {
-    hyperty.update(msg.body, this._request, this._registryURL, callback);
+    this.hyperty.update(msg.body, callback);
   }else {
-    dataObject.update(msg.body, this._request, this._registryURL, callback);
+    this.dataObject.update(msg.body, callback);
   }
 };
 
 RegistryConnector.prototype.deleteOperation = function(msg, callback) {
   if(this.checkResourceType(msg.body.value.url) === 'hyperty') {
-    hyperty.del(msg.body, this._request, this._registryURL, callback);
+    this.hyperty.del(msg.body, callback);
   }else {
-    dataObject.del(msg.body, this._request, this._registryURL, callback);
+    this.dataObject.del(msg.body, callback);
   }
 };
 

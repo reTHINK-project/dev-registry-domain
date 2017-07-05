@@ -1,4 +1,16 @@
-var search = function(body, request, url, callback) {
+var notification = require('./notification');
+
+var DataObject = function(request, url, notificationCallback) {
+  this._request = request;
+  this._url = url
+  this._notificationsEnabled = typeof notificationCallback !== 'undefined';
+
+  if(this._notificationsEnabled) {
+    this._notificationCallback = notificationCallback;
+  }
+};
+
+DataObject.prototype.search = function(body, callback) {
 
   var resourceType;
 
@@ -10,7 +22,7 @@ var search = function(body, request, url, callback) {
     resourceType = 'name/';
   }
 
-  request.get(url + '/hyperty/dataobject/' + resourceType + encodeURIComponent(body.resource), function(err, response, statusCode) {
+  this._request.get(this._url + '/hyperty/dataobject/' + resourceType + encodeURIComponent(body.resource), function(err, response, statusCode) {
 
     if(err) {
       var body = {
@@ -33,7 +45,7 @@ var search = function(body, request, url, callback) {
   });
 };
 
-var advancedSearch = function(body, request, url, callback) {
+DataObject.prototype.advancedSearch = function(body, callback) {
 
   var endpoint;
 
@@ -70,7 +82,7 @@ var advancedSearch = function(body, request, url, callback) {
     var querystring = '?' + qsDataschemes;
   }
 
-  request.get(url + endpoint + querystring, function(err, response, statusCode) {
+  this._request.get(this._url + endpoint + querystring, function(err, response, statusCode) {
 
     if(err) {
       var body = {
@@ -93,19 +105,52 @@ var advancedSearch = function(body, request, url, callback) {
   });
 };
 
-var dataObject = {
-  read: function(body, request, url, isAdvanced, callback) {
+DataObject.prototype.read = function(body, isAdvanced, callback) {
     if(isAdvanced) {
-      advancedSearch(body, request, url, callback);
+      this.advancedSearch(body, callback);
     }else {
-      search(body, request, url, callback);
+      this.search(body, callback);
     }
-  },
+};
 
-  create: function(body, request, url, callback) {
-    var endpoint = '/hyperty/dataobject/' + encodeURIComponent(body.value.url);
+DataObject.prototype.create = function(body, callback) {
+  var endpoint = '/hyperty/dataobject/' + encodeURIComponent(body.value.url);
 
-    var data = {
+  var data = {
+    'name': body.value.name,
+    'schema': body.value.schema,
+    'url': body.value.url,
+    'reporter': body.value.reporter,
+    'expires': body.value.expires,
+    'dataSchemes': body.value.dataSchemes,
+    'resources': body.value.resources,
+    'status': body.value.status,
+    'runtime': body.value.runtime,
+    'p2pRequester': body.value.p2pRequester
+  };
+
+  this._request.put(this._url + endpoint, data, function(err, response, statusCode) {
+
+    if(err) {
+      var body = {
+        'code': 504,
+        'description': 'Error contacting the domain registry.'
+      };
+    } else {
+      var body = {
+        'code': statusCode
+      };
+    }
+
+    callback(body);
+  });
+};
+
+DataObject.prototype.update = function(body, callback) {
+  var endpoint = '/dataobject/url/' + encodeURIComponent(body.resource);
+
+  if(typeof body.value != "undefined" && body.value != null) {
+    data = {
       'name': body.value.name,
       'schema': body.value.schema,
       'url': body.value.url,
@@ -117,80 +162,58 @@ var dataObject = {
       'runtime': body.value.runtime,
       'p2pRequester': body.value.p2pRequester
     };
+  } else {
+    data = {};
+  }
 
-    request.put(url + endpoint, data, function(err, response, statusCode) {
+  this._request.put(this._url + endpoint, data, function(err, response, statusCode) {
 
-      if(err) {
-        var body = {
-          'code': 504,
-          'description': 'Error contacting the domain registry.'
-        };
-      } else {
-        var body = {
-          'code': statusCode
-        };
-      }
-
-      callback(body);
-    });
-  },
-
-  update: function(body, request, url, callback) {
-    var endpoint = '/dataobject/url/' + encodeURIComponent(body.resource);
-
-    if(typeof body.value != "undefined" && body.value != null) {
-      data = {
-        'name': body.value.name,
-        'schema': body.value.schema,
-        'url': body.value.url,
-        'reporter': body.value.reporter,
-        'expires': body.value.expires,
-        'dataSchemes': body.value.dataSchemes,
-        'resources': body.value.resources,
-        'status': body.value.status,
-        'runtime': body.value.runtime,
-        'p2pRequester': body.value.p2pRequester
+    if(err) {
+      var responseBody = {
+        'code': 504,
+        'description': 'Error contacting the domain registry.'
       };
     } else {
-      data = {};
+      var responseBody = {
+        'code': statusCode
+      };
     }
 
-    request.put(url + endpoint, data, function(err, response, statusCode) {
+    //check if notify
+    if(notification.checkNotification(statusCode, response, this._notificationsEnabled)) {
+      var notificationBody = {
+        'updated': {}
+      };
 
-      if(err) {
-        var body = {
-          'code': 504,
-          'description': 'Error contacting the domain registry.'
-        };
-      } else {
-        var body = {
-          'code': statusCode
-        };
-      }
+      notificationBody.updated[body.resource] = {
+        'status': data.status
+      };
 
-      callback(body);
-    });
-  },
+      this._notificationCallback(null, notificationBody);
+    }
 
-  del: function(body, request, url, callback) {
-    var endpoint = '/hyperty/dataobject/url/' + encodeURIComponent(body.value.name);
-
-    request.del(url + endpoint, function(err, response, statusCode) {
-
-      if(err) {
-        var body = {
-          'code': 504,
-          'description': 'Error contacting the domain registry.'
-        };
-      } else {
-        var body = {
-          'code': statusCode
-        };
-      }
-
-      callback(body);
-    });
-  },
+    callback(responseBody);
+  }.bind(this));
 };
 
-module.exports = dataObject;
+DataObject.prototype.del = function(body, callback) {
+  var endpoint = '/hyperty/dataobject/url/' + encodeURIComponent(body.value.name);
+
+  this._request.del(this._url + endpoint, function(err, response, statusCode) {
+
+    if(err) {
+      var body = {
+        'code': 504,
+        'description': 'Error contacting the domain registry.'
+      };
+    } else {
+      var body = {
+        'code': statusCode
+      };
+    }
+
+    callback(body);
+  });
+};
+
+module.exports = DataObject;
