@@ -1,7 +1,7 @@
 ### Component Description
 The Domain Registry is the component of reThink’s architecture that together with the Global Registry, forms the Registry Service. The Global Registry provides a mapping from a User’s Unique Id (GUID) to the several services it uses. Each Communication Service Provider (CSP) runs a Domain Registry service that resolves domain-dependent user identifiers to the actual information about this user’s Hyperty Instances (a Hyperty used by a user in one device).
 
-A Domain Registry stores, for each user identifier, the list of Hyperty Instances the user runs on his devices. It also stores, for each Hyperty Instance, the data that enables other applications to contact it, by providing a mapping between the identifier for each Hyperty Instance and the data that characterizes it. It also enables a user's hyperties to be searched for using several parameters [reference to user manual](https://github.com/reTHINK-project/dev-registry-domain/blob/master/docs/DomainRegistryUserManual.md).
+A Domain Registry stores, for each user identifier, the list of Hyperty Instances the user runs on his devices. It also stores, for each Hyperty Instance, the data that enables other applications to contact it, by providing a mapping between the identifier for each Hyperty Instance and the data that characterizes it. It also enables a user's Hyperties to be searched for using several parameters, see [user manual](https://github.com/reTHINK-project/dev-registry-domain/blob/master/docs/DomainRegistryUserManual.md).
 
 The Domain Registry is a critical service as it stands in the critical path for call establishment. As it will be used very often, it must provide a low access time, high availability and be capable of fast updates (e.g. for when a device changes IP address). It is based on the client-server model and handles high-speed and high-frequency data.
 
@@ -9,7 +9,7 @@ The Domain Registry is a critical service as it stands in the critical path for 
 Given the Domain Registry requirements presented in the previous section, the following metrics must be evaluated in order to determine the suitability of an implementation:
 - Response time for read - As the Domain Registry is a critical component in the call establishment process, the time it takes to perform a read should be small, in the order of the tens of ms. We will test the evolution of this metric as the load on the server increases.
 - Number of concurrent requests - A large Service Provider is expected to have a large number of users, which will result in a high number of requests to the Domain Registry. Thus the domain registry should be able to scale to accommodate a large number of requests/s while providing a reasonable response time.
-- Response time for write - The device runtime will write to the Domain Registry whenever new hyperties are deployed, removed or updated. Although not as critical, the response time should also be within tens of ms.
+- Response time for write - The device runtime will write to the Domain Registry whenever new Hyperties are deployed, removed or updated. Although not as critical, the response time should also be within tens of ms.
 - Error rate - Measured in percentage of the requests that fail to be successfully replied to within the timeout period (defined as 5s). This value should be zero.
 - Recovery Time - Measured in second during which the service is not available, after a failure and until the backup server takes over.
 
@@ -92,7 +92,7 @@ In this Section, we complement the previous scalability evaluation with an evalu
 
 #### Evaluation scenario
 These tests were conducted at a later date. As such the scenario is not identical.
-The deployment architecture is still the same, as ilustrated in Figure 1, but the used testbed was different.
+The deployment architecture is still the same, as illustrated in Figure 1, but the used testbed was different.
 The Domain Registry was deployed on a datacenter at the University of Lisbon’s, Instituto Superior Técnico's Tagus Park campus, using 9 VM with 1vCPU and 2GB RAM each. The VMs were assigned the roles described in Figure 1: 4 Cassandra DB nodes, 3 application servers and a 2 load balancers in active/passive configuration. All requests are sent to the
 load balancer, that distributes them in round-robin through the 3 application servers.
 The Operating System used was Ubuntu 14.04 64bit and all software was deployed using Docker
