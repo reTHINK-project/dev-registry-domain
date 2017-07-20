@@ -13,6 +13,8 @@ Given the Domain Registry requirements presented in the previous section, the fo
 - Error rate - Measured in percentage of the requests that fail to be successfully replied to within the timeout period (defined as 5s). This value should be zero.
 - Recovery Time - Measured in second during which the service is not available, after a failure and until the backup server takes over.
 
+This evaluation is presented in two sections. The next section presents the performance evaluation, considering the first 4 metrics. The evaluation of the fail-over mechanisms (fifth metric) is provided in the section after the next one.
+
 ### Performance tests
 The Domain Registry was evaluated using an HTTP stress tool and a high-availability setup.
 
@@ -73,8 +75,17 @@ We can observe, that as single server can handle up to 700 req/s, while 2 are ab
 
 Going from 1 to 2 servers, we observe an almost linear increase in capacity. However, a third server does not provide the same increase in capacity. This is due to the increased load on the database servers, which will have to be analysed in the future.
 
-#### Failure recovery test
 
+### Failure recovery tests
+
+The tests described in the previous Section demonstrate the ability of the Domain Registry implementation to scale in order to handle a large number of clients.
+The scalability is provided by the deployment architecture, where the number of nodes processing the requests as well as the number of nodes that make up the database can be dynamically adjusted according to the expected load.
+In this Section, we complement the previous scalability evaluation with an evaluation of the high availability performance.
+
+In our deployment architecture, three types of nodes may fail: load balancer, application node or database node. In this section, we examine the impact of failures in the most critical componentes (load balancer and application node). The database server is not evaluated, as it was not designed by us and Cassandra uses a DHT and was designed specifically to handle node failures.
+
+#### Application node failure
+The evaluation scenario for this test was the same as used in the previous section.
 Figure 5 presents the evolution of the response time and error count in the event of a application server failure. During this test, the effective request rate is constant, at 500 req/s. One of the 3 servers fails at instant 120s and is put back online one minute later. The events are marked in the figure by red vertical lines.
 
 ![Figure 5 - ](failure_1_node_june.png)
@@ -84,13 +95,12 @@ We can observe that the failure of the node results in an increased average resp
 When the server is put back online, following a *docker run*, haproxy detects the availability of the servers and adds it to the pool of available servers. However, the server is still booting up the Spark framework. As such, the JVM takes time to do the JIT compilation, load the required classes and open the database connections, leading to a high response time for the first few requests. This impacts the response time and even causes some requests to timeout. After a while, the newly added server recovers and the response time drops to the initial value.
 
 
-### Fail-over tests
+#### Load balancer node failure
+The Load Balancer node can also fail. 
+We use a master/backup architecture were the master handles all the requests and the backup is on standby to assume the master role when necessary.
+In this test, we evaluate the impact on the service of a load balancer failure.
 
-The tests described in the previous Section demonstrate the ability of the Domain Registry implementation to scale in order to handle a large number of clients.
-The scalability is provided by the deployment architecture, where the number of nodes processing the requests as well as the number of nodes that make up the database can be dynamically adjusted according to the expected load.
-In this Section, we complement the previous scalability evaluation with an evaluation of the high availability performance.
-
-#### Evaluation scenario
+##### Evaluation scenario
 These tests were conducted at a later date. As such the scenario is not identical.
 The deployment architecture is still the same, as illustrated in Figure 1, but the used testbed was different.
 The Domain Registry was deployed on a datacenter at the University of Lisbon’s, Instituto Superior Técnico's Tagus Park campus, using 9 VM with 1vCPU and 2GB RAM each. The VMs were assigned the roles described in Figure 1: 4 Cassandra DB nodes, 3 application servers and a 2 load balancers in active/passive configuration. All requests are sent to the
@@ -104,7 +114,7 @@ The load testing tools were run on a server with 2 Intel(R) Xeon(R) CPU E5-2640 
 CPUs (total of 32 cores), 128GB of RAM running Debian 8.2, located in the same datacenter.
 After reviewing and testing several open source load testing applications, we ended up choosing [httperf 2](http://www.labs.hpe.com/research/linux/httperf/) to simulate the client load.
 
-#### Test methodology
+##### Test methodology
 There are two load balancers. The master node handles all the requests and the backup node is in standby mode.
 When the backup node detects a failure of the master, it assumes its role.
 This is accomplished by using the Virtual Router Redundancy Protocol (VRRP) running between the two nodes.
@@ -116,7 +126,7 @@ When the Master is back online, the Slave relinquishes control of the shared IP 
 
 We simulated two types of Master node failure: failure of the service provided by the node (haproxy) and failure of the fail-over mechanism itself (keepalived). The latter simulates a complete node failure.
 
-#### Recovery Time
+##### Recovery Time
 Figure 6 illustrates the failure of the service provided by the node.
 In this case, after about 20s, we stop the haproxy service on the Master node.
 There is a service failure that lasts about 5s. After 5s, the service is resumed by the Backup node.
@@ -137,3 +147,8 @@ The return of the control to the Master node is similar to the previous case: wh
 ![Figure 7](keepalived_keep.png)
 
 In both situations, the down-time is only a few seconds. This is a reasonable amount of time, particularly when we take into consideration that this is a rare event. The more common failure of an application node is handled by the load balancer (haproxy), as examined in deliverable 6.3.
+
+## Conclusions
+Our evaluation allowed us to conclude that the Domain Resgistry is able to handle large loads. Furthermore, its deployment architecture allows us to scale its capacity simply by adding more servers.
+
+The evaluation performed, also demonstrated the ability of the Domain Registry to handle node failures. This is due to its design and implementation, that enables a deployment architecture where all components can be made to be redundant. The Domain Registry was designed and implemented as not to have a single point of failure.
