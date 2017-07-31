@@ -242,8 +242,9 @@ public class CassandraClient implements Connection{
     public void insertHyperty(HypertyInstance hyperty){
         insertStatement(hyperty, USERHYPERTIES);
         insertStatement(hyperty, IDHYPERTIES);
-        insertGuid(hyperty, GUIDBYUSER);
         insertEmail(getUserEmail(hyperty.getUserID()), hyperty.getHypertyID(), EMAILBYUSER);
+        if(hyperty.getGuid() != null)
+            insertGuid(hyperty, GUIDBYUSER);
     }
 
     private String getUserEmail(String userID){
