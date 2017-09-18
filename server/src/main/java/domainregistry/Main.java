@@ -27,6 +27,7 @@ public class Main {
     private static final String RAM = "Ram";
     private static final String STORAGE = "STORAGE_TYPE";
     private static final String EXPIRES = "EXPIRES";
+    private static final String EXPIRES_MAX = "EXPIRES_MAX";
     private static final String RIEMANN = "RIEMANN_SERVER";
 
     public static void main(String[] args) {
@@ -70,4 +71,3 @@ public class Main {
         }
     }
 }
-
