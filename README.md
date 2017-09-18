@@ -13,7 +13,7 @@ $ docker build -t domain-registry .
 $ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -e DOMAIN_ENV=DEVELOPMENT -p 4568:4567 domain-registry
 ```
 A development environment will provide an overview of the Hyperties stored on the status page (/live).
-The Domain Registry can be run with another configurations, such as a with multi-host database cluster or with mutual authentication. See the [user manual](https://github.com/reTHINK-project/dev-registry-domain/blob/docs/DomainRegistryUserManual.md) for more information.
+The Domain Registry can be run with another configurations, such as a with multi-host database cluster or with mutual authentication. See the [user manual](https://github.com/reTHINK-project/dev-registry-domain/blob/master/docs/DomainRegistryUserManual.md) for more information.
 
 
 ### Integration tests
