@@ -27,7 +27,9 @@ import org.apache.commons.lang3.ArrayUtils;
 
 public class HypertyService{
     static Logger log = Logger.getLogger(HypertyService.class.getName());
-    private static final String EXPIRES = "EXPIRES";
+    private static final String EXPIRES_MAX = "EXPIRES_MAX";
+    private static final String EXPIRES_DEFAULT = "3600";
+
     private static final String DEAD = "disconnected";
     private static final String LIVE = "live";
 
@@ -167,9 +169,10 @@ public class HypertyService{
     }
 
     public void createUserHyperty(Connection connectionClient, HypertyInstance newHyperty){
-        long expiresLimit = Long.valueOf(System.getenv(EXPIRES)).longValue();
+        long expiresLimit;
         String userID = newHyperty.getUserID();
         String hypertyID = newHyperty.getHypertyID();
+        expiresLimit = getExpiresValue();
 
         if(validateExpiresField(newHyperty.getExpires(), expiresLimit)){
             newHyperty.setExpires((int) expiresLimit);
@@ -185,6 +188,13 @@ public class HypertyService{
             throw new CouldNotCreateOrUpdateHypertyException();
 
         else newHyperty(connectionClient, newHyperty);
+    }
+
+    private long getExpiresValue() {
+        if(System.getenv(EXPIRES_MAX) != null)
+            return Long.valueOf(System.getenv(EXPIRES_MAX)).longValue();
+        else
+             return Long.valueOf(EXPIRES_DEFAULT).longValue();
     }
 
     public boolean keepAlive(Connection connectionClient, String hypertyID){

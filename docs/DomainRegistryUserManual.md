@@ -38,9 +38,12 @@ Requests may be saved in-memory. It is the simplest way to deploy the server. Ho
 
 ```
 $ docker build -t domain-registry .
-$ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -e DOMAIN_ENV=DEVELOPMENT -p 4568:4567 domain-registry
+$ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -e EXPIRES_MAX=3600 -e DOMAIN_ENV=DEVELOPMENT -p 4568:4567 domain-registry
 ```
-Expires global variable defines the maximum amount of time (in seconds) a Hyperty stays in the server (see [soft state issue](https://github.com/reTHINK-project/dev-registry-domain/issues/7)). Note that the published port 4568 may be changed to another port that better suits your needs. Running the server with this configuration will work exactly as the last release. The global variable 'DOMAIN_END' can be set to 'DEVELOPMENT' to enable a customized Domain Registry status page.
+
+'EXPIRES_MAX' global variable defines the maximum amount of time (in seconds) a Hyperty stays in the server.
+The HeartBeat thread is responsable to validade this expires field of all registered objects. This thread runs at intervals of x seconds. This time is defined using the global variable 'EXPIRES'. 
+Note that the published port 4568 may be changed to another port that better suits your needs. Running the server with this configuration will work exactly as the last release. The global variable 'DOMAIN_ENV' can be set to 'DEVELOPMENT' to enable a customized Domain Registry status page.
 
 #### Requests saved in a multi-host Cassandra cluster
 
