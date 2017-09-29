@@ -112,7 +112,6 @@ describe 'domain registry api tests' do
         dataSchemes: ["datascheme4", "datascheme3"],
         status: "created",
         runtime: "runtime",
-        expires: 1000,
         p2pRequester: "requester",
         invalidField: "invalid"
       }

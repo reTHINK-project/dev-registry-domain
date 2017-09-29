@@ -142,10 +142,7 @@ describe 'domain registry api tests' do
         dataSchemes: ["comm"],
         descriptor: "descriptor5",
         expires: 1200,
-        status: "created",
-        runtime: "runtime",
-        p2pRequester: "requester",
-        p2pHandler: "handler",
+        status: "created"
       }
 
       put host << '/hyperty/user/bernardo@inesc-id.pt/hyperty12', invalid_hyperty
@@ -199,7 +196,6 @@ describe 'domain registry api tests' do
         descriptor: "descriptor5",
         expires: 1200,
         status: "created",
-        runtime: "runtime",
         p2pRequester: "requester",
         p2pHandler: "handler",
       }

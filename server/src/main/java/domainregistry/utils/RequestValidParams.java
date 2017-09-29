@@ -26,11 +26,8 @@ public class RequestValidParams {
                            "dataSchemes",
                            "resources",
                            "runtime",
-                           "guid",
                            "status",
-                           "descriptor",
-                           "p2pRequester",
-                           "p2pHandler"));
+                           "descriptor"));
 
     private static final List<String> dataObjectCreationExpectedParams =
           Collections.unmodifiableList(Arrays.asList(
@@ -41,7 +38,6 @@ public class RequestValidParams {
                            "dataSchemes",
                            "status",
                            "expires",
-                           "p2pRequester",
                            "runtime"));
 
     protected static List<String> getHypertyvalidParamskeys(){

@@ -283,10 +283,10 @@ public class HypertyController {
             }
 
             else{
-                if(!getHypertyInvalidParams(body).isEmpty()){
-                    log.info("Bad hyperty update request. Invalid params: " + getHypertyInvalidParams(body));
-                    halt(400);
-                }
+                // if(!getHypertyInvalidParams(body).isEmpty()){
+                //     log.info("Bad hyperty update request. Invalid params: " + getHypertyInvalidParams(body));
+                //     halt(400);
+                // }
 
                 log.info("Update hyperty with ID " + hypertyID + " and body " + body);
                 HypertyInstance hyperty = gson.fromJson(body, HypertyInstance.class);
@@ -313,7 +313,7 @@ public class HypertyController {
                 List<String> hypertyValidParams = RequestValidParams.getHypertyvalidParamskeys();
                 log.info("Invalid request. Hyperty creation valid params are: " + hypertyValidParams);
                 if(!getHypertyMissingParams(body).isEmpty()) log.info("Missing params: " + getHypertyMissingParams(body));
-                if(!getHypertyInvalidParams(body).isEmpty()) log.info("Invalid params: " + getHypertyInvalidParams(body));
+                //if(!getHypertyInvalidParams(body).isEmpty()) log.info("Invalid params: " + getHypertyInvalidParams(body));
                 halt(400);
             }
 
@@ -354,7 +354,7 @@ public class HypertyController {
                 List<String> dataObjectValidParams = RequestValidParams.getDataObjectsvalidParamskeys();
                 log.info("Invalid request. DataObject creation valid params are: " + dataObjectValidParams);
                 if(!getDataObjectMissingParams(body).isEmpty()) log.info("Missing params: " + getDataObjectMissingParams(body));
-                if(!getDataObjectInvalidParams(body).isEmpty()) log.info("Invalid params: " + getDataObjectInvalidParams(body));
+                //if(!getDataObjectInvalidParams(body).isEmpty()) log.info("Invalid params: " + getDataObjectInvalidParams(body));
                 halt(400);
             }
 
@@ -386,10 +386,10 @@ public class HypertyController {
             }
 
             else{
-                if(!getDataObjectInvalidParams(body).isEmpty()){
-                    log.info("Bad data object update request. Invalid params: " + getDataObjectInvalidParams(body));
-                    halt(400);
-                }
+                // if(!getDataObjectInvalidParams(body).isEmpty()){
+                //     log.info("Bad data object update request. Invalid params: " + getDataObjectInvalidParams(body));
+                //     halt(400);
+                // }
 
                 log.info("Update dataobject with : " + body + " and url: " + dataObjectUrl);
 
@@ -651,7 +651,9 @@ public class HypertyController {
         List<String> jsonRequestKeys = getKeysFromJsonString(requestBody);
         List<String> expectedParams = RequestValidParams.getHypertyvalidParamskeys();
 
-        return expectedParams.containsAll(jsonRequestKeys) && jsonRequestKeys.containsAll(expectedParams);
+        // Could additional fields in the request
+        //return expectedParams.containsAll(jsonRequestKeys) && jsonRequestKeys.containsAll(expectedParams);
+        return jsonRequestKeys.containsAll(expectedParams);
     }
 
     private List<String> getHypertyMissingParams(String requestBody){
@@ -688,7 +690,9 @@ public class HypertyController {
         List<String> jsonRequestKeys = getKeysFromJsonString(requestBody);
         List<String> expectedParams = RequestValidParams.getDataObjectsvalidParamskeys();
 
-        return expectedParams.containsAll(jsonRequestKeys) && jsonRequestKeys.containsAll(expectedParams);
+        // Could additional fields in the request
+        // return expectedParams.containsAll(jsonRequestKeys) && jsonRequestKeys.containsAll(expectedParams);
+        return jsonRequestKeys.containsAll(expectedParams);
     }
 
     private List<String> getDataObjectMissingParams(String requestBody){
