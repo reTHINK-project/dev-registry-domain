@@ -76,6 +76,8 @@ describe 'domain registry api tests' do
       resources: ["resource4", "resource6"],
       dataSchemes: ["datascheme4", "datascheme4"],
       status: "live",
+      runtime: "runtime",
+      p2pRequester: "requester",
       expires: 1
     }
   }
