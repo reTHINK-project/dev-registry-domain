@@ -56,7 +56,8 @@ public class HypertyService{
         }
 
         if(connectionClient.userExists(userID) && !allUserHyperties.isEmpty()){
-            return liveHyperties(hypertiesWithStatusUpdated);
+            //return liveHyperties(hypertiesWithStatusUpdated);
+            return hypertiesWithStatusUpdated;
         }
 
         else throw new UserNotFoundException();
@@ -80,7 +81,8 @@ public class HypertyService{
             return hypertiesWithStatusUpdated;
         }
 
-        return liveHyperties(hypertiesWithStatusUpdated);
+        //return liveHyperties(hypertiesWithStatusUpdated);
+        return hypertiesWithStatusUpdated;
     }
 
     public Map<String, HypertyInstance> getHypertiesByEmail(Connection connectionClient, String email) {
@@ -101,7 +103,8 @@ public class HypertyService{
         if(allHypertiesAreUnavailable(hyperties))
             return hyperties;
 
-        else return liveHyperties(hyperties);
+        // else return liveHyperties(hyperties);
+        else return hyperties;
     }
 
     // Status page shows all hyperties independent of the their status
@@ -246,7 +249,8 @@ public class HypertyService{
         if(allHypertiesAreUnavailable(foundHyperties))
             return foundHyperties;
 
-        else return liveHyperties(foundHyperties);
+        //else return liveHyperties(foundHyperties);
+        else return foundHyperties;
     }
 
     public Map<String, HypertyInstance> getSpecificHypertiesByEmail(Connection connectionClient, String email, Map<String, String> parameters){
@@ -271,7 +275,8 @@ public class HypertyService{
         if(allHypertiesAreUnavailable(foundHyperties))
             return foundHyperties;
 
-        else return liveHyperties(foundHyperties);
+        // else return liveHyperties(foundHyperties);
+        else return foundHyperties;
     }
 
     protected void deleteExpiredHyperties(Connection connectionClient, String userID){

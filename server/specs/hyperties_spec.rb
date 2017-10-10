@@ -486,18 +486,18 @@ describe 'domain registry api tests' do
         expect_json_sizes(2)
       end
 
-      it 'should return one live hyperty, the other two are disconnected' do
+      it 'should return one live and two disconnected hyperties' do
         put host << '/hyperty/user/user%3A%2F%2Fgoogle.com%2Frui.jose@gmail.com/live_1', @live_1
         get host << '/hyperty/email/rui.jose@gmail.com'
         expect_status(200);
-        expect_json_sizes(1)
+        expect_json_sizes(3)
       end
 
-      it 'should return two live hyperty, after on of the disconnected comes back alive' do
+      it 'should return two live and one disconnected hyperties, after on of the disconnected comes back alive' do
         put host << '/hyperty/url/disconnected1', {}
         get host << '/hyperty/email/rui.jose@gmail.com'
         expect_status(200);
-        expect_json_sizes(2)
+        expect_json_sizes(3)
       end
 
       it 'should return three live hyperty, after the remaining disconnected comes back alive' do
