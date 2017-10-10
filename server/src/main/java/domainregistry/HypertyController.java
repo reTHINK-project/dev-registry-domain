@@ -18,13 +18,17 @@ package domainregistry;
 
 import static spark.Spark.*;
 import java.util.*;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import org.apache.log4j.Logger;
 
 import spark.ModelAndView;
 import spark.template.freemarker.*;
-import freemarker.cache.*; // template loaders live in this package
+import freemarker.cache.*;
 import freemarker.template.*;
 
 public class HypertyController {
@@ -50,6 +54,7 @@ public class HypertyController {
 
     private static final String LOAD_BALANCER_IP = "LOAD_BALANCER_IP";
 
+    private static final String PUT_REQUEST = "PUT";
 
     public HypertyController(StatusService status, final HypertyService hypertyService, final Connection connectionClient, final DataObjectService dataObjectService) {
 
@@ -81,6 +86,7 @@ public class HypertyController {
             return null;
         });
 
+        // Used by the load balancer to redirect unauthorized users
         get("/error", (req, res) -> {
             Gson gson = new Gson();
             res.type("application/json");
@@ -277,6 +283,11 @@ public class HypertyController {
             }
 
             else{
+                // if(!getHypertyInvalidParams(body).isEmpty()){
+                //     log.info("Bad hyperty update request. Invalid params: " + getHypertyInvalidParams(body));
+                //     halt(400);
+                // }
+
                 log.info("Update hyperty with ID " + hypertyID + " and body " + body);
                 HypertyInstance hyperty = gson.fromJson(body, HypertyInstance.class);
                 hyperty.setHypertyID(hypertyID);
@@ -296,6 +307,16 @@ public class HypertyController {
             this.numWrites++;
             res.type("application/json");
             String body = req.body();
+
+            // validate json fields before create hyperty
+            if(!validateHypertyCreationFields(body)){
+                List<String> hypertyValidParams = RequestValidParams.getHypertyvalidParamskeys();
+                log.info("Invalid request. Hyperty creation valid params are: " + hypertyValidParams);
+                if(!getHypertyMissingParams(body).isEmpty()) log.info("Missing params: " + getHypertyMissingParams(body));
+                //if(!getHypertyInvalidParams(body).isEmpty()) log.info("Invalid params: " + getHypertyInvalidParams(body));
+                halt(400);
+            }
+
             String[] encodedURL = req.url().split("/");
             String userID = decodeUrl(encodedURL[encodedURL.length - 2]);
             String hypertyID = decodeUrl(encodedURL[encodedURL.length - 1]);
@@ -327,6 +348,16 @@ public class HypertyController {
             this.numWrites++;
             res.type("application/json");
             String body = req.body();
+
+            // validate json fields before create data object
+            if(!validateDataObjectCreationFields(body)){
+                List<String> dataObjectValidParams = RequestValidParams.getDataObjectsvalidParamskeys();
+                log.info("Invalid request. DataObject creation valid params are: " + dataObjectValidParams);
+                if(!getDataObjectMissingParams(body).isEmpty()) log.info("Missing params: " + getDataObjectMissingParams(body));
+                //if(!getDataObjectInvalidParams(body).isEmpty()) log.info("Invalid params: " + getDataObjectInvalidParams(body));
+                halt(400);
+            }
+
             String[] encodedURL = req.url().split("/");
             String dataObjectUrl = decodeUrl(encodedURL[encodedURL.length - 1]);
             log.info("Create dataObject with " + body + " and url " + dataObjectUrl + "\n");
@@ -355,7 +386,13 @@ public class HypertyController {
             }
 
             else{
+                // if(!getDataObjectInvalidParams(body).isEmpty()){
+                //     log.info("Bad data object update request. Invalid params: " + getDataObjectInvalidParams(body));
+                //     halt(400);
+                // }
+
                 log.info("Update dataobject with : " + body + " and url: " + dataObjectUrl);
+
                 DataObjectInstance dataObject = gson.fromJson(body, DataObjectInstance.class);
                 dataObject.setUrl(dataObjectUrl);
                 boolean statusChanged = dataObjectService.updateDataObjectFields(connectionClient, dataObject);
@@ -608,4 +645,89 @@ public class HypertyController {
         return this.numWrites;
     }
 
+    // the following three methods validate inputs
+
+    private boolean validateHypertyCreationFields(String requestBody){
+        List<String> jsonRequestKeys = getKeysFromJsonString(requestBody);
+        List<String> expectedParams = RequestValidParams.getHypertyvalidParamskeys();
+
+        // Could additional fields in the request
+        //return expectedParams.containsAll(jsonRequestKeys) && jsonRequestKeys.containsAll(expectedParams);
+        return jsonRequestKeys.containsAll(expectedParams);
+    }
+
+    private List<String> getHypertyMissingParams(String requestBody){
+        List<String> missingParams = new ArrayList<String>();
+
+        List<String> jsonRequestKeys = getKeysFromJsonString(requestBody);
+        List<String> expectedParams = RequestValidParams.getHypertyvalidParamskeys();
+
+        for(String param : expectedParams){
+            if(!jsonRequestKeys.contains(param)){
+                missingParams.add(param);
+            }
+        }
+
+        return missingParams;
+    }
+
+    private List<String> getHypertyInvalidParams(String requestBody){
+        List<String> invalidParams = new ArrayList<String>();
+
+        List<String> jsonRequestKeys = getKeysFromJsonString(requestBody);
+        List<String> expectedParams = RequestValidParams.getHypertyvalidParamskeys();
+
+        for(String param : jsonRequestKeys){
+            if(!expectedParams.contains(param)){
+                invalidParams.add(param);
+            }
+        }
+
+        return invalidParams;
+    }
+
+    private boolean validateDataObjectCreationFields(String requestBody){
+        List<String> jsonRequestKeys = getKeysFromJsonString(requestBody);
+        List<String> expectedParams = RequestValidParams.getDataObjectsvalidParamskeys();
+
+        // Could additional fields in the request
+        // return expectedParams.containsAll(jsonRequestKeys) && jsonRequestKeys.containsAll(expectedParams);
+        return jsonRequestKeys.containsAll(expectedParams);
+    }
+
+    private List<String> getDataObjectMissingParams(String requestBody){
+        List<String> missingParams = new ArrayList<String>();
+
+        List<String> jsonRequestKeys = getKeysFromJsonString(requestBody);
+        List<String> expectedParams = RequestValidParams.getDataObjectsvalidParamskeys();
+
+        for(String param : expectedParams){
+            if(!jsonRequestKeys.contains(param)){
+                missingParams.add(param);
+            }
+        }
+
+        return missingParams;
+    }
+
+    private List<String> getDataObjectInvalidParams(String requestBody){
+        List<String> invalidParams = new ArrayList<String>();
+
+        List<String> jsonRequestKeys = getKeysFromJsonString(requestBody);
+        List<String> expectedParams = RequestValidParams.getDataObjectsvalidParamskeys();
+
+        for(String param : jsonRequestKeys){
+            if(!expectedParams.contains(param)){
+                invalidParams.add(param);
+            }
+        }
+
+        return invalidParams;
+    }
+
+    // return json keys as a List<String>
+    private List<String> getKeysFromJsonString(String body){
+        JSONObject jsonRequest = new JSONObject(body);
+        return new ArrayList<String>(jsonRequest.keySet());
+    }
 }
