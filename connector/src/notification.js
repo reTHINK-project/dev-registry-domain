@@ -1,13 +1,18 @@
 var notification = {
 
-  checkNotification: function(statusCode, response, notificationsEnabled) {
+  checkNotification: function(statusCode, response, notificationsEnabled, body) {
     return (
-      statusCode === 200 && notification.isStatusUpdate(response) && notificationsEnabled
+      (statusCode === 200 && notification.isStatusUpdate(response) && notificationsEnabled) ||
+      (statusCode === 200 && !notification.isKeepAlive(response) && notificationsEnabled)
     );
   },
 
   isStatusUpdate: function(response) {
     return response.statusChanged === "true";
+  },
+
+  isKeepAlive: function(body) {
+    return (body.method && body.method === "refresh");
   },
 
   fetchUpdated: function(url, request, notificationCallback) {
