@@ -134,6 +134,41 @@ describe 'domain registry api tests' do
       expect_json(:message => "Hyperty created")
     end
 
+    it 'should return a 400 bad request error' do
+      # trying to register an Hyperty without the guid
+
+      invalid_hyperty = {
+        resources: ["chat", "voice"],
+        dataSchemes: ["comm"],
+        descriptor: "descriptor5",
+        expires: 1200,
+        status: "created"
+      }
+
+      put host << '/hyperty/user/bernardo@inesc-id.pt/hyperty12', invalid_hyperty
+      expect_status(400)
+    end
+
+    it 'should return a 400 bad request error' do
+      # trying to register an Hyperty with invalid fields
+
+      invalid_hyperty = {
+        invalid: ["chat", "voice"],
+        dataSchemes: ["comm"],
+        descriptor: "descriptor5",
+        expires: 1200,
+        status: "created",
+        runtime: "runtime",
+        p2pRequester: "requester",
+        p2pHandler: "handler",
+        guid: "guid_5",
+        invalidField: "invalid fied"
+      }
+
+      put host << '/hyperty/user/bernardo@inesc-id.pt/hyperty12', invalid_hyperty
+      expect_status(400)
+    end
+
     it 'should add a new hyperty' do
       put host << '/hyperty/user/user%3A%2F%2Fgoogle.com%2Fbernardo.marquesg@gmail.com/hyperty7', @hyperty_two_details
       expect_status(200)
@@ -150,6 +185,43 @@ describe 'domain registry api tests' do
       put host << '/hyperty/user/user%3A%2F%2Fgoogle.com%2Frui.marquesg@gmail.com/hyperty77', @hyperty_zero_details
       expect_status(200)
       expect_json(:message => "Hyperty created")
+    end
+
+    it 'should return a 400 bad request error' do
+      # trying to register an Hyperty without the guid
+
+      invalid_hyperty = {
+        resources: ["chat", "voice"],
+        dataSchemes: ["comm"],
+        descriptor: "descriptor5",
+        expires: 1200,
+        status: "created",
+        p2pRequester: "requester",
+        p2pHandler: "handler",
+      }
+
+      put host << '/hyperty/user/bernardo@inesc-id.pt/hyperty121', invalid_hyperty
+      expect_status(400)
+    end
+
+    it 'should return a 400 bad request error' do
+      # trying to register an Hyperty with invalid fields
+
+      invalid_hyperty = {
+        invalid: ["chat", "voice"],
+        dataSchemes: ["comm"],
+        descriptor: "descriptor5",
+        expires: 1200,
+        status: "created",
+        runtime: "runtime",
+        p2pRequester: "requester",
+        p2pHandler: "handler",
+        guid: "guid_5",
+        invalidField: "invalid fied"
+      }
+
+      put host << '/hyperty/user/bernardo@inesc-id.pt/hyperty121', invalid_hyperty
+      expect_status(400)
     end
 
     it 'should add a new hyperty' do
@@ -414,18 +486,18 @@ describe 'domain registry api tests' do
         expect_json_sizes(2)
       end
 
-      it 'should return one live hyperty, the other two are disconnected' do
+      it 'should return one live and two disconnected hyperties' do
         put host << '/hyperty/user/user%3A%2F%2Fgoogle.com%2Frui.jose@gmail.com/live_1', @live_1
         get host << '/hyperty/email/rui.jose@gmail.com'
         expect_status(200);
-        expect_json_sizes(1)
+        expect_json_sizes(3)
       end
 
-      it 'should return two live hyperty, after on of the disconnected comes back alive' do
+      it 'should return two live and one disconnected hyperties, after on of the disconnected comes back alive' do
         put host << '/hyperty/url/disconnected1', {}
         get host << '/hyperty/email/rui.jose@gmail.com'
         expect_status(200);
-        expect_json_sizes(2)
+        expect_json_sizes(3)
       end
 
       it 'should return three live hyperty, after the remaining disconnected comes back alive' do

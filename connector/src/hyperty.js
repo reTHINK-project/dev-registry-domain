@@ -197,8 +197,10 @@ Hyperty.prototype.update = function(body, callback) {
       };
     }
 
+    //TODO: always notify if is not keepalive
+
     //check if notify
-    if(notification.checkNotification(statusCode, response, this._notificationsEnabled)) {
+    if(notification.checkNotification(statusCode, response, this._notificationsEnabled, body)) {
       var notificationBody = {
         'updated': {}
       };

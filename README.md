@@ -13,7 +13,7 @@ $ docker build -t domain-registry .
 $ docker run -e STORAGE_TYPE=RAM -e EXPIRES=3600 -e DOMAIN_ENV=DEVELOPMENT -p 4568:4567 domain-registry
 ```
 A development environment will provide an overview of the Hyperties stored on the status page (/live).
-The Domain Registry can be run with another configurations, such as a with multi-host database cluster or with mutual authentication. See the [user manual](https://github.com/reTHINK-project/dev-registry-domain/blob/database-integration/docs/DomainRegistryUserManual.md) for more information.
+The Domain Registry can be run with another configurations, such as a with multi-host database cluster or with mutual authentication. See the [user manual](https://github.com/reTHINK-project/dev-registry-domain/blob/master/docs/DomainRegistryUserManual.md) for more information.
 
 
 ### Integration tests
@@ -42,7 +42,7 @@ const registry = new RegistryConnector(config);
 
 #### Config options
 
-**HTTP Domain Registry** 
+**HTTP Domain Registry**
 ```
 const config = {
   url: 'http://citysdk.tecnico.ulisboa.pt',
@@ -55,7 +55,7 @@ const config = {
 const registry = new RegistryConnector(config);
 ```
 
-**HTTPS Domain Registry** 
+**HTTPS Domain Registry**
 
 More information about how to generate the necessary CA infrastructure and certificates is in the [Certification Manual](https://github.com/reTHINK-project/dev-registry-domain/blob/master/docs/CertificationManual.md).
 ```
@@ -89,7 +89,7 @@ const config = {
 const registry = new RegistryConnector(config);
 ```
 
-**Notifications** 
+**Notifications**
 
 In order to receive hyperty/data objects notifications from Domain Registry, is necessary to pass an additional callback.
 ```

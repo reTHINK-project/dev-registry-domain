@@ -153,7 +153,6 @@ DataObject.prototype.update = function(body, callback) {
     data = {
       'name': body.value.name,
       'schema': body.value.schema,
-      'url': body.value.url,
       'reporter': body.value.reporter,
       'expires': body.value.expires,
       'dataSchemes': body.value.dataSchemes,
