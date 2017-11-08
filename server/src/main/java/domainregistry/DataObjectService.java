@@ -28,7 +28,9 @@ import org.json.JSONObject;
 
 public class DataObjectService{
     static Logger log = Logger.getLogger(DataObjectService.class.getName());
-    private static final String EXPIRES = "EXPIRES";
+    private static final String EXPIRES_MAX = "EXPIRES_MAX";
+    private static final String EXPIRES_DEFAULT = "3600";
+
     private static final String DEAD = "disconnected";
     private static final String LIVE = "live";
 
@@ -44,7 +46,8 @@ public class DataObjectService{
 
     public void createDataObject(Connection client, DataObjectInstance dataObject){
         String dataObjectUrl = dataObject.getUrl();
-        long expiresLimit = Long.valueOf(System.getenv(EXPIRES)).longValue();
+        long expiresLimit;
+        expiresLimit = getExpiresValue();
 
         if(validateExpiresField(dataObject.getExpires(), expiresLimit)){
             dataObject.setExpires((int) expiresLimit);
@@ -55,6 +58,13 @@ public class DataObjectService{
             updateDataObject(client, dataObject);
 
         else newDataObject(client, dataObject);
+    }
+
+    private long getExpiresValue() {
+        if(System.getenv(EXPIRES_MAX) != null)
+            return Long.valueOf(System.getenv(EXPIRES_MAX)).longValue();
+        else
+             return Long.valueOf(EXPIRES_DEFAULT).longValue();
     }
 
     private boolean validateExpiresField(long expires, long limit){

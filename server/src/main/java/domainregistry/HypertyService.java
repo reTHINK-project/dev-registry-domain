@@ -27,7 +27,9 @@ import org.apache.commons.lang3.ArrayUtils;
 
 public class HypertyService{
     static Logger log = Logger.getLogger(HypertyService.class.getName());
-    private static final String EXPIRES = "EXPIRES";
+    private static final String EXPIRES_MAX = "EXPIRES_MAX";
+    private static final String EXPIRES_DEFAULT = "3600";
+
     private static final String DEAD = "disconnected";
     private static final String LIVE = "live";
 
@@ -54,7 +56,8 @@ public class HypertyService{
         }
 
         if(connectionClient.userExists(userID) && !allUserHyperties.isEmpty()){
-            return liveHyperties(hypertiesWithStatusUpdated);
+            //return liveHyperties(hypertiesWithStatusUpdated);
+            return hypertiesWithStatusUpdated;
         }
 
         else throw new UserNotFoundException();
@@ -78,7 +81,8 @@ public class HypertyService{
             return hypertiesWithStatusUpdated;
         }
 
-        return liveHyperties(hypertiesWithStatusUpdated);
+        //return liveHyperties(hypertiesWithStatusUpdated);
+        return hypertiesWithStatusUpdated;
     }
 
     public Map<String, HypertyInstance> getHypertiesByEmail(Connection connectionClient, String email) {
@@ -99,7 +103,8 @@ public class HypertyService{
         if(allHypertiesAreUnavailable(hyperties))
             return hyperties;
 
-        else return liveHyperties(hyperties);
+        // else return liveHyperties(hyperties);
+        else return hyperties;
     }
 
     // Status page shows all hyperties independent of the their status
@@ -167,9 +172,10 @@ public class HypertyService{
     }
 
     public void createUserHyperty(Connection connectionClient, HypertyInstance newHyperty){
-        long expiresLimit = Long.valueOf(System.getenv(EXPIRES)).longValue();
+        long expiresLimit;
         String userID = newHyperty.getUserID();
         String hypertyID = newHyperty.getHypertyID();
+        expiresLimit = getExpiresValue();
 
         if(validateExpiresField(newHyperty.getExpires(), expiresLimit)){
             newHyperty.setExpires((int) expiresLimit);
@@ -185,6 +191,13 @@ public class HypertyService{
             throw new CouldNotCreateOrUpdateHypertyException();
 
         else newHyperty(connectionClient, newHyperty);
+    }
+
+    private long getExpiresValue() {
+        if(System.getenv(EXPIRES_MAX) != null)
+            return Long.valueOf(System.getenv(EXPIRES_MAX)).longValue();
+        else
+             return Long.valueOf(EXPIRES_DEFAULT).longValue();
     }
 
     public boolean keepAlive(Connection connectionClient, String hypertyID){
@@ -236,7 +249,8 @@ public class HypertyService{
         if(allHypertiesAreUnavailable(foundHyperties))
             return foundHyperties;
 
-        else return liveHyperties(foundHyperties);
+        //else return liveHyperties(foundHyperties);
+        else return foundHyperties;
     }
 
     public Map<String, HypertyInstance> getSpecificHypertiesByEmail(Connection connectionClient, String email, Map<String, String> parameters){
@@ -261,7 +275,8 @@ public class HypertyService{
         if(allHypertiesAreUnavailable(foundHyperties))
             return foundHyperties;
 
-        else return liveHyperties(foundHyperties);
+        // else return liveHyperties(foundHyperties);
+        else return foundHyperties;
     }
 
     protected void deleteExpiredHyperties(Connection connectionClient, String userID){
