@@ -51,6 +51,7 @@ public class CassandraClient implements Connection{
     private Session session;
 
     public void connect(Collection<InetAddress> addresses){
+    	System.out.println("Addresses to connect:" + addresses.toString());
         this.cluster = Cluster.builder()
             .addContactPoints(addresses)
             .withRetryPolicy(DefaultRetryPolicy.INSTANCE)
