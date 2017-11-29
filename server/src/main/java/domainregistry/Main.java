@@ -30,17 +30,15 @@ public class Main {
     private static final String EXPIRES_MAX = "EXPIRES_MAX";
     private static final String RIEMANN = "RIEMANN_SERVER";
 
-    @SuppressWarnings("deprecation")
-	public static void main(String[] args) {
+    public static void main(String[] args) {
         String storageType = System.getenv(STORAGE);
         String expires = System.getenv(EXPIRES);
         long time = Long.valueOf(expires).longValue();
 
         if(storageType.equals("CASSANDRA")){
-        	log.info("Cassandra choosen. Requests will be saved in a Cassandra db cluster");
-            
+            log.info("Cassandra choosen. Requests will be saved in a Cassandra db cluster");
+
             Collection<InetAddress> clusterContactPoinsts = Addresses.getClusterContactPointsAddresses();
-            HeartBeatThread hbThread = null;
             final CassandraClient cassandraClient = new CassandraClient();
 
             if (clusterContactPoinsts.isEmpty()){
@@ -53,24 +51,7 @@ public class Main {
             DataObjectService dataObjectService = new DataObjectService();
             StatusService status = new StatusService(CASSANDRA, cassandraClient, hypertyService, dataObjectService);
             HypertyController controller = new HypertyController(status, hypertyService, cassandraClient, dataObjectService);
-            
-        	try { 
-	        	
-        		hbThread = new HeartBeatThread(hypertyService, dataObjectService, cassandraClient, time);
-        		hbThread.start();
-	            
-            } catch (Exception e) {
-            	System.out.println("Estoirou");
-            	hbThread.stop();
-            	
-            	final CassandraClient cassandraClient2 = new CassandraClient();
-
-               ((CassandraClient) cassandraClient2).connect(clusterContactPoinsts);
-
-            	new HeartBeatThread(hypertyService, dataObjectService, cassandraClient2, time).start();
-            	
-            }
-            
+            new HeartBeatThread(hypertyService, dataObjectService, cassandraClient, time).start();
 
             if(System.getenv(RIEMANN) != null){
                 log.info("Riemann env variable was set. Events will begin to be sent to " + System.getenv(RIEMANN));

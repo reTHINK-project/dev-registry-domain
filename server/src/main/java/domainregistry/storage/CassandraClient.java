@@ -51,7 +51,6 @@ public class CassandraClient implements Connection{
     private Session session;
 
     public void connect(Collection<InetAddress> addresses){
-    	System.out.println("Addresses to connect:" + addresses.toString());
         this.cluster = Cluster.builder()
             .addContactPoints(addresses)
             .withRetryPolicy(DefaultRetryPolicy.INSTANCE)
@@ -74,7 +73,7 @@ public class CassandraClient implements Connection{
     public Map<String, HypertyInstance> getUpdatedHypertiesMap(){
         Map<String, HypertyInstance> hyperties = new HashMap();
         Statement select = QueryBuilder.select().all().from(KEYSPACE, UPDATEDHYPERTIES);
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
         if(results == null) return Collections.emptyMap();
 
         for(Row row : results){
@@ -99,7 +98,7 @@ public class CassandraClient implements Connection{
     public Map<String, DataObjectInstance> getUpdatedDataObjectsMap(){
         Map<String, DataObjectInstance> dataObjects = new HashMap();
         Statement select = QueryBuilder.select().all().from(KEYSPACE, UPDATEDDATAOBJECTS);
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
         if(results == null) return Collections.emptyMap();
 
         for(Row row : results){
@@ -123,12 +122,12 @@ public class CassandraClient implements Connection{
 
     public void clearUpdatedHypertiesMap() {
         Statement select = QueryBuilder.truncate(KEYSPACE, UPDATEDHYPERTIES);
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
     }
 
     public void clearUpdatedDataObjectsMap() {
         Statement select = QueryBuilder.truncate(KEYSPACE, UPDATEDDATAOBJECTS);
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
     }
 
     public void updateTableUpdatedHyperties(HypertyInstance hyperty, String table){
@@ -136,7 +135,7 @@ public class CassandraClient implements Connection{
             HypertyInstance updatedhyperty = getUpdatedHyperty(hyperty, table);
             Statement deleteFromNames = QueryBuilder.delete().from(KEYSPACE, table)
                                              .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()));
-            session.execute(deleteFromNames);
+            getSession().execute(deleteFromNames);
 
         } //else {
             // if(hyperty.getStatus().equals("disconnected")){
@@ -164,7 +163,7 @@ public class CassandraClient implements Connection{
             DataObjectInstance updatedDataObject = getUpdatedDataObject(dataObject, table);
             Statement deleteFromNames = QueryBuilder.delete().from(KEYSPACE, table)
                                              .where(QueryBuilder.eq("url", dataObject.getUrl()));
-            session.execute(deleteFromNames);
+            getSession().execute(deleteFromNames);
 
         } //else {
         //     if(dataObject.getStatus().equals("disconnected")){
@@ -190,7 +189,7 @@ public class CassandraClient implements Connection{
         Statement select = QueryBuilder.select().all().from(KEYSPACE, table)
                                                       .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()));
 
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
         Row row = results.one();
         HypertyInstance newHyperty =  new HypertyInstance(row.getString("descriptor"), row.getString("startingTime"),
                   row.getString("user"), row.getList("resources", String.class), row.getList("dataSchemes", String.class),
@@ -205,7 +204,7 @@ public class CassandraClient implements Connection{
         Statement select = QueryBuilder.select().all().from(KEYSPACE, table)
                                                       .where(QueryBuilder.eq("url", dataObject.getUrl()));
 
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
         Row row = results.one();
         DataObjectInstance newDataObject =  new DataObjectInstance( row.getString("name"),
                                                                     row.getString("schem"),
@@ -226,7 +225,7 @@ public class CassandraClient implements Connection{
         Statement select = QueryBuilder.select().all().from(KEYSPACE, table)
             .where(QueryBuilder.eq("hypertyID", hyperty.getHypertyID()));
 
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
         Row row = results.one();
         return row != null;
     }
@@ -235,7 +234,7 @@ public class CassandraClient implements Connection{
         Statement select = QueryBuilder.select().all().from(KEYSPACE, table)
             .where(QueryBuilder.eq("url", dataObject.getUrl()));
 
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
         Row row = results.one();
         return row != null;
     }
@@ -281,7 +280,7 @@ public class CassandraClient implements Connection{
         Statement select = QueryBuilder.select().all().from(KEYSPACE, EMAILBYUSER)
             .where(QueryBuilder.eq("email", email));
 
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
         Row row = results.one();
         return row != null;
     }
@@ -352,7 +351,7 @@ public class CassandraClient implements Connection{
         Statement select = QueryBuilder.select().column("hyperties_ids").from(KEYSPACE, EMAILBYUSER)
             .where(QueryBuilder.eq("email", email));
 
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
 
         Set<String> hypertiesUrls = new HashSet<String>();
 
@@ -375,7 +374,7 @@ public class CassandraClient implements Connection{
         ArrayList<String> data = new ArrayList<String>();
 
         Statement select = QueryBuilder.select().column("hypertyID").from(KEYSPACE, IDHYPERTIES);
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
 
         if(results == null) return 0;
 
@@ -392,7 +391,7 @@ public class CassandraClient implements Connection{
         ArrayList<String> data = new ArrayList<String>();
 
         Statement select = QueryBuilder.select().column("user").from(KEYSPACE, USERHYPERTIES);
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
 
         if(results == null) return new ArrayList();
 
@@ -410,7 +409,7 @@ public class CassandraClient implements Connection{
         ArrayList<String> data = new ArrayList<String>();
 
         Statement select = QueryBuilder.select().column("url").from(KEYSPACE, URLDATAOBJECTS);
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
 
         if(results == null) return new ArrayList();
 
@@ -426,7 +425,7 @@ public class CassandraClient implements Connection{
     public HypertyInstance getHyperty(String hypertyID){
         Statement select = QueryBuilder.select().all().from(KEYSPACE, IDHYPERTIES)
                                                       .where(QueryBuilder.eq("hypertyID", hypertyID));
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
         Row row = results.one();
         HypertyInstance newHyperty =  new HypertyInstance(row.getString("descriptor"), row.getString("startingTime"),
                 row.getString("user"), row.getList("resources", String.class), row.getList("dataSchemes", String.class),
@@ -445,7 +444,7 @@ public class CassandraClient implements Connection{
     public String getUserByGuid(String guid){
         Statement select = QueryBuilder.select().all().from(KEYSPACE, GUIDBYUSER)
                                                       .where(QueryBuilder.eq("guid", guid));
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
         Row row = results.one();
         return row.getString("user");
     }
@@ -454,7 +453,7 @@ public class CassandraClient implements Connection{
         Statement select = QueryBuilder.select().all().from(KEYSPACE, GUIDBYUSER)
                                                       .where(QueryBuilder.eq("guid", guid));
 
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
         Row row = results.one();
         return row != null;
     }
@@ -463,7 +462,7 @@ public class CassandraClient implements Connection{
         ArrayList<String> data = new ArrayList<String>();
 
         Statement select = QueryBuilder.select().column("guid").from(KEYSPACE, GUIDBYUSER);
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
 
         if(results == null) return 0;
 
@@ -480,7 +479,7 @@ public class CassandraClient implements Connection{
         Map<String, String> usersByGuid = new HashMap();
 
         Statement select = QueryBuilder.select().all().from(KEYSPACE, GUIDBYUSER);
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
 
         if(results == null) return Collections.emptyMap();
 
@@ -494,7 +493,7 @@ public class CassandraClient implements Connection{
     public DataObjectInstance getDataObjectByUrl(String dataObjectUrl){
         Statement select = QueryBuilder.select().all().from(KEYSPACE, URLDATAOBJECTS)
                                                       .where(QueryBuilder.eq("url", dataObjectUrl));
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
         Row row = results.one();
         return new DataObjectInstance(row.getString("name"), row.getString("schem"), row.getList("dataSchemes", String.class),
                 row.getList("resources", String.class), row.getString("reporter"), row.getString("url"), row.getString("startingTime"),
@@ -505,7 +504,7 @@ public class CassandraClient implements Connection{
         Statement select = QueryBuilder.select().all().from(KEYSPACE, IDHYPERTIES)
                                                       .where(QueryBuilder.eq("hypertyID", hypertyID));
 
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
         Row row = results.one();
         return row != null;
     }
@@ -514,7 +513,7 @@ public class CassandraClient implements Connection{
         Statement select = QueryBuilder.select().all().from(KEYSPACE, URLDATAOBJECTS)
                                                       .where(QueryBuilder.eq("url", dataObjectUrl));
 
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
         Row row = results.one();
         return row != null;
     }
@@ -522,7 +521,7 @@ public class CassandraClient implements Connection{
     public boolean userExists(String userID){
         Statement select = QueryBuilder.select().all().from(KEYSPACE, USERHYPERTIES)
                                                       .where(QueryBuilder.eq("user", userID));
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
         Row row = results.one();
         return row != null;
     }
@@ -578,7 +577,7 @@ public class CassandraClient implements Connection{
 
         Statement select = QueryBuilder.select().all().from(KEYSPACE, URLDATAOBJECTS);
 
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
 
         if(results == null) return Collections.emptyMap();
 
@@ -596,7 +595,7 @@ public class CassandraClient implements Connection{
 
         Statement select = QueryBuilder.select().all().from(KEYSPACE, USERHYPERTIES)
                                                       .where(QueryBuilder.eq("user", userID));
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
 
         if(results == null) return Collections.emptyMap();
 
@@ -624,7 +623,7 @@ public class CassandraClient implements Connection{
 
         Statement select = QueryBuilder.select().all().from(KEYSPACE, REPORTERDATAOBJECTS)
                                                       .where(QueryBuilder.eq("reporter", hypertyReporter));
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
 
         if(results == null) return Collections.emptyMap();
 
@@ -642,7 +641,7 @@ public class CassandraClient implements Connection{
 
         Statement select = QueryBuilder.select().all().from(KEYSPACE, NAMEDATAOBJECTS)
                                                       .where(QueryBuilder.eq("name", dataObjectName));
-        ResultSet results = session.execute(select);
+        ResultSet results = getSession().execute(select);
 
         if(results == null) return Collections.emptyMap();
 
@@ -684,7 +683,7 @@ public class CassandraClient implements Connection{
                                         .value("p2pHandler", hyperty.getHandler())
                                         .value("expires", hyperty.getExpires())
                                         .value("status", hyperty.getStatus());
-                session.execute(statement);
+                getSession().execute(statement);
             }
         }
 
@@ -731,7 +730,7 @@ public class CassandraClient implements Connection{
                                             .value("url", dataObject.getUrl())
                                             .value("status", dataObject.getStatus())
                                             .value("expires", dataObject.getExpires());
-                    session.execute(statement);
+                    getSession().execute(statement);
             }
         }
 
@@ -754,7 +753,13 @@ public class CassandraClient implements Connection{
     }
 
     public Session getSession(){
-        return this.session;
+    	
+        System.out.println("session: " + this.session);
+        System.out.println("isClosed:" + this.session.isClosed());
+        if (this.session.isClosed()) {
+        	this.session = cluster.connect(KEYSPACE);
+        }
+    	return this.session;
     }
 
     public int getClusterSize(){
