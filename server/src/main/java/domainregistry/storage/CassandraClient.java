@@ -755,19 +755,21 @@ public class CassandraClient implements Connection{
     }
 
     public Session getSession(){
-    	
-
-        if (this.session.isClosed()) {
-        	this.session = cluster.connect(KEYSPACE);
-        }
     	return this.session;
+    }
+    
+    public void setSession(Session session) {
+    	this.session = session;
     }
     public ResultSet executeQuery(Statement select) {
     	try {
     		return getSession().execute(select);
     	} catch (NoHostAvailableException e) {
-    		this.cluster.close();
-    		connect(this.addresses);
+    		this.session.close();
+    		Session newSession = this.cluster.newSession();
+    		newSession.init();
+    		setSession(newSession);
+    		System.out.println("New Session was created");
     	}
     	return null;
     }
