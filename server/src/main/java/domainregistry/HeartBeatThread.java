@@ -41,15 +41,17 @@ class HeartBeatThread extends Thread {
 
     @Override
     public void run(){
-        try{
-            while(true){
-                TimeUnit.SECONDS.sleep(this.time);
-                changeHypertyStatus(this.storageClient);
-                changeDataObjectStatus(this.storageClient);
-            }
-        }catch(InterruptedException | WriteTimeoutException e){
-            e.printStackTrace();
+
+      while(true){
+    	  try{
+            TimeUnit.SECONDS.sleep(this.time);
+            changeHypertyStatus(this.storageClient);
+            changeDataObjectStatus(this.storageClient);
+        }catch(Exception e){
+             e.printStackTrace();
         }
+      }
+
     }
 
     private void changeHypertyStatus(Connection storageClient){
